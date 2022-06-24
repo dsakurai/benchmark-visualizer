@@ -1,0 +1,9 @@
+jmetalpy~=1.5.5
+
+networkx~=2.8.4
+numpy~=1.22.4
+fastapi~=0.78.0
+sqlalchemy~=1.4.37
+pydantic~=1.9.1
+passlib~=1.7.4
+igraph~=0.9.11
