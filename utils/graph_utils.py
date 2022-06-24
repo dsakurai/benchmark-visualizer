@@ -27,7 +27,7 @@ def graph2dict(graph: Graph) -> dict:
     return {"vertices": vertices, "edges": vertices}
 
 
-def find_edge(vertex_id: int, graph: Graph):
+def find_edge(vertex_id: int, graph: Graph) -> Graph.edges:
     return graph.edges(vertex_id, data=True)
 
 
@@ -63,4 +63,3 @@ if __name__ == "__main__":
         ],
     }
     G = dict2graph(dict_info)
-    get_vertex_payload(0, G)

@@ -1,6 +1,6 @@
 from networkx import Graph
 
-from source import multimodal_benchmark
+from reeb_based_benchmark import multimodal_benchmark
 from utils import graph_utils
 
 
@@ -9,16 +9,22 @@ class ProblemConstructor:
         pass
 
     @staticmethod
-    def graph_to_problem_tree(graph: Graph, dim_space: int) -> multimodal_benchmark.Tree:
+    def graph_to_problem_tree(
+        graph: Graph, dim_space: int
+    ) -> multimodal_benchmark.Tree:
         tree = multimodal_benchmark.Tree(dim_space=dim_space)
         for vertex_id, vertex in graph.nodes(data=True):
             edges = graph_utils.find_edge(vertex_id=vertex_id, graph=graph)
             if edges is not None:
                 for edge in edges:
                     src_vertex, tgt_vertex, payload = edge
-                    # Do we have some kind of index or identifier for node??
-                    tree.add_node(
-                        parent=src_vertex,  # !!!!!!!!!!!! via igraph search
+                    if src_vertex == 0:
+                        parent = tree.root_node
+                    else:
+                        parent = tree.find_node(graph.nodes[src_vertex]["igraph_index"])
+                    node = tree.add_node(
+                        parent=parent,
+                        # TODO: Confirm how do we get this axis
                         movement=multimodal_benchmark.Movement(
                             axis=0, direction=multimodal_benchmark.Movement.forward
                         ),
@@ -26,6 +32,7 @@ class ProblemConstructor:
                             "minima"
                         ],
                     )
+                    graph.nodes[tgt_vertex]["igraph_index"] = node.index
             else:
                 raise Exception("Vertex cannot be floating around")
         return tree

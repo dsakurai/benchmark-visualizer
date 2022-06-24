@@ -31,6 +31,7 @@ class ConstructionTree(ConstructionTreeBase):
     class Config:
         orm_mode = True
 
+
 class JsonGraph(BaseModel):
     vertices: list[dict]
     edges: list[dict]

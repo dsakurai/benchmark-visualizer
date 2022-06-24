@@ -13,18 +13,21 @@ def cli_main(opts: argparse.ArgumentParser.parse_args):
     problem_constructor = ProblemConstructor()
     json_tree = file_utils.read_json_tree(opts.file)
     graph = graph_utils.dict2graph(json_tree)
-    problem_tree = problem_constructor.graph_to_problem_tree(graph=graph, dim_space=opts.dim)
-    problem = Diamond(construction_tree=problem_tree, dim_space=opts.dim)
-    algorithm = GDE3(
-        problem=problem,
-        population_size=100,
-        cr=0.5,
-        f=0.5,
-        termination_criterion=StoppingByEvaluations(25000),
+    print(graph)
+    problem_tree = problem_constructor.graph_to_problem_tree(
+        graph=graph, dim_space=opts.dim
     )
-    algorithm.run()
-    solutions = algorithm.get_result()
-    print(solutions)
+    problem = Diamond(construction_tree=problem_tree, dim_space=opts.dim)
+    # algorithm = GDE3(
+    #     problem=problem,
+    #     population_size=100,
+    #     cr=0.5,
+    #     f=0.5,
+    #     termination_criterion=StoppingByEvaluations(25000),
+    # )
+    # algorithm.run()
+    # solutions = algorithm.get_result()
+    # print(solutions)
 
 
 if __name__ == "__main__":

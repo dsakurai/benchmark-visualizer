@@ -3,13 +3,11 @@ import math
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
 
-from source import multimodal_benchmark
+from reeb_based_benchmark import multimodal_benchmark
 
 
 class Diamond(FloatProblem):
-    def __init__(
-        self, construction_tree: multimodal_benchmark.Tree, dim_space: int
-    ):
+    def __init__(self, construction_tree: multimodal_benchmark.Tree, dim_space: int):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
         self.number_of_objectives = 2
