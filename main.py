@@ -2,19 +2,10 @@ from typing import Union
 
 from fastapi import FastAPI
 
-from database import models
-from database.database import engine, SessionLocal
+from utils import file_utils
+from config import sample_file_path
 
-models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @app.get("/")
@@ -29,9 +20,10 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 @app.get("/api/get_demo_problem")
 def get_demo_problem():
-    pass
+    json_tree = file_utils.read_json_tree(sample_file_path)
+    return json_tree
 
 
 @app.post("/api/construct_problem")
-def construct_problem(graph):
+def construct_problem(graph:dict):
     return graph
