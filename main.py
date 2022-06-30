@@ -1,11 +1,26 @@
 from typing import Union
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from config import sample_file_path, solver_info
 from utils import file_utils
-from config import sample_file_path
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://192.168.16.169:8080"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -24,6 +39,11 @@ def get_demo_problem():
     return json_tree
 
 
+@app.get("/api/get_all_solvers")
+def get_all_solvers():
+    return solver_info
+
+
 @app.post("/api/construct_problem")
-def construct_problem(graph:dict):
+def construct_problem(graph: dict):
     return graph

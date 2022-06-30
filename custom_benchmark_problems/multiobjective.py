@@ -5,7 +5,7 @@ from jmetal.core.solution import FloatSolution
 
 from reeb_based_benchmark import multimodal_benchmark
 
-
+# TODO: Specify an official name
 class Diamond(FloatProblem):
     def __init__(self, construction_tree: multimodal_benchmark.Tree, dim_space: int):
         super(Diamond, self).__init__()
@@ -27,6 +27,7 @@ class Diamond(FloatProblem):
         self.tree = construction_tree
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
+        # TODO: Verify how to optimize time
         solution.objectives[0] = multimodal_benchmark.value_at(
             xt=solution.variables, tree=self.tree
         )
@@ -34,3 +35,12 @@ class Diamond(FloatProblem):
 
     def get_name(self) -> str:
         return "diamond"
+
+    # TODO: Clarify which to use
+    '''
+    igraph: vertex, edge #####
+    multimodal_benchmark: Node, Edge
+    d3: node, link
+    '''
+    # TODO: multimodal_benchmark.py#304-305 Exception not raised
+    # TODO: See gitlab issue

@@ -1,29 +1,75 @@
 <template>
-    <D3Tree></D3Tree>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo"
+        mode="horizontal"
+        :ellipsis="false"
+        background-color="#2c3e50"
+        text-color="#fff"
+        active-text-color="#fff"
+        @select="handleSelect"
+    >
+        <el-button type="default" style="margin: 15px 15px 15px 30px;" circle @click="asideExpansion=!asideExpansion">
+            <el-icon>
+                <Expand/>
+            </el-icon>
+        </el-button>
+        <img src="./assets/logo.png" alt="logo" style="height: 40px; margin: 10px"/><h3>Benchmark Visualizer</h3>
+        <div class="flex-grow"/>
+        <el-menu-item index="1" @click="d3TreeActive=!d3TreeActive">D3Tree</el-menu-item>
+        <el-menu-item index="2" @click="d3TreeActive=!d3TreeActive">D3ForceTree</el-menu-item>
+    </el-menu>
+    <el-container>
+        <el-aside width="auto">
+           <ComputationMenu :asideExpansion="asideExpansion"></ComputationMenu>
+        </el-aside>
+        <el-main>
+            <D3Tree v-if="d3TreeActive"></D3Tree>
+            <D3ForceTree v-else></D3ForceTree>
+        </el-main>
+    </el-container>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import D3Tree from "@/components/D3Tree";
+import D3ForceTree from "@/components/D3ForceTree";
+import ComputationMenu from "@/components/ComputationMenu";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld,
-      D3Tree,
-  }
+    name: 'App',
+    data() {
+        return {
+            d3TreeActive: true,
+            activeIndex: '1',
+            asideExpansion: false,
+        };
+    },
+    components: {
+        D3Tree,
+        ComputationMenu,
+        D3ForceTree
+    },
+    methods: {
+        handleSelect(key, keyPath) {
+            console.log(key, keyPath);
+        },
+    }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+html, body, #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #fff;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.flex-grow {
+    flex-grow: 1;
 }
 </style>
