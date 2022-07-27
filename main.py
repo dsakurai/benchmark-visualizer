@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import sample_file_path, solver_info
@@ -26,6 +26,17 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+@app.websocket("/api/test_ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    cmd = await websocket.receive_text()
+    print(cmd)
+    counter = 0
+    while True:
+        await websocket.send_text(f"Counting: {counter}")
+        counter += 1
 
 
 @app.get("/items/{item_id}")
