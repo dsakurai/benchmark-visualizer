@@ -5,6 +5,7 @@ from jmetal.core.solution import FloatSolution
 
 from reeb_based_benchmark import multimodal_benchmark
 
+
 # TODO: Specify an official name
 class Diamond(FloatProblem):
     def __init__(self, construction_tree: multimodal_benchmark.Tree, dim_space: int):

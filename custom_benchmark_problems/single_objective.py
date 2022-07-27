@@ -1,15 +1,18 @@
 import math
+from typing import Optional
 
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
 
 
 class HolderTable(FloatProblem):
-    def __init__(self, number_of_variables: int = 2):
+    def __init__(self, number_of_variables: int = 2, logger: Optional = None):
         super(HolderTable, self).__init__()
         self.number_of_variables = number_of_variables
         self.number_of_objectives = 1
         self.number_of_constraints = 0
+        if logger:
+            self.logger = logger
 
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ["f(x)"]
@@ -21,11 +24,13 @@ class HolderTable(FloatProblem):
         x_1 = solution.variables[0]
         x_2 = solution.variables[1]
 
-        y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
+        y = abs(1 - math.sqrt(x_1 ** 2 + x_2 ** 2) / math.pi)
         y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
 
         solution.objectives[0] = y
-
+        if self.logger:
+            self.logger.log_solution_status(solution.objectives)
+            self.logger.log_variable_status(solution.variables)
         return solution
 
     def get_name(self) -> str:

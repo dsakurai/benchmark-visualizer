@@ -6,9 +6,12 @@ from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
 from custom_benchmark_problems.single_objective import HolderTable
+from core.status_logger import StatusLogger
 
+logger = StatusLogger()
 problem = ZDT1()
-problem2 = HolderTable()
+problem2 = HolderTable(logger=logger)
+
 
 max_evaluations = 25000
 
@@ -22,7 +25,8 @@ algorithm = GDE3(
 
 algorithm.run()
 solutions = algorithm.get_result()
-
+logger.plot_solution()
+# logger.plot_variable()
 for solution in solutions:
     x_1 = solution.variables[0]
     x_2 = solution.variables[1]
