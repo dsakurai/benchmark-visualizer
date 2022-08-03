@@ -37,12 +37,16 @@ def read_root():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     cmd = await websocket.receive_text()
-    print(cmd)
-    counter = 0
-    while True:
-        msg = conn.recv()
-        await websocket.send_text(f"Counting: {msg}")
-        counter += 1
+    if cmd == "run_program":
+        pass
+    else:
+        counter = 0
+        while True:
+            msg = conn.recv()
+            await websocket.send_text(f"Counting: {msg}")
+            counter += 1
+            if counter >= 1000:
+                await websocket.close()
 
 
 @app.get("/items/{item_id}")
