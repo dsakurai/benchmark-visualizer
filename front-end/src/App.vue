@@ -14,7 +14,7 @@
                 <Expand/>
             </el-icon>
         </el-button>
-        <img src="./assets/logo.png" alt="logo" style="height: 40px; margin: 10px"/><h3>Benchmark Visualizer</h3>
+<!--        <img src="./assets/logo.png" alt="logo" style="height: 40px; margin: 10px"/><h3>Benchmark Visualizer</h3>-->
         <div class="flex-grow"/>
         <el-menu-item index="1" @click="d3TreeActive=!d3TreeActive">D3Tree</el-menu-item>
         <el-menu-item index="2" @click="d3TreeActive=!d3TreeActive">D3ForceTree</el-menu-item>

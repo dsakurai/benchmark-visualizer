@@ -2,7 +2,7 @@
     <el-container>
         <el-header>
             <el-card>
-                -> TODO: Control properties here
+                Control properties
             </el-card>
         </el-header>
         <el-main>
