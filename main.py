@@ -1,10 +1,11 @@
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import sample_file_path, solver_info
 from utils import file_utils
+from multiprocessing.connection import Listener
 
 app = FastAPI()
 
@@ -22,10 +23,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
+listener = Listener(address, authkey=b'secret password')
+conn = listener.accept()
+
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+@app.websocket("/api/test_ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    cmd = await websocket.receive_text()
+    if cmd == "run_program":
+        pass
+    else:
+        counter = 0
+        while True:
+            msg = conn.recv()
+            await websocket.send_text(f"Counting: {msg}")
+            counter += 1
+            if counter >= 1000:
+                await websocket.close()
 
 
 @app.get("/items/{item_id}")
