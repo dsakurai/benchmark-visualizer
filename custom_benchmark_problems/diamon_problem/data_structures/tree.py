@@ -3,7 +3,7 @@ from pathlib import Path
 import igraph
 import json
 
-from custom_benchmark_problems.diamon_problem.data_structures.movement import Movement
+from custom_benchmark_problems.diamon_problem.data_structures.link import Link
 from custom_benchmark_problems.diamon_problem.data_structures.node import Node
 from utils import file_utils
 
@@ -53,9 +53,9 @@ class Tree:
         pass
 
     # Interpret node to iGraph vertex, with attributes and edges appended
-    def add_node(self, minima: float, movement: Movement = None, parent: Node = None, **kwargs) -> int:
+    def add_node(self, minima: float, link: Link = None, parent: Node = None, **kwargs) -> int:
         if self._tree.vcount() == 0:
-            self._tree.add_vertex(name=self.root_id, minima=0, movement=None)
+            self._tree.add_vertex(name=self.root_id, minima=0, link=None)
         node_id = self._tree.add_vertex(name=None, minima=minima)
         return node_id
 
@@ -70,8 +70,7 @@ class Tree:
         if t == 0:
             return 0
         else:
-
-
+            pass
         self.counter += 1
 
     @property
