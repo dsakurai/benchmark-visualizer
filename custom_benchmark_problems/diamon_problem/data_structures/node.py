@@ -17,4 +17,13 @@ class Node:
     def parent(self):
         return self.parent
 
+    @property
+    def node_id(self):
+        return self._vertex["name"]
+
+    @property
+    def minima(self):
+        return self._vertex["attrs"]["minima"]
+
+
 
