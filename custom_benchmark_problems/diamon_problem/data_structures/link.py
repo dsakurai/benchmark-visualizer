@@ -1,7 +1,8 @@
 import igraph
 
+
 class Link:
-    def __init__(self, edge:igraph.Edge):
+    def __init__(self, edge: igraph.Edge):
         self._edge = edge
 
     @property
@@ -13,7 +14,7 @@ class Link:
         return self._edge.target
 
     @property
-    def direction(self) -> str:
+    def direction(self) -> int:
         return self._edge["attrs"]["direction"]
 
     @property

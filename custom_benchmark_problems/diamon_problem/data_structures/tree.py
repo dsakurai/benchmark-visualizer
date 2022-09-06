@@ -1,7 +1,9 @@
+import json
+import math
 from pathlib import Path
+from typing import NamedTuple, List
 
 import igraph
-import json
 
 from custom_benchmark_problems.diamon_problem.data_structures.link import Link
 from custom_benchmark_problems.diamon_problem.data_structures.node import Node
@@ -65,13 +67,47 @@ class Tree:
     def structure(self) -> dict:
         pass
 
-    def evaluate(self):
+    def read_path(self, node_id: int):
+        class SequenceInfo(NamedTuple):
+            node_id: int
+            minima: float
+            axis: int
+            direction: int
+
+        path_sequence = []
+
+        def get_parent(current_id: int):
+            current_vertex = self._tree.vs[current_id]
+            edge_info = current_vertex.in_edges()[0]
+            up_link = Link(edge_info)
+            path_sequence.append(SequenceInfo(current_id, Node(current_vertex).minima, up_link.axis, up_link.direction
+                                              ))
+            return edge_info.source
+
+        current_node = self._tree.vs[node_id]
+        if current_node.out_edges():
+            # TODO: Change this to warning
+            print("Not terminal node")
+
+        while node_id != 0:
+            source_node = get_parent(node_id)
+            node_id = source_node
+
+        path_sequence.append(SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0))
+        return path_sequence
+
+    def evaluate(self, path_sequence: list, xs: List[float]):
+        print(path_sequence)
+        s_length = len(path_sequence) - 1
+        ms = path_sequence[0][1]
         t = self.counter
         if t == 0:
             return 0
         else:
             pass
         self.counter += 1
+        for i, x in enumerate(xs):
+            h_i_tau = math.copysign(1 / 4 ** s_length, x)
 
     @property
     def dim_space(self) -> int:
@@ -92,5 +128,5 @@ if __name__ == "__main__":
     data_path = base_path / "sample.json"
     tree.from_json(data_path)
     tree.to_json()
-
-
+    sequence = tree.read_path(7)
+    tree.evaluate(sequence,[1.0,2.0])

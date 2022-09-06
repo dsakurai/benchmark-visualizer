@@ -18,11 +18,11 @@ class Node:
         return self.parent
 
     @property
-    def node_id(self):
+    def node_id(self) -> int:
         return self._vertex["name"]
 
     @property
-    def minima(self):
+    def minima(self) -> float:
         return self._vertex["attrs"]["minima"]
 
 
