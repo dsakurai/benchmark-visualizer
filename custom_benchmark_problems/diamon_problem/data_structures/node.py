@@ -25,5 +25,8 @@ class Node:
     def minima(self) -> float:
         return self._vertex["attrs"]["minima"]
 
+    @property
+    def sequence(self):
+        return self._vertex["attrs"]["sequence"]
 
 

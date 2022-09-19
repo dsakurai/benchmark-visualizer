@@ -3,17 +3,20 @@
     {
       "id": 0,
       "group": 0,
-      "minima": -1
+      "minima": -1,
+      "symbol": [1]
     },
     {
       "id": 1,
       "group": 0,
-      "minima": -20.78
+      "minima": -20.78,
+      "symbol": [1,-2,-1]
     },
     {
       "id": 2,
       "group": 0,
-      "minima": 33.75
+      "minima": 33.75,
+      "symbol": [1,-2,1]
     },
     {
       "id": 3,
