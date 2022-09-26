@@ -28,11 +28,12 @@ class Tree:
     def from_json(self, data_path: str):
         tree_data = file_utils.read_json_tree(data_path)
         nodes = tree_data["nodes"]
-        edges = tree_data["links"]
         for node in nodes:
             self._tree.add_vertex(name=node.pop("id", None), minima=node.pop("minima", None), attrs=node)
-        for edge in edges:
-            self._tree.add_edge(source=edge.pop("source", None), target=edge.pop("target", None), attrs=edge)
+        if "links" in tree_data:
+            edges = tree_data["links"]
+            for edge in edges:
+                self._tree.add_edge(source=edge.pop("source", None), target=edge.pop("target", None), attrs=edge)
 
     def to_json(self, file_path: str = None):
         nodes = []
@@ -129,4 +130,4 @@ if __name__ == "__main__":
     tree.from_json(data_path)
     tree.to_json()
     sequence = tree.read_path(7)
-    tree.evaluate(sequence,[1.0,2.0])
+    tree.evaluate(sequence, [1.0, 2.0])
