@@ -17,6 +17,12 @@
       "group": 0,
       "minima": 33.75,
       "symbol": [1,-2,1]
+    },
+    {
+      "id": 3,
+      "group": 0,
+      "minima": 31.75,
+      "symbol": [1,-2]
     }
   ]
 }
