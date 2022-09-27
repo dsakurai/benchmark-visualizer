@@ -16,6 +16,7 @@ class Tree:
         # Create a directed graph with 0 vertex
         # https://igraph.org/python/api/latest/igraph.Graph.html#__init__
         self._tree = igraph.Graph(n=0, directed=True, graph_attrs=kwargs)
+        self._tree.add_vertex(name=self.root_id, minima=self.root_minima, attrs={"symbol":self.root_symbol})
         self.counter = 0
 
     # Define how to print out this data structure
@@ -34,6 +35,10 @@ class Tree:
             edges = tree_data["links"]
             for edge in edges:
                 self._tree.add_edge(source=edge.pop("source", None), target=edge.pop("target", None), attrs=edge)
+
+    def load_edge(self, edge_info: list):
+        for edge in edge_info:
+            self._tree.add_edge(source=edge["source"], target=edge["target"])
 
     def to_json(self, file_path: str = None):
         nodes = []
@@ -117,6 +122,14 @@ class Tree:
     @property
     def root_id(self) -> int:
         return 0
+
+    @property
+    def root_minima(self) -> float:
+        return 0.0
+
+    @property
+    def root_symbol(self) -> list:
+        return []
 
     @property
     def root_node(self) -> Node:

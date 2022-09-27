@@ -1,25 +1,25 @@
 {
   "nodes": [
     {
-      "id": 0,
+      "id": 1,
       "group": 0,
       "minima": -1,
       "symbol": [1]
     },
     {
-      "id": 1,
+      "id": 2,
       "group": 0,
       "minima": -20.78,
       "symbol": [1,-2,-1]
     },
     {
-      "id": 2,
+      "id": 3,
       "group": 0,
       "minima": 33.75,
       "symbol": [1,-2,1]
     },
     {
-      "id": 3,
+      "id": 4,
       "group": 0,
       "minima": 31.75,
       "symbol": [1,-2]
