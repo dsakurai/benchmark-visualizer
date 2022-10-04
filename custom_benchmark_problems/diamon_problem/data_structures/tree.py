@@ -102,9 +102,10 @@ class Tree:
         path_sequence.append(SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0))
         return path_sequence
 
-    def evaluate(self, path_sequence: list, xs: List[float]):
+    def evaluate(self, solution_variables,path_sequence: list, xs: List[float]):
         print(path_sequence)
-        s_length = len(path_sequence) - 1
+        tau = len(path_sequence) + 1
+        delta_t = min()
         ms = path_sequence[0][1]
         t = self.counter
         if t == 0:
@@ -112,9 +113,6 @@ class Tree:
         else:
             pass
         self.counter += 1
-        for i, x in enumerate(xs):
-            h_i_tau = math.copysign(1 / 4 ** s_length, x)
-
     @property
     def dim_space(self) -> int:
         return self._tree["dim_space"]
@@ -142,5 +140,5 @@ if __name__ == "__main__":
     data_path = base_path / "sample.json"
     tree.from_json(data_path)
     tree.to_json()
-    sequence = tree.read_path(7)
+    sequence = tree.read_path(2)
     tree.evaluate(sequence, [1.0, 2.0])
