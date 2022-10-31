@@ -77,6 +77,7 @@ def h_i_x(solution_variables: tuple, candidate_coordinates: list, tau: int):
     signs = compute_sign(solution_variables=solution_variables, candidate_coordinates=candidate_coordinates)
     return signs / (4 ** tau)
 
+
 def compute_coordinates(symbol_sequence: list, dim_space: int) -> list:
     coordinates = [0 for _ in range(dim_space)]
     for index, symbol in enumerate(symbol_sequence):
@@ -98,9 +99,6 @@ def main():
         else:
             for iteration in range(t):
                 pass
-
-
-
 
 
 if __name__ == "__main__":
