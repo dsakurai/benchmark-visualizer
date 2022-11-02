@@ -28,5 +28,3 @@ class Node:
     @property
     def sequence(self):
         return self._vertex["attrs"]["sequence"]
-
-

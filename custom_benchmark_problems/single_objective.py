@@ -24,7 +24,7 @@ class HolderTable(FloatProblem):
         x_1 = solution.variables[0]
         x_2 = solution.variables[1]
 
-        y = abs(1 - math.sqrt(x_1 ** 2 + x_2 ** 2) / math.pi)
+        y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
         y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
 
         solution.objectives[0] = y

@@ -16,7 +16,11 @@ class Tree:
         # Create a directed graph with 0 vertex
         # https://igraph.org/python/api/latest/igraph.Graph.html#__init__
         self._tree = igraph.Graph(n=0, directed=True, graph_attrs=kwargs)
-        self._tree.add_vertex(name=self.root_id, minima=self.root_minima, attrs={"symbol":self.root_symbol})
+        self._tree.add_vertex(
+            name=self.root_id,
+            minima=self.root_minima,
+            attrs={"symbol": self.root_symbol},
+        )
         self.counter = 0
 
     # Define how to print out this data structure
@@ -30,11 +34,17 @@ class Tree:
         tree_data = file_utils.read_json_tree(data_path)
         nodes = tree_data["nodes"]
         for node in nodes:
-            self._tree.add_vertex(name=node.pop("id", None), minima=node.pop("minima", None), attrs=node)
+            self._tree.add_vertex(
+                name=node.pop("id", None), minima=node.pop("minima", None), attrs=node
+            )
         if "links" in tree_data:
             edges = tree_data["links"]
             for edge in edges:
-                self._tree.add_edge(source=edge.pop("source", None), target=edge.pop("target", None), attrs=edge)
+                self._tree.add_edge(
+                    source=edge.pop("source", None),
+                    target=edge.pop("target", None),
+                    attrs=edge,
+                )
 
     def load_edge(self, edge_info: list):
         for edge in edge_info:
@@ -61,7 +71,9 @@ class Tree:
         pass
 
     # Interpret node to iGraph vertex, with attributes and edges appended
-    def add_node(self, minima: float, link: Link = None, parent: Node = None, **kwargs) -> int:
+    def add_node(
+        self, minima: float, link: Link = None, parent: Node = None, **kwargs
+    ) -> int:
         if self._tree.vcount() == 0:
             self._tree.add_vertex(name=self.root_id, minima=0, link=None)
         node_id = self._tree.add_vertex(name=None, minima=minima)
@@ -86,8 +98,14 @@ class Tree:
             current_vertex = self._tree.vs[current_id]
             edge_info = current_vertex.in_edges()[0]
             up_link = Link(edge_info)
-            path_sequence.append(SequenceInfo(current_id, Node(current_vertex).minima, up_link.axis, up_link.direction
-                                              ))
+            path_sequence.append(
+                SequenceInfo(
+                    current_id,
+                    Node(current_vertex).minima,
+                    up_link.axis,
+                    up_link.direction,
+                )
+            )
             return edge_info.source
 
         current_node = self._tree.vs[node_id]
@@ -99,10 +117,12 @@ class Tree:
             source_node = get_parent(node_id)
             node_id = source_node
 
-        path_sequence.append(SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0))
+        path_sequence.append(
+            SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0)
+        )
         return path_sequence
 
-    def evaluate(self, solution_variables,path_sequence: list, xs: List[float]):
+    def evaluate(self, solution_variables, path_sequence: list, xs: List[float]):
         print(path_sequence)
         tau = len(path_sequence) + 1
         delta_t = min()
@@ -113,6 +133,7 @@ class Tree:
         else:
             pass
         self.counter += 1
+
     @property
     def dim_space(self) -> int:
         return self._tree["dim_space"]

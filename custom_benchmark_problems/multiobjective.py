@@ -38,10 +38,10 @@ class Diamond(FloatProblem):
         return "diamond"
 
     # TODO: Clarify which to use
-    '''
+    """
     igraph: vertex, edge #####
     multimodal_benchmark: Node, Edge
     d3: node, link
-    '''
+    """
     # TODO: multimodal_benchmark.py#304-305 Exception not raised
     # TODO: See gitlab issue
