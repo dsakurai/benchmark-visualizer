@@ -1,5 +1,10 @@
 import numpy as np
 
+class BMP:
+    def __init__(self,sequence_info:list):
+        self.sequence_info = sequence_info
+        self.s_lengths =
+
 
 def __tau(t: float) -> int:
     return int(t - 1) if int(t) == t else int(t)
@@ -19,7 +24,7 @@ def __max_s_length(sequence_info: tuple) -> int:
 
 
 def evaluate(
-    solution_variables: tuple, sequence_info: tuple, candidate_coordinates: list
+    solution_variables: tuple, sequence_info: list, candidate_coordinates: list
 ) -> np.ndarray:
     t = solution_variables[-1]
     x = solution_variables[:-1]
@@ -32,8 +37,6 @@ def evaluate(
         pass
     return np.array([])
 
-    return np.array([])
-
 
 if __name__ == "__main__":
-    evaluate((1, 2, 9.9), (1, -2, 1), [1, 2])
+    evaluate(solution_variables=(1, 2, 9.9), sequence_info=[(1, -2, 1)], candidate_coordinates=[1, 2])
