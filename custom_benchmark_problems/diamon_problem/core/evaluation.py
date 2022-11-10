@@ -1,3 +1,5 @@
+import numpy as np
+
 from algs import *
 
 
@@ -49,20 +51,55 @@ class BMP:
         return ms_ts
 
     @staticmethod
+    def __compute_sign(solution_variables: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:
+        assert (
+                solution_variables.shape == candidate_coordinates
+        ), "Solution dimension and candidates dimension not match"
+        differential = solution_variables - candidate_coordinates
+        return differential / np.absolute(differential)
+
+    def __h_x(self, solution_variables: np.ndarray, candidate_coordinates: np.ndarray, tau: int) -> np.ndarray:
+        signs = self.__compute_sign(
+            solution_variables=solution_variables,
+            candidate_coordinates=candidate_coordinates,
+        )
+        return signs / (4 ** tau)
+
+    @staticmethod
+    def __compute_coordinates(symbol_sequence: list, dim_space: int) -> np.ndarray:
+        coordinates = np.array([0 for _ in range(dim_space)])
+        for index, symbol in enumerate(symbol_sequence):
+            if abs(symbol) + 1 > dim_space:
+                raise ValueError(
+                    f"Dimension cannot be greater than axis. Got dimension: {dim_space}, axis: {symbol}"
+                )
+            if symbol != 0:
+                movement_length = symbol / abs(symbol) / (4 ** (index + 1))
+                coordinates[abs(symbol) - 1] += movement_length
+        return coordinates
+
+    @staticmethod
     def __delta_t(t: float, tau: int) -> float:
         return min(t - tau, 1)
+
+    def __nabla_g(self, x: np.ndarray, xs_coordinates: np.ndarray, tau: int, s: dict):
+        m_s = s["minima"]
+        h_x = self.__h_x(solution_variables=x, candidate_coordinates=xs_coordinates, tau=tau)
+        return (self.f_tau_x(tau, xs_coordinates+h_x) - m_s) / h_x
 
     @property
     def max_s_length(self) -> int:
         return max(self.s_lengths)
 
-    def f_tau_x(self, tau) -> list:
+    def f_tau_x(self, tau: int, x: np.ndarray):
         """Recursively compute tau until condition is hit
 
         Parameters
         ----------
         tau : int
             tau value
+        x : np.ndarray
+            Variables other than t
 
         Returns
         -------
@@ -70,12 +107,12 @@ class BMP:
             List of values @ f(tau,x)
         """
         if tau == 0:
-            return [0]
+            return np.array([0])
         else:
             if tau in self.s_lengths:
                 return self.f_taus[tau]
             else:
-                self.f_tau_x(tau-1)
+                return self.f_tau_x(tau - 1,x)
 
 
 def evaluate(

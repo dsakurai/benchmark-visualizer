@@ -82,35 +82,6 @@ def check_sublist(new_list: list, org_list: list) -> bool:
     return True
 
 
-def compute_sign(solution_variables: tuple, candidate_coordinates: list) -> np.ndarray:
-    solution_variables = np.array(solution_variables)
-    candidate_coordinates = np.array(candidate_coordinates)
-    assert (
-        solution_variables.shape == candidate_coordinates
-    ), "Solution dimension and candidates dimension not match"
-    differential = solution_variables - candidate_coordinates
-    return differential / np.absolute(differential)
-
-
-def h_i_x(solution_variables: tuple, candidate_coordinates: list, tau: int):
-    signs = compute_sign(
-        solution_variables=solution_variables,
-        candidate_coordinates=candidate_coordinates,
-    )
-    return signs / (4**tau)
-
-
-def compute_coordinates(symbol_sequence: list, dim_space: int) -> list:
-    coordinates = [0 for _ in range(dim_space)]
-    for index, symbol in enumerate(symbol_sequence):
-        if abs(symbol) + 1 > dim_space:
-            raise ValueError(
-                f"Dimension cannot be greater than axis. Got dimension: {dim_space}, axis: {symbol}"
-            )
-        if symbol != 0:
-            movement_length = symbol / abs(symbol) / (4 ** (index + 1))
-            coordinates[abs(symbol) - 1] += movement_length
-        yield coordinates
 
 
 # TODO: Change this function name
