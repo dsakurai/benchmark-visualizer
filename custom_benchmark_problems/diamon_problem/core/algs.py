@@ -4,7 +4,22 @@ import numpy as np
 
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 
-def s_lengths(sequence_info:list) -> list:
+
+def s_lengths(sequence_info: list) -> list:
+    # TODO: Naive implementation
+    length_list = []
+    for element in sequence_info:
+        if len(element["attrs"]["symbol"]) not in length_list:
+            length_list.append(len(element["attrs"]["symbol"]))
+    return length_list
+
+
+def get_s_at_length(sequence_info: list, length: int) -> list:
+    s_list = []
+    for element in sequence_info:
+        if len(element["attrs"]["symbol"]) == length:
+            s_list.append(element)
+    return s_list
 
 
 def compute_links(tree_data: dict) -> list:
@@ -18,7 +33,7 @@ def compute_links(tree_data: dict) -> list:
     Returns
     -------
     list
-        list of links in dictionary with keys: source, target
+        List of links in dictionary with keys: source, target
 
     """
     links_info = []

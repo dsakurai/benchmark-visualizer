@@ -160,6 +160,6 @@ if __name__ == "__main__":
     base_path = Path(__file__).parent.absolute().parents[2]
     data_path = base_path / "sample.json"
     tree.from_json(data_path)
-    tree.to_json()
+    print(tree.to_json())
     sequence = tree.read_path(2)
     tree.evaluate(sequence, [1.0, 2.0])
