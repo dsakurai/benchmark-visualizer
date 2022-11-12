@@ -14,6 +14,10 @@ def s_lengths(sequence_info: list) -> list:
     return length_list
 
 
+def get_tau(t: float) -> int:
+    return int(t - 1) if int(t) == t else int(t)
+
+
 def get_s_at_length(sequence_info: list, length: int) -> list:
     s_list = []
     for element in sequence_info:
@@ -80,8 +84,6 @@ def check_sublist(new_list: list, org_list: list) -> bool:
         if new_list[i] != org_list[i]:
             return False
     return True
-
-
 
 
 # TODO: Change this function name

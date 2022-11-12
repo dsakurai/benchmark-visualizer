@@ -9,12 +9,8 @@ class BMP:
         self.s_lengths = s_lengths(sequence_info)
         self.f_taus = self.__compute_f_taus()
 
-    @staticmethod
-    def __tau(t: float) -> int:
-        return int(t - 1) if int(t) == t else int(t)
-
     def __compute_f_taus(self) -> dict:
-        """ Compute all available f(tau,x) in advance
+        """Compute all available f(tau,x) in advance
 
         Returns
         -------
@@ -23,7 +19,9 @@ class BMP:
         """
         f_taus = {}
         for s_length in self.s_lengths:
-            f_taus[s_length] = self.__f_tau_x(s_length, get_s_at_length(self.sequence_info, s_length))
+            f_taus[s_length] = self.__f_tau_x(
+                s_length, get_s_at_length(self.sequence_info, s_length)
+            )
         return f_taus
 
     @staticmethod
@@ -51,19 +49,26 @@ class BMP:
         return ms_ts
 
     @staticmethod
-    def __compute_sign(solution_variables: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:
+    def __compute_sign(
+        solution_variables: np.ndarray, candidate_coordinates: np.ndarray
+    ) -> np.ndarray:
         assert (
-                solution_variables.shape == candidate_coordinates
+            solution_variables.shape == candidate_coordinates
         ), "Solution dimension and candidates dimension not match"
         differential = solution_variables - candidate_coordinates
         return differential / np.absolute(differential)
 
-    def __h_x(self, solution_variables: np.ndarray, candidate_coordinates: np.ndarray, tau: int) -> np.ndarray:
+    def __h_x(
+        self,
+        solution_variables: np.ndarray,
+        candidate_coordinates: np.ndarray,
+        tau: int,
+    ) -> np.ndarray:
         signs = self.__compute_sign(
             solution_variables=solution_variables,
             candidate_coordinates=candidate_coordinates,
         )
-        return signs / (4 ** tau)
+        return signs / (4**tau)
 
     @staticmethod
     def __compute_coordinates(symbol_sequence: list, dim_space: int) -> np.ndarray:
@@ -84,8 +89,10 @@ class BMP:
 
     def __nabla_g(self, x: np.ndarray, xs_coordinates: np.ndarray, tau: int, s: dict):
         m_s = s["minima"]
-        h_x = self.__h_x(solution_variables=x, candidate_coordinates=xs_coordinates, tau=tau)
-        return (self.f_tau_x(tau, xs_coordinates+h_x) - m_s) / h_x
+        h_x = self.__h_x(
+            solution_variables=x, candidate_coordinates=xs_coordinates, tau=tau
+        )
+        return (self.f_tau_x(tau, xs_coordinates + h_x) - m_s) / h_x
 
     @property
     def max_s_length(self) -> int:
@@ -112,11 +119,11 @@ class BMP:
             if tau in self.s_lengths:
                 return self.f_taus[tau]
             else:
-                return self.f_tau_x(tau - 1,x)
+                return self.f_tau_x(tau - 1, x)
 
 
 def evaluate(
-        solution_variables: tuple, sequence_info: list, candidate_coordinates: list
+    solution_variables: tuple, sequence_info: list, candidate_coordinates: list
 ) -> np.ndarray:
     t = solution_variables[-1]
     x = solution_variables[:-1]
