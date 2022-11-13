@@ -105,7 +105,5 @@ if __name__ == "__main__":
     tree.from_json(str(data_path))
     tree.load_edge(compute_links(tree.to_json()))
     print(tree)
-    for item in compute_coordinates([-2, 1, 1, 2, 0, -1], 2):
-        print(item)
     # sequence = tree.read_path(2)
     # tree.evaluate(sequence, [1.0, 2.0])
