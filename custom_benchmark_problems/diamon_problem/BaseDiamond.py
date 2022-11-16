@@ -2,6 +2,7 @@ import math
 
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
+
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 
 
