@@ -98,7 +98,7 @@ class BMP:
     def max_s_length(self) -> int:
         return max(self.s_lengths)
 
-    def f_tau_x(self, tau: int, x: np.ndarray):
+    def f_tau_x(self, tau: int, x: np.ndarray) -> np.ndarray:
         """Recursively compute tau until condition is hit
 
         Parameters
