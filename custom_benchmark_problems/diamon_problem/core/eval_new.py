@@ -58,7 +58,7 @@ def compute_f_t_x_int(x: np.ndarray, processed_sequence: dict):
 f_t_x_ = {}
 
 
-def f_t_x(t, x: np.ndarray, processed_sequence: dict):
+def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space: int):
     if t == 0:
         return 0
     else:
@@ -79,7 +79,12 @@ def f_t_x(t, x: np.ndarray, processed_sequence: dict):
             if tau not in processed_sequence.keys():
                 tau -= 1
             else:
-                f_tau_x = f_t_x(t=tau, x=x, processed_sequence=processed_sequence)
+                f_tau_x = f_t_x(
+                    t=tau,
+                    x=x,
+                    processed_sequence=processed_sequence,
+                    dim_space=dim_space,
+                )
                 candidate_ss = processed_sequence[tau]
                 candidates = [f_tau_x]
                 for candidate_s in candidate_ss:
@@ -87,17 +92,25 @@ def f_t_x(t, x: np.ndarray, processed_sequence: dict):
                     delta_t = t - tau
                     # TODO: Change dim_space to dim space variable
                     candidate_coordinates = compute_coordinates(
-                        symbol_sequence=candidate_s[0], dim_space=2
+                        symbol_sequence=candidate_s[0], dim_space=dim_space
                     )
                     M_s = (1 - delta_t) * f_t_x(
-                        tau, candidate_coordinates, processed_sequence
+                        tau,
+                        candidate_coordinates,
+                        processed_sequence,
+                        dim_space=dim_space,
                     ) + delta_t * m_s
                     delta_x = x - candidate_coordinates
                     h_x_ = h_x(
                         x=x, candidate_coordinates=candidate_coordinates, tau=tau
                     )
                     nabla_g = (
-                        f_t_x(tau, candidate_coordinates + h_x_, processed_sequence)
+                        f_t_x(
+                            tau,
+                            candidate_coordinates + h_x_,
+                            processed_sequence,
+                            dim_space=dim_space,
+                        )
                         - m_s
                     ) / h_x_
                     candidates.append(M_s + np.dot(nabla_g, delta_x.T))
@@ -196,6 +209,7 @@ if __name__ == "__main__":
             7,
             np.array([1, 2]),
             processed_sequence=process_sequence(sequence=sequence_info),
+            dim_space=2,
         )
     )
     # evaluate(
