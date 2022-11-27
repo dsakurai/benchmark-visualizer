@@ -7,54 +7,6 @@ import numpy as np
 from algs import s_lengths, get_tau
 
 
-class BMP:
-    def __init__(self, sequence_info: list):
-        self.sequence_info = sequence_info
-        self.s_lengths = s_lengths(sequence_info)
-
-
-def evaluate(solution_variables: tuple, sequence_info: list) -> np.ndarray:
-    t = solution_variables[-1]
-    x = solution_variables[:-1]
-    tau = get_tau(t)
-    problem = BMP(sequence_info=sequence_info)
-
-    while True:
-        if tau in problem.s_lengths:
-            pass
-        else:
-            tau -= 1
-        break
-    return np.array([])
-
-
-def compute_f_t_x_int(x: np.ndarray, processed_sequence: dict):
-    f_t_x = {}
-
-    def f_tau_x(a, b):
-        for t in range(max(processed_sequence.keys()) + 1):
-            if t == 0:
-                f_t_x[(t, x)] = 0
-            else:
-                tau = get_tau(t=t)
-                if tau not in processed_sequence.keys():
-                    f_t_x[tau, x] = f_t_x[tau - 1, x]
-                    continue
-                candidate_f = f_t_x[(t, x)]
-                candidate_ss = processed_sequence[tau]
-                for candidate_s in candidate_ss:
-                    m_s = candidate_s[1]
-                    # TODO: Change dim_space to dim space variable
-                    candidate_coordinates = compute_coordinates(
-                        candidate_s[0], dim_space=2
-                    )
-                    h_x_ = h_x(x, candidate_coordinates=candidate_coordinates, tau=tau)
-                    delta_x = x - candidate_coordinates
-
-                    candidate_gs_t_x = None
-                    # TODO: add gx computation here
-
-
 f_t_x_ = {}
 
 
