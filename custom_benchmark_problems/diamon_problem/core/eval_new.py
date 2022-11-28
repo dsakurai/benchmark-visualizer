@@ -10,18 +10,18 @@ from algs import s_lengths, get_tau
 f_t_x_ = {}
 
 
-def f_t_x(t, x: np.ndarray, processed_sequence: dict):
+def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space : int = 2):
     if t == 0:
         return 0
     else:
+        if (t, tuple(x.tolist())) in f_t_x_.keys():
+            return f_t_x_[(t, tuple(x.tolist()))]
         tau = get_tau(t)
-        if (tau, tuple(x.tolist())) in f_t_x_.keys():
-            return f_t_x_[(tau, tuple(x.tolist()))]
         while tau >= 0:
             if tau == 0:
                 delta_x = x
                 h_x_ = h_x(
-                    x=x, candidate_coordinates=compute_coordinates([], 2), tau=tau
+                    x=x, candidate_coordinates=compute_coordinates([], dim_space=dim_space), tau=tau
                 )
                 nabla_g = np.dot(
                     (-processed_sequence[tau][0][1] / h_x_), delta_x.T
@@ -37,9 +37,8 @@ def f_t_x(t, x: np.ndarray, processed_sequence: dict):
                 for candidate_s in candidate_ss:
                     m_s = candidate_s[1]
                     delta_t = t - tau
-                    # TODO: Change dim_space to dim space variable
                     candidate_coordinates = compute_coordinates(
-                        symbol_sequence=candidate_s[0], dim_space=2
+                        symbol_sequence=candidate_s[0], dim_space=dim_space
                     )
                     M_s = (1 - delta_t) * f_t_x(
                         tau, candidate_coordinates, processed_sequence
@@ -81,10 +80,6 @@ def compute_gs_int(t, x: np.ndarray, candidate_ss):
 
 
 def compute_sign(x: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:
-    # assert (
-    #         x.shape == candidate_coordinates
-    # ), "Solution dimension and candidates dimension not match"
-    # TODO: Confirm if this is set to 1 if 0s were given
     differential = x - candidate_coordinates
     differential = np.where(differential != 0, differential, 1)
     return np.divide(differential, np.absolute(differential))
