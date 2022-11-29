@@ -112,7 +112,7 @@ class BMP:
 
     @staticmethod
     def process_sequence(sequence_info: list):
-        """
+        """ Pre-process the sequence and group symbol sequence with the same size togather
 
         Parameters
         ----------
@@ -121,7 +121,8 @@ class BMP:
 
         Returns
         -------
-
+        dict
+            Dictionary with length as key and list of tuple(symbol, minima, name) as value
         """
         # TODO: Change naming here, don't want to do this right now
         s_dict = {}
