@@ -23,6 +23,22 @@ class BMP:
         candidate_coordinates: np.ndarray,
         tau: int,
     ) -> np.ndarray:
+        """Compute h(x) with solution variables and candidate coordinates and tau
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Solution variables without t
+        candidate_coordinates: np.ndarray
+            Coordinates of the local minima point
+        tau : int
+            tau value
+
+        Returns
+        -------
+        np.ndarray
+            A numpy array representing h(x) in each dimension
+        """
         signs = self.compute_sign(
             x=x,
             candidate_coordinates=candidate_coordinates,
@@ -30,6 +46,18 @@ class BMP:
         return signs / (4**tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
+        """Compute the coordinates for the given symbol sequence.
+
+        Parameters
+        ----------
+        symbol_sequence: list
+            List of ints representing the symbol sequence
+
+        Returns
+        -------
+        np.ndarray
+            The coordinates of the given symbol sequence, each element representing value in corresponding dimension
+        """
         coordinates = np.array([0 for _ in range(self.dim_space)])
         for index, symbol in enumerate(symbol_sequence):
             print(symbol)
@@ -41,6 +69,27 @@ class BMP:
                 movement_length = symbol / abs(symbol) / (4 ** (index + 1))
                 coordinates[abs(symbol) - 1] += movement_length
         return coordinates
+
+    @staticmethod
+    def compute_sign(x: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:
+        """Compute the sign of x with regard to local minima point x_s, if x is the local minima point, then the sign
+        will be set to positive (1 in practice)
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Solution variables
+        candidate_coordinates : np.ndarray
+            The coordinates of the local minima point
+
+        Returns
+        -------
+        np.ndarray
+            The sign in each dimension
+        """
+        differential = x - candidate_coordinates
+        differential = np.where(differential != 0, differential, 1)
+        return np.divide(differential, np.absolute(differential))
 
     @staticmethod
     def get_tau(t: float) -> int:
@@ -58,61 +107,9 @@ class BMP:
         """
         return int(t - 1) if int(t) == t else int(t)
 
-    def f_t_x(self, t, x: np.ndarray, processed_sequence: dict):
-        if t == 0:
-            return 0
-        else:
-            tau = self.get_tau(t)
-            if (tau, tuple(x.tolist())) in self.f_t_x_.keys():
-                return self.f_t_x_[(tau, tuple(x.tolist()))]
-            while tau >= 0:
-                if tau == 0:
-                    delta_x = x
-                    h_x_ = self.h_x(
-                        x=x,
-                        candidate_coordinates=self.compute_coordinates([], 2),
-                        tau=tau,
-                    )
-                    nabla_g = np.dot(
-                        (-processed_sequence[tau][0][1] / h_x_), delta_x.T
-                    ).item()
-                    self.f_t_x_[(tau, tuple(x.tolist()))] = min(0, nabla_g)
-                    return min(0, nabla_g)
-                if tau not in processed_sequence.keys():
-                    tau -= 1
-                else:
-                    f_tau_x = self.f_t_x(
-                        t=tau, x=x, processed_sequence=processed_sequence
-                    )
-                    candidate_ss = processed_sequence[tau]
-                    candidates = [f_tau_x]
-                    for candidate_s in candidate_ss:
-                        m_s = candidate_s[1]
-                        delta_t = t - tau
-                        # TODO: Change dim_space to dim space variable
-                        candidate_coordinates = self.compute_coordinates(
-                            symbol_sequence=candidate_s[0]
-                        )
-                        M_s = (1 - delta_t) * self.f_t_x(
-                            tau, candidate_coordinates, processed_sequence
-                        ) + delta_t * m_s
-                        delta_x = x - candidate_coordinates
-                        h_x_ = self.h_x(
-                            x=x, candidate_coordinates=candidate_coordinates, tau=tau
-                        )
-                        nabla_g = (
-                            self.f_t_x(
-                                tau, candidate_coordinates + h_x_, processed_sequence
-                            )
-                            - m_s
-                        ) / h_x_
-                        candidates.append(M_s + np.dot(nabla_g, delta_x.T))
-                    self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
-                    return min(candidates)
-
     @staticmethod
     def process_sequence(sequence_info: list):
-        """ Pre-process the sequence and group symbol sequence with the same size togather
+        """Pre-process the sequence and group symbol sequence with the same size togather
 
         Parameters
         ----------
@@ -180,6 +177,58 @@ class BMP:
             if len(element["attrs"]["symbol"]) == length:
                 s_list.append(element)
         return s_list
+
+    def f_t_x(self, t, x: np.ndarray, processed_sequence: dict):
+        if t == 0:
+            return 0
+        else:
+            tau = self.get_tau(t)
+            if (tau, tuple(x.tolist())) in self.f_t_x_.keys():
+                return self.f_t_x_[(tau, tuple(x.tolist()))]
+            while tau >= 0:
+                if tau == 0:
+                    delta_x = x
+                    h_x_ = self.h_x(
+                        x=x,
+                        candidate_coordinates=self.compute_coordinates([], 2),
+                        tau=tau,
+                    )
+                    nabla_g = np.dot(
+                        (-processed_sequence[tau][0][1] / h_x_), delta_x.T
+                    ).item()
+                    self.f_t_x_[(tau, tuple(x.tolist()))] = min(0, nabla_g)
+                    return min(0, nabla_g)
+                if tau not in processed_sequence.keys():
+                    tau -= 1
+                else:
+                    f_tau_x = self.f_t_x(
+                        t=tau, x=x, processed_sequence=processed_sequence
+                    )
+                    candidate_ss = processed_sequence[tau]
+                    candidates = [f_tau_x]
+                    for candidate_s in candidate_ss:
+                        m_s = candidate_s[1]
+                        delta_t = t - tau
+                        # TODO: Change dim_space to dim space variable
+                        candidate_coordinates = self.compute_coordinates(
+                            symbol_sequence=candidate_s[0]
+                        )
+                        M_s = (1 - delta_t) * self.f_t_x(
+                            tau, candidate_coordinates, processed_sequence
+                        ) + delta_t * m_s
+                        delta_x = x - candidate_coordinates
+                        h_x_ = self.h_x(
+                            x=x, candidate_coordinates=candidate_coordinates, tau=tau
+                        )
+                        nabla_g = (
+                            self.f_t_x(
+                                tau, candidate_coordinates + h_x_, processed_sequence
+                            )
+                            - m_s
+                        ) / h_x_
+                        candidates.append(M_s + np.dot(nabla_g, delta_x.T))
+                    self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
+                    return min(candidates)
 
 
 if __name__ == "__main__":
