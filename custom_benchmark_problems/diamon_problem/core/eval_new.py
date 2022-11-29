@@ -4,13 +4,12 @@ Store S and t value pair in dictionary for further usage.
 """
 import numpy as np
 
-from algs import s_lengths, get_tau
-
+from algs import get_tau
 
 f_t_x_ = {}
 
 
-def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space : int = 2):
+def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space: int = 2):
     if t == 0:
         return 0
     else:
@@ -21,7 +20,9 @@ def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space : int = 2):
             if tau == 0:
                 delta_x = x
                 h_x_ = h_x(
-                    x=x, candidate_coordinates=compute_coordinates([], dim_space=dim_space), tau=tau
+                    x=x,
+                    candidate_coordinates=compute_coordinates([], dim_space=dim_space),
+                    tau=tau,
                 )
                 nabla_g = np.dot(
                     (-processed_sequence[tau][0][1] / h_x_), delta_x.T
@@ -69,14 +70,6 @@ def process_sequence(sequence: list):
         else:
             s_dict[len_s] = [(symbol, minima, name)]
     return s_dict
-
-
-def compute_gs_int(t, x: np.ndarray, candidate_ss):
-    for candidate_s in candidate_ss:
-        m_s = candidate_s[1]
-        candidate_coordinates = compute_coordinates(candidate_s[0])
-        delta_x = x - candidate_coordinates
-        h_x_ = h_x(x, candidate_coordinates, tau=get_tau(t))
 
 
 def compute_sign(x: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:

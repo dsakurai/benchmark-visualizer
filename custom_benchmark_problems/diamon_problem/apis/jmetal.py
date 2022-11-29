@@ -3,8 +3,6 @@ import math
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
 
-from custom_benchmark_problems.diamon_problem.core.eval_new import *
-
 
 class Diamond(FloatProblem):
     def __init__(self, dim_space: int):
