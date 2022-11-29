@@ -7,69 +7,21 @@ import numpy as np
 from algs import s_lengths, get_tau
 
 
-class BMP:
-    def __init__(self, sequence_info: list):
-        self.sequence_info = sequence_info
-        self.s_lengths = s_lengths(sequence_info)
-
-
-def evaluate(solution_variables: tuple, sequence_info: list) -> np.ndarray:
-    t = solution_variables[-1]
-    x = solution_variables[:-1]
-    tau = get_tau(t)
-    problem = BMP(sequence_info=sequence_info)
-
-    while True:
-        if tau in problem.s_lengths:
-            pass
-        else:
-            tau -= 1
-        break
-    return np.array([])
-
-
-def compute_f_t_x_int(x: np.ndarray, processed_sequence: dict):
-    f_t_x = {}
-
-    def f_tau_x(a, b):
-        for t in range(max(processed_sequence.keys()) + 1):
-            if t == 0:
-                f_t_x[(t, x)] = 0
-            else:
-                tau = get_tau(t=t)
-                if tau not in processed_sequence.keys():
-                    f_t_x[tau, x] = f_t_x[tau - 1, x]
-                    continue
-                candidate_f = f_t_x[(t, x)]
-                candidate_ss = processed_sequence[tau]
-                for candidate_s in candidate_ss:
-                    m_s = candidate_s[1]
-                    # TODO: Change dim_space to dim space variable
-                    candidate_coordinates = compute_coordinates(
-                        candidate_s[0], dim_space=2
-                    )
-                    h_x_ = h_x(x, candidate_coordinates=candidate_coordinates, tau=tau)
-                    delta_x = x - candidate_coordinates
-
-                    candidate_gs_t_x = None
-                    # TODO: add gx computation here
-
-
 f_t_x_ = {}
 
 
-def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space: int):
+def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space : int = 2):
     if t == 0:
         return 0
     else:
+        if (t, tuple(x.tolist())) in f_t_x_.keys():
+            return f_t_x_[(t, tuple(x.tolist()))]
         tau = get_tau(t)
-        if (tau, tuple(x.tolist())) in f_t_x_.keys():
-            return f_t_x_[(tau, tuple(x.tolist()))]
         while tau >= 0:
             if tau == 0:
                 delta_x = x
                 h_x_ = h_x(
-                    x=x, candidate_coordinates=compute_coordinates([], 2), tau=tau
+                    x=x, candidate_coordinates=compute_coordinates([], dim_space=dim_space), tau=tau
                 )
                 nabla_g = np.dot(
                     (-processed_sequence[tau][0][1] / h_x_), delta_x.T
@@ -79,38 +31,24 @@ def f_t_x(t, x: np.ndarray, processed_sequence: dict, dim_space: int):
             if tau not in processed_sequence.keys():
                 tau -= 1
             else:
-                f_tau_x = f_t_x(
-                    t=tau,
-                    x=x,
-                    processed_sequence=processed_sequence,
-                    dim_space=dim_space,
-                )
+                f_tau_x = f_t_x(t=tau, x=x, processed_sequence=processed_sequence)
                 candidate_ss = processed_sequence[tau]
                 candidates = [f_tau_x]
                 for candidate_s in candidate_ss:
                     m_s = candidate_s[1]
                     delta_t = t - tau
-                    # TODO: Change dim_space to dim space variable
                     candidate_coordinates = compute_coordinates(
                         symbol_sequence=candidate_s[0], dim_space=dim_space
                     )
                     M_s = (1 - delta_t) * f_t_x(
-                        tau,
-                        candidate_coordinates,
-                        processed_sequence,
-                        dim_space=dim_space,
+                        tau, candidate_coordinates, processed_sequence
                     ) + delta_t * m_s
                     delta_x = x - candidate_coordinates
                     h_x_ = h_x(
                         x=x, candidate_coordinates=candidate_coordinates, tau=tau
                     )
                     nabla_g = (
-                        f_t_x(
-                            tau,
-                            candidate_coordinates + h_x_,
-                            processed_sequence,
-                            dim_space=dim_space,
-                        )
+                        f_t_x(tau, candidate_coordinates + h_x_, processed_sequence)
                         - m_s
                     ) / h_x_
                     candidates.append(M_s + np.dot(nabla_g, delta_x.T))
@@ -142,10 +80,6 @@ def compute_gs_int(t, x: np.ndarray, candidate_ss):
 
 
 def compute_sign(x: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:
-    # assert (
-    #         x.shape == candidate_coordinates
-    # ), "Solution dimension and candidates dimension not match"
-    # TODO: Confirm if this is set to 1 if 0s were given
     differential = x - candidate_coordinates
     differential = np.where(differential != 0, differential, 1)
     return np.divide(differential, np.absolute(differential))
@@ -209,7 +143,6 @@ if __name__ == "__main__":
             7,
             np.array([1, 2]),
             processed_sequence=process_sequence(sequence=sequence_info),
-            dim_space=2,
         )
     )
     # evaluate(

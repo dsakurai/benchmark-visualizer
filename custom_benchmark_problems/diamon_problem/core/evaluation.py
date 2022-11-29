@@ -1,13 +1,148 @@
 import numpy as np
 
-from algs import *
-
-
 class BMP:
-    def __init__(self, sequence_info: list):
+    def __init__(self, sequence_info: list, dim_space: int =2):
         self.sequence_info = sequence_info
-        self.s_lengths = s_lengths(sequence_info)
-        self.f_taus = self.__compute_f_taus()
+        self.s_lengths = self.s_lengths(sequence_info)
+        self.dim_space = dim_space
+        self.f_t_x_ = {}
+
+    def evaluate(self,solution_variables:np.ndarray):
+        x = solution_variables[:-1]
+        t = solution_variables[-1]
+        return self.f_t_x(t=t,x=x,processed_sequence=self.process_sequence(sequence_info=self.sequence_info))
+
+    @staticmethod
+    def get_tau(t: float) -> int:
+        """ Returns the corresponding tau for given t (tau<t<=tau+1, tau is int)
+
+        Parameters
+        ----------
+        t : float
+            t value
+
+        Returns
+        -------
+        int
+            tau value
+        """
+        return int(t - 1) if int(t) == t else int(t)
+
+    def f_t_x(self,t, x: np.ndarray, processed_sequence: dict):
+        if t == 0:
+            return 0
+        else:
+            tau = self.get_tau(t)
+            if (tau, tuple(x.tolist())) in self.f_t_x_.keys():
+                return self.f_t_x_[(tau, tuple(x.tolist()))]
+            while tau >= 0:
+                if tau == 0:
+                    delta_x = x
+                    h_x_ = h_x(
+                        x=x, candidate_coordinates=compute_coordinates([], 2), tau=tau
+                    )
+                    nabla_g = np.dot(
+                        (-processed_sequence[tau][0][1] / h_x_), delta_x.T
+                    ).item()
+                    f_t_x_[(tau, tuple(x.tolist()))] = min(0, nabla_g)
+                    return min(0, nabla_g)
+                if tau not in processed_sequence.keys():
+                    tau -= 1
+                else:
+                    f_tau_x = f_t_x(t=tau, x=x, processed_sequence=processed_sequence)
+                    candidate_ss = processed_sequence[tau]
+                    candidates = [f_tau_x]
+                    for candidate_s in candidate_ss:
+                        m_s = candidate_s[1]
+                        delta_t = t - tau
+                        # TODO: Change dim_space to dim space variable
+                        candidate_coordinates = compute_coordinates(
+                            symbol_sequence=candidate_s[0], dim_space=2
+                        )
+                        M_s = (1 - delta_t) * f_t_x(
+                            tau, candidate_coordinates, processed_sequence
+                        ) + delta_t * m_s
+                        delta_x = x - candidate_coordinates
+                        h_x_ = h_x(
+                            x=x, candidate_coordinates=candidate_coordinates, tau=tau
+                        )
+                        nabla_g = (
+                                          f_t_x(tau, candidate_coordinates + h_x_, processed_sequence)
+                                          - m_s
+                                  ) / h_x_
+                        candidates.append(M_s + np.dot(nabla_g, delta_x.T))
+                    f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
+                    return min(candidates)
+    @staticmethod
+    def process_sequence(sequence_info: list):
+        """
+
+        Parameters
+        ----------
+        sequence_info : list
+            Extract sequence from a standard JSON format
+
+        Returns
+        -------
+
+        """
+        # TODO: Change naming here, don't want to do this right now
+        s_dict = {}
+        for item in sequence_info:
+            minima = item["minima"]
+            symbol = item["attrs"]["symbol"]
+            name = item["name"]
+            len_s = len(symbol)
+            if len_s in s_dict:
+                s_dict[len_s].append((symbol, minima, name))
+            else:
+                s_dict[len_s] = [(symbol, minima, name)]
+        return s_dict
+
+
+    @staticmethod
+    def s_lengths(sequence_info: list) -> list:
+        """ Get the available symbol length of the entire sequence tree
+
+        Parameters
+        ----------
+        sequence_info : list
+            List of dictionaries contains the tree information
+
+        Returns
+        -------
+        list
+            List of the available symbol lengths
+
+        """
+        # TODO: Naive implementation
+        length_list = []
+        for element in sequence_info:
+            if len(element["attrs"]["symbol"]) not in length_list:
+                length_list.append(len(element["attrs"]["symbol"]))
+        return length_list
+
+    @staticmethod
+    def get_s_at_length(sequence_info: list, length: int) -> list:
+        """ Get all symbol sequence at given length
+
+        Parameters
+        ----------
+        sequence_info : list
+            List of dictionaries contains the tree information
+        length : int
+            The desired length
+
+        Returns
+        -------
+        list
+            List of sequence information at given length
+        """
+        s_list = []
+        for element in sequence_info:
+            if len(element["attrs"]["symbol"]) == length:
+                s_list.append(element)
+        return s_list
 
     def __compute_f_taus(self) -> dict:
         """Compute all available f(tau,x) in advance
@@ -20,7 +155,7 @@ class BMP:
         f_taus = {}
         for s_length in self.s_lengths:
             f_taus[s_length] = self.__f_tau_x(
-                s_length, get_s_at_length(self.sequence_info, s_length)
+                s_length,self. get_s_at_length(self.sequence_info, s_length)
             )
         return f_taus
 
@@ -98,7 +233,7 @@ class BMP:
     def max_s_length(self) -> int:
         return max(self.s_lengths)
 
-    def f_tau_x(self, tau: int, x: np.ndarray):
+    def f_tau_x(self, tau: int, x: np.ndarray) -> np.ndarray:
         """Recursively compute tau until condition is hit
 
         Parameters
@@ -122,26 +257,9 @@ class BMP:
                 return self.f_tau_x(tau - 1, x)
 
 
-def evaluate(
-    solution_variables: tuple, sequence_info: list, candidate_coordinates: list
-) -> np.ndarray:
-    t = solution_variables[-1]
-    x = solution_variables[:-1]
-    problem = BMP(sequence_info=sequence_info)
-
-    if t > problem.max_s_length + 1:
-        tau = problem.max_s_length
-        # TODO: compute f(tau,x)
-    else:
-        # TODO: compute f(t,x)
-        pass
-    return np.array([])
-
 
 if __name__ == "__main__":
-    evaluate(
-        solution_variables=(1, 2, 3.9),
-        sequence_info=[
+    bmp = BMP(        sequence_info=[
             {"minima": 0.0, "attrs": {"symbol": [], "id": 0, "minima": 0.0}, "name": 0},
             {
                 "minima": -1,
@@ -163,6 +281,9 @@ if __name__ == "__main__":
                 "attrs": {"group": 0, "symbol": [1, -2], "id": 4, "minima": 31.75},
                 "name": 4,
             },
-        ],
+        ],)
+    bmp.f_t_x(
+        solution_variables=(1, 2, 3.9),
+
         candidate_coordinates=[1, 2],
     )
