@@ -208,7 +208,6 @@ class BMP:
                     for candidate_s in candidate_ss:
                         m_s = candidate_s[1]
                         delta_t = t - tau
-                        # TODO: Change dim_space to dim space variable
                         candidate_coordinates = self.compute_coordinates(
                             symbol_sequence=candidate_s[0]
                         )
