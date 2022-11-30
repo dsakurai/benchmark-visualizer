@@ -60,7 +60,6 @@ class BMP:
         """
         coordinates = np.array([0 for _ in range(self.dim_space)])
         for index, symbol in enumerate(symbol_sequence):
-            print(symbol)
             if abs(symbol) > self.dim_space:
                 raise ValueError(
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
@@ -190,7 +189,7 @@ class BMP:
                     delta_x = x
                     h_x_ = self.h_x(
                         x=x,
-                        candidate_coordinates=self.compute_coordinates([], 2),
+                        candidate_coordinates=self.compute_coordinates([]),
                         tau=tau,
                     )
                     nabla_g = np.dot(
@@ -257,7 +256,6 @@ if __name__ == "__main__":
             },
         ],
     )
-    bmp.f_t_x(
-        solution_variables=(1, 2, 3.9),
-        candidate_coordinates=[1, 2],
-    )
+    print(bmp.evaluate(
+        solution_variables=np.array([1, 2, 3.9]),
+    ))
