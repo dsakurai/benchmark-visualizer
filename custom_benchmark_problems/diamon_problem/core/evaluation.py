@@ -14,14 +14,14 @@ class BMP:
         return self.f_t_x(
             t=t,
             x=x,
-            processed_sequence=self.process_sequence(sequence_info=self.sequence_info),
+            sequences=self.process_sequence(sequence_info=self.sequence_info),
         )
 
     def h_x(
-            self,
-            x: np.ndarray,
-            candidate_coordinates: np.ndarray,
-            tau: int,
+        self,
+        x: np.ndarray,
+        x_s: np.ndarray,
+        tau: int,
     ) -> np.ndarray:
         """Compute h(x) with solution variables and candidate coordinates and tau
 
@@ -29,7 +29,7 @@ class BMP:
         ----------
         x : np.ndarray
             Solution variables without t
-        candidate_coordinates: np.ndarray
+        x_s: np.ndarray
             Coordinates of the local minima point
         tau : int
             tau value
@@ -41,9 +41,9 @@ class BMP:
         """
         signs = self.compute_sign(
             x=x,
-            candidate_coordinates=candidate_coordinates,
+            x_s=x_s,
         )
-        return signs / (4 ** tau)
+        return signs / (4**tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
@@ -70,7 +70,7 @@ class BMP:
         return coordinates
 
     @staticmethod
-    def compute_sign(x: np.ndarray, candidate_coordinates: np.ndarray) -> np.ndarray:
+    def compute_sign(x: np.ndarray, x_s: np.ndarray) -> np.ndarray:
         """Compute the sign of x with regard to local minima point x_s, if x is the local minima point, then the sign
         will be set to positive (1 in practice)
 
@@ -78,7 +78,7 @@ class BMP:
         ----------
         x : np.ndarray
             Solution variables
-        candidate_coordinates : np.ndarray
+        x_s : np.ndarray
             The coordinates of the local minima point
 
         Returns
@@ -86,7 +86,7 @@ class BMP:
         np.ndarray
             The sign in each dimension
         """
-        differential = x - candidate_coordinates
+        differential = x - x_s
         differential = np.where(differential != 0, differential, 1)
         return np.divide(differential, np.absolute(differential))
 
@@ -105,6 +105,12 @@ class BMP:
             tau value
         """
         return int(t - 1) if int(t) == t else int(t)
+
+    class ProcessedSequence:
+        def __init__(self, symbol, minima, name):
+            self.symbol = symbol
+            self.minima = minima
+            self.name = name
 
     @staticmethod
     def process_sequence(sequence_info: list):
@@ -129,6 +135,7 @@ class BMP:
             len_s = len(symbol)
             if len_s in s_dict:
                 s_dict[len_s].append((symbol, minima, name))
+                # s_dict[len_s].append(ProccessedSequence(symbol, minima, name))
             else:
                 s_dict[len_s] = [(symbol, minima, name)]
         return s_dict
@@ -177,42 +184,34 @@ class BMP:
                 s_list.append(element)
         return s_list
 
-    def f_t_x(self, t: int, x: np.ndarray, processed_sequence: dict) -> float:
+    def f_t_x(self, t: int, x: np.ndarray, sequences: dict) -> float:
         if t == 0:
             return 0.0
         else:
             tau = self.get_tau(t)
             while tau >= 0:
-                if tau not in processed_sequence.keys():
-                    return self.f_t_x(t=tau, x=x, processed_sequence=processed_sequence)
+                if tau not in sequences.keys():
+                    return self.f_t_x(t=tau, x=x, sequences=sequences)
                 else:
-                    f_tau_x = self.f_t_x(
-                        t=tau, x=x, processed_sequence=processed_sequence
-                    )
-                    candidate_ss = processed_sequence[tau]
-                    candidates = [f_tau_x]
-                    for candidate_s in candidate_ss:
-                        m_s = candidate_s[1]
+                    f_tau_x = self.f_t_x(t=tau, x=x, sequences=sequences)
+                    sequences_tau = sequences[tau]
+                    g_s_values = [f_tau_x]
+                    for s_tau in sequences_tau:
+                        m_s = s_tau[1]
                         delta_t = t - tau
-                        candidate_coordinates = self.compute_coordinates(
-                            symbol_sequence=candidate_s[0]
-                        )
-                        M_s = (1 - delta_t) * self.f_t_x(
-                            tau, candidate_coordinates, processed_sequence
+                        if not (0.0 <= delta_t <= 1.0):
+                            raise Exception("sign error")
+
+                        x_s = self.compute_coordinates(symbol_sequence=s_tau[0])
+                        M_s = (1.0 - delta_t) * self.f_t_x(
+                            tau, x_s, sequences
                         ) + delta_t * m_s
-                        delta_x = x - candidate_coordinates
-                        h_x_ = self.h_x(
-                            x=x, candidate_coordinates=candidate_coordinates, tau=tau
-                        )
-                        nabla_g = (
-                                          self.f_t_x(
-                                              tau, candidate_coordinates + h_x_, processed_sequence
-                                          )
-                                          - m_s
-                                  ) / h_x_
-                        candidates.append(M_s + np.dot(nabla_g, delta_x.T))
+                        delta_x = x - x_s
+                        h_x_ = self.h_x(x=x, x_s=x_s, tau=tau)
+                        nabla_g = (self.f_t_x(tau, x_s + h_x_, sequences) - m_s) / h_x_
+                        g_s_values.append(M_s + np.dot(nabla_g, delta_x.T))
                     # self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
-                    return min(candidates)
+                    return min(g_s_values)
 
 
 if __name__ == "__main__":
