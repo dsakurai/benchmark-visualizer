@@ -1,3 +1,5 @@
+import math as m
+
 import numpy as np
 
 
@@ -69,11 +71,10 @@ class BMP:
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
                 )
             if symbol != 0:
-                movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
+                movement_length = np.sign(symbol) * 2.0 / (4.0**index)
                 x = abs(symbol) - 1  # the 1st axis is x0 internally
                 coordinates[x] += movement_length
         return coordinates
-
 
     @staticmethod
     def compute_sign(x: np.ndarray, x_s: np.ndarray) -> np.ndarray:
@@ -92,9 +93,10 @@ class BMP:
         np.ndarray
             The sign in each dimension
         """
-        differential = x - x_s
-        differential = np.where(differential != 0, differential, 1)
-        return np.divide(differential, np.absolute(differential))
+        diff = x - x_s
+        return np.sign(diff) + (
+            diff == 0
+        )  # if x - x_s is 0, set the sign to 1 (by default it's 0).
 
     @staticmethod
     def get_tau(t: float) -> int:
@@ -110,7 +112,12 @@ class BMP:
         int
             tau value
         """
-        return int(t - 1) if int(t) == t else int(t)
+        if t < 0:
+            raise Exception("Bad t")
+        tau = m.floor(t)  # int type
+        if float(tau) == t:
+            tau -= 1
+        return tau
 
     class ProcessedSequence:
         def __init__(self, symbol, minima, name):
