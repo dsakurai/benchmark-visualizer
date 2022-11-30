@@ -58,16 +58,22 @@ class BMP:
         np.ndarray
             The coordinates of the given symbol sequence, each element representing value in corresponding dimension
         """
-        coordinates = np.array([0 for _ in range(self.dim_space)])
+        coordinates = np.zeros(self.dim_space)
+        # The origin in the x coordinates is an empty sequence.
+        # The index in Python start from 0.
+        # In the paper we start it from 1...
         for index, symbol in enumerate(symbol_sequence):
+            index += 1  # The math index starts from 1
             if abs(symbol) > self.dim_space:
                 raise ValueError(
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
                 )
             if symbol != 0:
-                movement_length = symbol / abs(symbol) / (4 ** (index + 1))
-                coordinates[abs(symbol) - 1] += movement_length
+                movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
+                x = abs(symbol) - 1  # the 1st axis is x0 internally
+                coordinates[x] += movement_length
         return coordinates
+
 
     @staticmethod
     def compute_sign(x: np.ndarray, x_s: np.ndarray) -> np.ndarray:
