@@ -43,7 +43,7 @@ class BMP:
             x=x,
             x_s=x_s,
         )
-        return signs / (4**tau)
+        return signs / (4.0**tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
