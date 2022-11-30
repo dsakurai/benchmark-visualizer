@@ -182,8 +182,6 @@ class BMP:
             return 0.0
         else:
             tau = self.get_tau(t)
-            # if (tau, tuple(x.tolist())) in self.f_t_x_.keys():
-            #     return self.f_t_x_[(tau, tuple(x.tolist()))]
             while tau >= 0:
                 if tau not in processed_sequence.keys():
                     return self.f_t_x(t=tau, x=x, processed_sequence=processed_sequence)
