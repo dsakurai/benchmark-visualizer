@@ -1,3 +1,0 @@
-[submodule "reeb_based_benchmark"]
-	path = reeb_based_benchmark
-	url = git@gitlab.com:dsakurai/reeb_based_benchmark.git

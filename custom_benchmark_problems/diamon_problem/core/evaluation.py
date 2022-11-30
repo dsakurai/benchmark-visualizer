@@ -18,10 +18,10 @@ class BMP:
         )
 
     def h_x(
-        self,
-        x: np.ndarray,
-        candidate_coordinates: np.ndarray,
-        tau: int,
+            self,
+            x: np.ndarray,
+            candidate_coordinates: np.ndarray,
+            tau: int,
     ) -> np.ndarray:
         """Compute h(x) with solution variables and candidate coordinates and tau
 
@@ -43,7 +43,7 @@ class BMP:
             x=x,
             candidate_coordinates=candidate_coordinates,
         )
-        return signs / (4**tau)
+        return signs / (4 ** tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
@@ -177,28 +177,16 @@ class BMP:
                 s_list.append(element)
         return s_list
 
-    def f_t_x(self, t, x: np.ndarray, processed_sequence: dict):
+    def f_t_x(self, t: int, x: np.ndarray, processed_sequence: dict) -> float:
         if t == 0:
-            return 0
+            return 0.0
         else:
             tau = self.get_tau(t)
-            if (tau, tuple(x.tolist())) in self.f_t_x_.keys():
-                return self.f_t_x_[(tau, tuple(x.tolist()))]
+            # if (tau, tuple(x.tolist())) in self.f_t_x_.keys():
+            #     return self.f_t_x_[(tau, tuple(x.tolist()))]
             while tau >= 0:
-                if tau == 0:
-                    delta_x = x
-                    h_x_ = self.h_x(
-                        x=x,
-                        candidate_coordinates=self.compute_coordinates([]),
-                        tau=tau,
-                    )
-                    nabla_g = np.dot(
-                        (-processed_sequence[tau][0][1] / h_x_), delta_x.T
-                    ).item()
-                    self.f_t_x_[(tau, tuple(x.tolist()))] = min(0, nabla_g)
-                    return min(0, nabla_g)
                 if tau not in processed_sequence.keys():
-                    tau -= 1
+                    return self.f_t_x(t=tau, x=x, processed_sequence=processed_sequence)
                 else:
                     f_tau_x = self.f_t_x(
                         t=tau, x=x, processed_sequence=processed_sequence
@@ -219,13 +207,13 @@ class BMP:
                             x=x, candidate_coordinates=candidate_coordinates, tau=tau
                         )
                         nabla_g = (
-                            self.f_t_x(
-                                tau, candidate_coordinates + h_x_, processed_sequence
-                            )
-                            - m_s
-                        ) / h_x_
+                                          self.f_t_x(
+                                              tau, candidate_coordinates + h_x_, processed_sequence
+                                          )
+                                          - m_s
+                                  ) / h_x_
                         candidates.append(M_s + np.dot(nabla_g, delta_x.T))
-                    self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
+                    # self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
                     return min(candidates)
 
 
@@ -254,7 +242,10 @@ if __name__ == "__main__":
                 "name": 4,
             },
         ],
+        dim_space=2,
     )
-    print(bmp.evaluate(
-        solution_variables=np.array([1, 2, 3.9]),
-    ))
+    print(
+        bmp.evaluate(
+            solution_variables=np.array([1, 2, 3.9]),
+        )
+    )
