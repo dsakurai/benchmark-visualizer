@@ -58,7 +58,7 @@ class BMP:
         np.ndarray
             The coordinates of the given symbol sequence, each element representing value in corresponding dimension
         """
-        coordinates = np.zeros(self.dim_space)
+        coordinates = np.zeros(self.dim_space, dtype="float64")
         # The origin in the x coordinates is an empty sequence.
         # The index in Python start from 0.
         # In the paper we start it from 1...
