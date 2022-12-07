@@ -15,6 +15,7 @@ class BMP:
 
     def evaluate(self, solution_variables: np.ndarray):
         # TODO: reverse the order of the t and x, change the t to the first parameter
+        # TODO: Remember to rotate (t,f(t, x)) 45 degrees Clockwise
         x = solution_variables[:-1]
         t = solution_variables[-1]
         return self.f_t_x(
