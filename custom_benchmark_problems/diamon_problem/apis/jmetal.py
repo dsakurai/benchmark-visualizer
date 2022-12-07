@@ -2,14 +2,16 @@ import math
 
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
+from custom_benchmark_problems.diamon_problem.core import evaluation
 
 
 class Diamond(FloatProblem):
-    def __init__(self, dim_space: int):
+    def __init__(self, dim_space: int, sequence_info: list[dict],enable_tracking: bool=False):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
         self.number_of_objectives = 2
         self.number_of_constraints = 0
+        self.problem = evaluation.BMP(sequence_info=sequence_info, dim_space=dim_space)
 
         self.obj_directions = [self.MINIMIZE]
         self.obj_lables = ["f(x)"]
@@ -20,4 +22,3 @@ class Diamond(FloatProblem):
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         solution.objectives[0] = evaluate()
-        pass

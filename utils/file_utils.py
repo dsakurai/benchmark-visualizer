@@ -8,5 +8,5 @@ def read_json_tree(file_path: str):
 
 
 def tree_to_json(file_path: str, tree_info: dict):
-    with open(file_path, 'w') as json_file:
+    with open(file_path, "w") as json_file:
         json.dump(tree_info, json_file)

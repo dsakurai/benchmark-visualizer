@@ -9,11 +9,7 @@ from multiprocessing.connection import Listener
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://192.168.16.169:8080"
-]
+origins = ["http://localhost", "http://localhost:8080", "http://192.168.16.169:8080"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,8 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
-listener = Listener(address, authkey=b'secret password')
+address = ("localhost", 6000)  # family is deduced to be 'AF_INET'
+listener = Listener(address, authkey=b"secret password")
 conn = listener.accept()
 
 

@@ -15,7 +15,7 @@ solver_info = {
                     "f": 0.5,
                     "max_evaluations": 25000,
                     "k": 0.5,
-                }
+                },
             },
             {
                 "name": "Dynamic GDE3",
@@ -25,7 +25,7 @@ solver_info = {
                     "f": 0.5,
                     "max_evaluations": 25000,
                     "k": 0.5,
-                }
+                },
             },
         ],
         "PSO_algorithms": [
@@ -46,16 +46,17 @@ solver_info = {
                     "mutation_probability": 0.8,
                     "max_evaluations": 25000,
                 },
-            }
-        ]
+            },
+        ],
     },
-    "single_objective":
-        [{
+    "single_objective": [
+        {
             "name": "GeneticAlgorithm",
             "parameters": {
                 "population_size": 30,
                 "offspring_population_size": 30,
                 "mutation_probability": 0.8,
-            }
-        }]
+            },
+        }
+    ],
 }

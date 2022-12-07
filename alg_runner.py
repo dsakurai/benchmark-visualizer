@@ -3,7 +3,7 @@ from jmetal.problem import ZDT1
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
 
-class AlgRunner():
+class AlgRunner:
     def __init__(self):
         self.algorithm = None
         self.problem = None
@@ -22,4 +22,3 @@ class AlgRunner():
         if self.algorithm is None or self.problem is None:
             raise ValueError("Algorithm or problem not specified")
         self.algorithm.run()
-

@@ -1,10 +1,13 @@
 import math as m
 
 import numpy as np
+from collections import namedtuple
+
+NodeInfo = namedtuple("NodeInfo", ["symbol", "minima", "name"])
 
 
 class BMP:
-    def __init__(self, sequence_info: list, dim_space: int = 2):
+    def __init__(self, sequence_info: list[dict], dim_space: int = 2):
         self.sequence_info = sequence_info
         self.s_lengths = self.s_lengths(sequence_info)
         self.dim_space = dim_space
@@ -147,10 +150,9 @@ class BMP:
             name = item["name"]
             len_s = len(symbol)
             if len_s in s_dict:
-                s_dict[len_s].append((symbol, minima, name))
-                # s_dict[len_s].append(ProccessedSequence(symbol, minima, name))
+                s_dict[len_s].append(NodeInfo(symbol, minima, name))
             else:
-                s_dict[len_s] = [(symbol, minima, name)]
+                s_dict[len_s] = [NodeInfo(symbol, minima, name)]
         return s_dict
 
     @staticmethod
@@ -210,12 +212,12 @@ class BMP:
                     sequences_tau = sequences[tau]
                     g_s_values = [f_tau_x]
                     for s_tau in sequences_tau:
-                        m_s = s_tau[1]
+                        m_s = s_tau.minima
                         delta_t = t - tau
                         if not (0.0 <= delta_t <= 1.0):
                             raise Exception("sign error")
 
-                        x_s = self.compute_coordinates(symbol_sequence=s_tau[0])
+                        x_s = self.compute_coordinates(symbol_sequence=s_tau.symbol)
                         M_s = (1.0 - delta_t) * self.f_t_x(
                             tau, x_s, sequences
                         ) + delta_t * m_s
