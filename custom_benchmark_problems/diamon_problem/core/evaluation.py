@@ -14,6 +14,7 @@ class BMP:
         self.f_t_x_ = {}
 
     def evaluate(self, solution_variables: np.ndarray):
+        # TODO: reverse the order of the t and x, change the t to the first parameter
         x = solution_variables[:-1]
         t = solution_variables[-1]
         return self.f_t_x(
