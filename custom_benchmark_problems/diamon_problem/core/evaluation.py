@@ -1,7 +1,7 @@
 import math as m
+from collections import namedtuple
 
 import numpy as np
-from collections import namedtuple
 
 NodeInfo = namedtuple("NodeInfo", ["symbol", "minima", "name"])
 
@@ -23,10 +23,10 @@ class BMP:
         )
 
     def h_x(
-        self,
-        x: np.ndarray,
-        x_s: np.ndarray,
-        tau: int,
+            self,
+            x: np.ndarray,
+            x_s: np.ndarray,
+            tau: int,
     ) -> np.ndarray:
         """Compute h(x) with solution variables and candidate coordinates and tau
 
@@ -48,7 +48,7 @@ class BMP:
             x=x,
             x_s=x_s,
         )
-        return signs / (4.0**tau)
+        return signs / (4.0 ** tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
@@ -74,7 +74,7 @@ class BMP:
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
                 )
             if symbol != 0:
-                movement_length = np.sign(symbol) * 2.0 / (4.0**index)
+                movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
                 x = abs(symbol) - 1  # the 1st axis is x0 internally
                 coordinates[x] += movement_length
         return coordinates
@@ -98,7 +98,7 @@ class BMP:
         """
         diff = x - x_s
         return np.sign(diff) + (
-            diff == 0
+                diff == 0
         )  # if x - x_s is 0, set the sign to 1 (by default it's 0).
 
     @staticmethod
@@ -231,33 +231,43 @@ class BMP:
 
 if __name__ == "__main__":
     bmp = BMP(
-        sequence_info=[
-            {"minima": 0.0, "attrs": {"symbol": [], "id": 0, "minima": 0.0}, "name": 0},
-            {
-                "minima": -1,
-                "attrs": {"group": 0, "symbol": [1], "id": 1, "minima": -1},
-                "name": 1,
-            },
-            {
-                "minima": -20.78,
-                "attrs": {"group": 0, "symbol": [1, -2, -1], "id": 2, "minima": -20.78},
-                "name": 2,
-            },
-            {
-                "minima": 33.75,
-                "attrs": {"group": 0, "symbol": [1, -2, 1], "id": 3, "minima": 33.75},
-                "name": 3,
-            },
-            {
-                "minima": 31.75,
-                "attrs": {"group": 0, "symbol": [1, -2], "id": 4, "minima": 31.75},
-                "name": 4,
-            },
-        ],
-        dim_space=2,
+        sequence_info=[{"minima": -0.5, "attrs": {"symbol": [], "id": 0, "minima": -0.5}, "name": 0},
+                       {"minima": -0.4, "attrs": {"symbol": [1], "id": 0, "minima": -0.4}, "name": 0},
+                       ],
+        dim_space=1
     )
-    print(
-        bmp.evaluate(
-            solution_variables=np.array([1, 2, 3.9]),
-        )
-    )
+    x_ts = [[0, 0], [0, 0.5], [0, 1], [0.5, 0], [0.5, 1], [0.5, 1.5], [0.5, 2], [0.25, 0],[0.25, 0.5],[0.25, 1],[0.25, 1.5],[0.75, 0],[0.75, 0.5],[0.75, 1],[0.75, 1.5] ]
+    for x_t in x_ts:
+        print(x_t, bmp.evaluate(solution_variables=np.array(x_t, dtype="float64")))
+
+    # bmp = BMP(
+    #     sequence_info=[
+    #         {"minima": 0.0, "attrs": {"symbol": [], "id": 0, "minima": 0.0}, "name": 0},
+    #         {
+    #             "minima": -1,
+    #             "attrs": {"group": 0, "symbol": [1], "id": 1, "minima": -1},
+    #             "name": 1,
+    #         },
+    #         {
+    #             "minima": -20.78,
+    #             "attrs": {"group": 0, "symbol": [1, -2, -1], "id": 2, "minima": -20.78},
+    #             "name": 2,
+    #         },
+    #         {
+    #             "minima": 33.75,
+    #             "attrs": {"group": 0, "symbol": [1, -2, 1], "id": 3, "minima": 33.75},
+    #             "name": 3,
+    #         },
+    #         {
+    #             "minima": 31.75,
+    #             "attrs": {"group": 0, "symbol": [1, -2], "id": 4, "minima": 31.75},
+    #             "name": 4,
+    #         },
+    #     ],
+    #     dim_space=2,
+    # )
+    # print(
+    #     bmp.evaluate(
+    #         solution_variables=np.array([1, 2, 3.9]),
+    #     )
+    # )
