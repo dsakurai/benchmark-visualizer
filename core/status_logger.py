@@ -7,16 +7,12 @@ class StatusLogger:
     def __init__(self):
         self.solution_list = []
         self.variable_list = []
-        self.address = ("localhost", 6000)
-        self.conn = Client(self.address, authkey=b"secret password")
 
     def log_solution_status(self, solution_value):
         self.solution_list.append(solution_value)
-        self.conn.send({"sol": solution_value})
 
     def log_variable_status(self, variable_value):
         self.variable_list.append(variable_value)
-        self.conn.send({"var": variable_value})
 
     def plot_solution(self):
         np_arr = np.array(self.solution_list)

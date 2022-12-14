@@ -3,6 +3,7 @@ from typing import Optional
 
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
+from utils import mlflow_tracking
 
 
 class HolderTable(FloatProblem):
@@ -20,6 +21,8 @@ class HolderTable(FloatProblem):
         self.lower_bound = self.number_of_variables * [-10.0]
         self.upper_bound = self.number_of_variables * [10.0]
 
+        self.tracking = mlflow_tracking.Tracking(experiment_name="test_run")
+
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         x_1 = solution.variables[0]
         x_2 = solution.variables[1]
@@ -28,9 +31,7 @@ class HolderTable(FloatProblem):
         y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
 
         solution.objectives[0] = y
-        if self.logger:
-            self.logger.log_solution_status(solution.objectives)
-            self.logger.log_variable_status(solution.variables)
+        self.tracking.log_step(variables=solution.variables,objectives=solution.objectives)
         return solution
 
     def get_name(self) -> str:
