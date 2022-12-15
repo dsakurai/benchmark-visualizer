@@ -31,7 +31,9 @@ class HolderTable(FloatProblem):
         y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
 
         solution.objectives[0] = y
-        self.tracking.log_step(variables=solution.variables,objectives=solution.objectives)
+        self.tracking.log_step(
+            variables=solution.variables, objectives=solution.objectives
+        )
         return solution
 
     def get_name(self) -> str:

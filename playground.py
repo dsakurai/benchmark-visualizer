@@ -7,16 +7,29 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 
 from custom_benchmark_problems.single_objective import HolderTable
 from core.status_logger import StatusLogger
+from custom_benchmark_problems.diamon_problem.apis import jmetal
 
 logger = StatusLogger()
 problem = ZDT1()
 problem2 = HolderTable(logger=logger)
+problem3 = jmetal.Diamond(dim_space=2, sequence_info=[
+            {
+                "minima": -0.5,
+                "attrs": {"symbol": [], "id": 0, "minima": -0.5},
+                "name": 0,
+            },
+            {
+                "minima": -0.4,
+                "attrs": {"symbol": [1], "id": 0, "minima": -0.4},
+                "name": 0,
+            },
+        ],)
 
 
 max_evaluations = 25000
 
 algorithm = GDE3(
-    problem=problem2,
+    problem=problem3,
     population_size=100,
     cr=0.5,
     f=0.5,
@@ -25,7 +38,6 @@ algorithm = GDE3(
 
 algorithm.run()
 solutions = algorithm.get_result()
-logger.plot_solution()
 # logger.plot_variable()
 for solution in solutions:
     x_1 = solution.variables[0]
