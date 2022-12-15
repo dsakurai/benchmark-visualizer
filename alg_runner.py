@@ -1,5 +1,4 @@
 from jmetal.algorithm.multiobjective.gde3 import GDE3
-from jmetal.problem import ZDT1
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
 

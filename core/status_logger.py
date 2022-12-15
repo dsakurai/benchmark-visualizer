@@ -1,6 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from multiprocessing.connection import Client
 
 
 class StatusLogger:

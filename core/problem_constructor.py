@@ -1,6 +1,6 @@
 from networkx import Graph
-
 from reeb_based_benchmark import multimodal_benchmark
+
 from utils import graph_utils
 
 

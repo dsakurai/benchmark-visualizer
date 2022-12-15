@@ -1,11 +1,9 @@
-import math
-
 import numpy as np
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
+
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from utils import mlflow_tracking
-import mlflow
 
 
 class Diamond(FloatProblem):

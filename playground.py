@@ -5,25 +5,28 @@ from jmetal.problem import ZDT1
 from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
-from custom_benchmark_problems.single_objective import HolderTable
 from core.status_logger import StatusLogger
 from custom_benchmark_problems.diamon_problem.apis import jmetal
+from custom_benchmark_problems.single_objective import HolderTable
 
 logger = StatusLogger()
 problem = ZDT1()
 problem2 = HolderTable(logger=logger)
-problem3 = jmetal.Diamond(dim_space=2, sequence_info=[
-            {
-                "minima": -0.5,
-                "attrs": {"symbol": [], "id": 0, "minima": -0.5},
-                "name": 0,
-            },
-            {
-                "minima": -0.4,
-                "attrs": {"symbol": [1], "id": 0, "minima": -0.4},
-                "name": 0,
-            },
-        ],)
+problem3 = jmetal.Diamond(
+    dim_space=2,
+    sequence_info=[
+        {
+            "minima": -0.5,
+            "attrs": {"symbol": [], "id": 0, "minima": -0.5},
+            "name": 0,
+        },
+        {
+            "minima": -0.4,
+            "attrs": {"symbol": [1], "id": 0, "minima": -0.4},
+            "name": 0,
+        },
+    ],
+)
 
 
 max_evaluations = 25000

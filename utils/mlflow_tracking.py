@@ -1,5 +1,6 @@
-import mlflow
 import os
+
+import mlflow
 import urllib3
 from urllib3.exceptions import InsecureRequestWarning
 

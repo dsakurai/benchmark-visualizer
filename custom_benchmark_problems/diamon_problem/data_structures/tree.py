@@ -1,9 +1,8 @@
 import json
 from pathlib import Path
-from typing import NamedTuple, List
+from typing import NamedTuple, Union
 
 import igraph
-import typing
 
 from custom_benchmark_problems.diamon_problem.data_structures.link import Link
 from custom_benchmark_problems.diamon_problem.data_structures.node import Node
@@ -30,7 +29,7 @@ class Tree:
             vertices.append(vertex.attributes())
         return json.dumps(({"vertices": vertices, "edges": self._tree.get_edgelist()}))
 
-    def from_json(self, data_path: str):
+    def from_json(self, data_path: Union[str, Path]):
         tree_data = file_utils.read_json_tree(data_path)
         nodes = tree_data["nodes"]
         for node in nodes:
@@ -122,17 +121,14 @@ class Tree:
         )
         return path_sequence
 
-    def evaluate(self, solution_variables, path_sequence: list, xs: List[float]):
-        print(path_sequence)
-        tau = len(path_sequence) + 1
-        delta_t = min()
-        ms = path_sequence[0][1]
-        t = self.counter
-        if t == 0:
-            return 0
-        else:
-            pass
-        self.counter += 1
+    def to_sequence(self) -> list:
+        sequence_info = []
+        for vertex in self._tree.vs:
+            attrs = vertex.attributes()
+            attrs["attrs"]["id"] = attrs["name"]
+            attrs["attrs"]["minima"] = attrs["minima"]
+            sequence_info.append(attrs)
+        return sequence_info
 
     @property
     def dim_space(self) -> int:
@@ -160,6 +156,6 @@ if __name__ == "__main__":
     base_path = Path(__file__).parent.absolute().parents[2]
     data_path = base_path / "sample.json"
     tree.from_json(data_path)
-    print(tree.to_json())
-    sequence = tree.read_path(2)
-    tree.evaluate(sequence, [1.0, 2.0])
+    tree.to_sequence()
+    print(tree)
+    print(tree.to_sequence())

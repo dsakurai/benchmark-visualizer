@@ -1,3 +1,4 @@
+from multiprocessing.connection import Listener
 from typing import Union
 
 from fastapi import FastAPI, WebSocket
@@ -5,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import sample_file_path, solver_info
 from utils import file_utils
-from multiprocessing.connection import Listener
 
 app = FastAPI()
 
