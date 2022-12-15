@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import NamedTuple, List
 
 import igraph
+import typing
 
 from custom_benchmark_problems.diamon_problem.data_structures.link import Link
 from custom_benchmark_problems.diamon_problem.data_structures.node import Node

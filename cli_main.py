@@ -1,9 +1,11 @@
 import argparse
+from pathlib import Path
 
 from jmetal.algorithm.multiobjective.gde3 import GDE3
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
 from core.problem_constructor import ProblemConstructor
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from custom_benchmark_problems.multiobjective import Diamond
 from utils import file_utils
 from utils import graph_utils
@@ -17,6 +19,18 @@ def cli_main(opts: argparse.ArgumentParser.parse_args):
     problem_tree = problem_constructor.graph_to_problem_tree(
         graph=graph, dim_space=opts.dim
     )
+
+    tree = Tree(dim_space=2)
+    base_path = Path(__file__).parent.absolute().parents[2]
+    data_path = base_path / "sample.json"
+    tree.from_json(data_path)
+    print(tree.to_json())
+    sequence = tree.read_path(2)
+    tree.evaluate(sequence, [1.0, 2.0])
+
+
+
+
     problem = Diamond(construction_tree=problem_tree, dim_space=opts.dim)
     # algorithm = GDE3(
     #     problem=problem,
