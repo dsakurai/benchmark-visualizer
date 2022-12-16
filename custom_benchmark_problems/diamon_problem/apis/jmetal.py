@@ -8,7 +8,7 @@ from utils import mlflow_tracking
 
 class Diamond(FloatProblem):
     def __init__(
-        self, dim_space: int, sequence_info: list[dict], enable_tracking: bool = False
+        self, dim_space: int, sequence_info: list[dict], enable_tracking: bool = False, experiment_name:str = None
     ):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
@@ -24,14 +24,20 @@ class Diamond(FloatProblem):
         self.lower_bound.append(0.0)
         self.upper_bound = dim_space * [2.0]
         self.upper_bound.append(10.0)
+        self.enable_tracking = enable_tracking
         if enable_tracking:
-            self.tracking = mlflow_tracking.Tracking(experiment_name="test_run")
+            assert experiment_name is not None, "Experiment name not set"
+            self.tracking = mlflow_tracking.Tracking(experiment_name=experiment_name)
+            self.tracking_list = []
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
-        solution.objectives[0] = solution.variables[0]
-        solution.objectives[1] = self.problem.evaluate(
+        eval_results = self.problem.evaluate(
             solution_variables=np.array(solution.variables, dtype="float64")
         )
+        solution.objectives[0] = eval_results[0]
+        solution.objectives[1] = eval_results[1]
+        if self.enable_tracking:
+            self.tracking.log_step(variables=solution.variables,objectives=solution.objectives)
         return solution
 
     def get_name(self) -> str:

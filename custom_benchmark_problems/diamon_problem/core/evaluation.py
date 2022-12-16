@@ -7,27 +7,34 @@ NodeInfo = namedtuple("NodeInfo", ["symbol", "minima", "name"])
 
 
 class BMP:
-    def __init__(self, sequence_info: list[dict], dim_space: int = 2):
+    def __init__(self, sequence_info: list[dict], dim_space: int = 2, rotate: bool = True):
         self.sequence_info = sequence_info
         self.s_lengths = self.s_lengths(sequence_info)
         self.dim_space = dim_space
         self.f_t_x_ = {}
+        self.rotate = rotate
+        # Define rotate degree here
+        theta = np.radians(45)
+        c, s = np.cos(theta), np.sin(theta)
+        self.rotation_matrix = np.array(((c, -s), (s, c)))
 
-    def evaluate(self, solution_variables: np.ndarray):
-        # TODO: Remember to rotate (t,f(t, x)) 45 degrees Clockwise
+    def evaluate(self, solution_variables: np.ndarray) -> tuple:
         x = solution_variables[1:]
         t = solution_variables[0]
-        return self.f_t_x(
+        y = self.f_t_x(
             t=t,
             x=x,
             sequences=self.process_sequence(sequence_info=self.sequence_info),
         )
+        if self.rotate:
+            t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
+        return t, y
 
     def h_x(
-        self,
-        x: np.ndarray,
-        x_s: np.ndarray,
-        tau: int,
+            self,
+            x: np.ndarray,
+            x_s: np.ndarray,
+            tau: int,
     ) -> np.ndarray:
         """Compute h(x) with solution variables and candidate coordinates and tau
 
@@ -49,7 +56,7 @@ class BMP:
             x=x,
             x_s=x_s,
         )
-        return signs / (4.0**tau)
+        return signs / (4.0 ** tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
@@ -75,7 +82,7 @@ class BMP:
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
                 )
             if symbol != 0:
-                movement_length = np.sign(symbol) * 2.0 / (4.0**index)
+                movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
                 x = abs(symbol) - 1  # the 1st axis is x0 internally
                 coordinates[x] += movement_length
         return coordinates
@@ -99,7 +106,7 @@ class BMP:
         """
         diff = x - x_s
         return np.sign(diff) + (
-            diff == 0
+                diff == 0
         )  # if x - x_s is 0, set the sign to 1 (by default it's 0).
 
     @staticmethod
