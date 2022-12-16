@@ -1,28 +1,40 @@
+import datetime
 import os
+from pathlib import Path
 
 import mlflow
+import numpy as np
 import urllib3
 from urllib3.exceptions import InsecureRequestWarning
-import numpy as np
-import datetime
+from typing import Optional
+import atexit
+import os
+
 
 class Tracking:
     def __init__(
         self,
         experiment_name: str,
-        tracking_uri: str = "http://xomics.cc.kyushu-u.ac.jp:5000",
+        tracking_uri: str,
+        tracking_parameters: Optional[dict] = None,
     ):
         os.environ["MLFLOW_TRACKING_INSECURE_TLS"] = "true"
         urllib3.disable_warnings(InsecureRequestWarning)
         self.experiment_name = experiment_name
         mlflow.set_tracking_uri(tracking_uri)
         mlflow.set_experiment(experiment_name)
-        mlflow.start_run(
-            run_id=None, experiment_id=None, run_name=None, tags=None, description=None
-        )
+        if tracking_parameters:
+            mlflow.start_run(
+                run_id=tracking_parameters.get("run_id"),
+                experiment_id=tracking_parameters.get("experiment_id"),
+                run_name=tracking_parameters.get("run_name"),
+                tags=tracking_parameters.get("tags"),
+                description=tracking_parameters.get("description"),
+            )
         self.step = 0
         self.dict_keys = None
         self.step_metrics = []
+        atexit.register(self.send_data)
 
     def log_step(
         self,
