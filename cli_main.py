@@ -35,7 +35,7 @@ def cli_main(opts):
     )
 
     # GDE3 Settings
-    max_evaluations = 2500
+    max_evaluations = 25000
     algorithm = GDE3(
         problem=problem,
         population_size=100,
