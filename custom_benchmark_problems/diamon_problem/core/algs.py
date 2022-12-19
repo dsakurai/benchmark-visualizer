@@ -84,17 +84,6 @@ def check_sublist(new_list: list, org_list: list) -> bool:
     return True
 
 
-# TODO: Change this function name
-# TODO: Dummy code for iteration simulation
-def main():
-    ts = 10
-    for t in range(ts):
-        if t == 0:
-            f_t = 0
-        else:
-            for iteration in range(t):
-                pass
-
 
 if __name__ == "__main__":
     tree = Tree(dim_space=2)

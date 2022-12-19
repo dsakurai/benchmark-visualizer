@@ -1,31 +1,22 @@
 {
   "nodes": [
     {
-      "id": 0,
-      "minima": 0,
-      "symbol": []
-    },
-    {
       "id": 1,
-      "group": 0,
       "minima": -1,
       "symbol": [1]
     },
     {
       "id": 2,
-      "group": 0,
       "minima": -20.78,
       "symbol": [1,-2,-1]
     },
     {
       "id": 3,
-      "group": 0,
       "minima": -33.75,
       "symbol": [1,-2,1]
     },
     {
       "id": 4,
-      "group": 0,
       "minima": -31.75,
       "symbol": [1,-2]
     }

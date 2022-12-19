@@ -6,8 +6,8 @@ import igraph
 
 from custom_benchmark_problems.diamon_problem.data_structures.link import Link
 from custom_benchmark_problems.diamon_problem.data_structures.node import Node
+from custom_benchmark_problems.diamon_problem.core.validators import validate_tree_minima
 from utils import file_utils
-
 
 class Tree:
     def __init__(self, dim_space: int, **kwargs):
@@ -29,6 +29,12 @@ class Tree:
             vertices.append(vertex.attributes())
         return json.dumps(({"vertices": vertices, "edges": self._tree.get_edgelist()}))
 
+    def __validate(self):
+        sequence_data = self.to_sequence()
+        validate_tree_minima(sequence_data=sequence_data,dim_space=self.dim_space)
+
+
+
     def from_json(self, data_path: Union[str, Path]):
         tree_data = file_utils.read_json_tree(data_path)
         nodes = tree_data["nodes"]
@@ -44,10 +50,12 @@ class Tree:
                     target=edge.pop("target", None),
                     attrs=edge,
                 )
+        self.__validate()
 
     def load_edge(self, edge_info: list):
         for edge in edge_info:
             self._tree.add_edge(source=edge["source"], target=edge["target"])
+
 
     def to_json(self, file_path: str = None):
         nodes = []
@@ -84,42 +92,43 @@ class Tree:
     def structure(self) -> dict:
         pass
 
-    def read_path(self, node_id: int):
-        class SequenceInfo(NamedTuple):
-            node_id: int
-            minima: float
-            axis: int
-            direction: int
-
-        path_sequence = []
-
-        def get_parent(current_id: int):
-            current_vertex = self._tree.vs[current_id]
-            edge_info = current_vertex.in_edges()[0]
-            up_link = Link(edge_info)
-            path_sequence.append(
-                SequenceInfo(
-                    current_id,
-                    Node(current_vertex).minima,
-                    up_link.axis,
-                    up_link.direction,
-                )
-            )
-            return edge_info.source
-
-        current_node = self._tree.vs[node_id]
-        if current_node.out_edges():
-            # TODO: Change this to warning
-            print("Not terminal node")
-
-        while node_id != 0:
-            source_node = get_parent(node_id)
-            node_id = source_node
-
-        path_sequence.append(
-            SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0)
-        )
-        return path_sequence
+    # TODO: Check if this is necessary
+    # def read_path(self, node_id: int):
+    #     class SequenceInfo(NamedTuple):
+    #         node_id: int
+    #         minima: float
+    #         axis: int
+    #         direction: int
+    #
+    #     path_sequence = []
+    #
+    #     def get_parent(current_id: int):
+    #         current_vertex = self._tree.vs[current_id]
+    #         edge_info = current_vertex.in_edges()[0]
+    #         up_link = Link(edge_info)
+    #         path_sequence.append(
+    #             SequenceInfo(
+    #                 current_id,
+    #                 Node(current_vertex).minima,
+    #                 up_link.axis,
+    #                 up_link.direction,
+    #             )
+    #         )
+    #         return edge_info.source
+    #
+    #     current_node = self._tree.vs[node_id]
+    #     if current_node.out_edges():
+    #         # TODO: Change this to warning
+    #         print("Not terminal node")
+    #
+    #     while node_id != 0:
+    #         source_node = get_parent(node_id)
+    #         node_id = source_node
+    #
+    #     path_sequence.append(
+    #         SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0)
+    #     )
+    #     return path_sequence
 
     def to_sequence(self) -> list:
         sequence_info = []
