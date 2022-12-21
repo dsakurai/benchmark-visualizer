@@ -1,5 +1,6 @@
 from typing import Optional
 
+import mlflow
 import numpy as np
 from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
@@ -17,6 +18,7 @@ class Diamond(FloatProblem):
         experiment_name: Optional[str] = None,
         tracking_uri: Optional[str] = None,
         tracking_parameters: Optional[dict] = None,
+        algorithm_parameters: Optional[dict] = None,
     ):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
@@ -42,6 +44,9 @@ class Diamond(FloatProblem):
                 tracking_parameters=tracking_parameters,
             )
             self.tracking_list = []
+            mlflow.log_params({"sequence": sequence_info})
+            if algorithm_parameters:
+                mlflow.log_params(algorithm_parameters)
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         eval_results = self.problem.evaluate(

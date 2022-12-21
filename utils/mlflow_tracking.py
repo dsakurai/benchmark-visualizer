@@ -18,6 +18,8 @@ class Tracking:
         tracking_uri: str,
         tracking_parameters: Optional[dict] = None,
     ):
+        if mlflow.active_run():
+            mlflow.end_run()
         os.environ["MLFLOW_TRACKING_INSECURE_TLS"] = "true"
         urllib3.disable_warnings(InsecureRequestWarning)
         self.experiment_name = experiment_name
@@ -31,6 +33,8 @@ class Tracking:
                 tags=tracking_parameters.get("tags"),
                 description=tracking_parameters.get("description"),
             )
+        else:
+            mlflow.start_run()
         self.step = 0
         self.dict_keys = None
         self.step_metrics = []
