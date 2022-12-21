@@ -50,7 +50,7 @@ class Tree:
                     target=edge.pop("target", None),
                     attrs=edge,
                 )
-        self.__validate()
+        # self.__validate()
 
     def load_edge(self, edge_info: list):
         for edge in edge_info:
