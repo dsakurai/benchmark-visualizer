@@ -6,8 +6,11 @@ import igraph
 
 from custom_benchmark_problems.diamon_problem.data_structures.link import Link
 from custom_benchmark_problems.diamon_problem.data_structures.node import Node
-from custom_benchmark_problems.diamon_problem.core.validators import validate_tree_minima
+from custom_benchmark_problems.diamon_problem.core.validators import (
+    validate_tree_minima,
+)
 from utils import file_utils
+
 
 class Tree:
     def __init__(self, dim_space: int, **kwargs):
@@ -31,12 +34,9 @@ class Tree:
 
     def __validate(self):
         sequence_data = self.to_sequence()
-        validate_tree_minima(sequence_data=sequence_data,dim_space=self.dim_space)
+        validate_tree_minima(sequence_data=sequence_data, dim_space=self.dim_space)
 
-
-
-    def from_json(self, data_path: Union[str, Path]):
-        tree_data = file_utils.read_json_tree(data_path)
+    def from_dict(self, tree_data: dict):
         nodes = tree_data["nodes"]
         for node in nodes:
             self._tree.add_vertex(
@@ -52,10 +52,13 @@ class Tree:
                 )
         # self.__validate()
 
+    def from_json(self, data_path: Union[str, Path]):
+        tree_data = file_utils.read_json_tree(data_path)
+        self.from_dict(tree_data=tree_data)
+
     def load_edge(self, edge_info: list):
         for edge in edge_info:
             self._tree.add_edge(source=edge["source"], target=edge["target"])
-
 
     def to_json(self, file_path: str = None):
         nodes = []

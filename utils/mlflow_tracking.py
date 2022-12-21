@@ -60,6 +60,6 @@ class Tracking:
 
     def send_data(self):
         self.step_metrics = np.array(self.step_metrics)
-        file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat()}.npz"
+        file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat().replace(':','-')}.npz"
         self.step_metrics.dump(file_name)
         mlflow.log_artifact(local_path=file_name)

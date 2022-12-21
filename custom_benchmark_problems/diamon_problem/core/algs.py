@@ -84,7 +84,6 @@ def check_sublist(new_list: list, org_list: list) -> bool:
     return True
 
 
-
 if __name__ == "__main__":
     tree = Tree(dim_space=2)
     base_path = Path(__file__).parent.absolute().parents[2]
