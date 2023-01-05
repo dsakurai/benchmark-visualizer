@@ -273,8 +273,8 @@ if __name__ == "__main__":
         [0.75, 1.5],
     ]
     for x_t in x_ts:
-        print(x_t, bmp.evaluate(solution_variables=np.array(x_t, dtype="float64")))
-
+        print(bmp.evaluate(solution_variables=np.array(x_t, dtype="float64")))
+    #
     # bmp = BMP(
     #     sequence_info=[
     #         {"minima": 0.0, "attrs": {"symbol": [], "id": 0, "minima": 0.0}, "name": 0},
