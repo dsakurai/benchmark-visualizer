@@ -27,10 +27,11 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
+  - pip install -q -r requirements.txt
 
 test:
   script:
-    - pip install -r requirements.txt
+    - echo "Testing ..."
     - python -m unittest discover test
 
 #run:
