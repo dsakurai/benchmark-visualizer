@@ -1,14 +1,14 @@
 import json
 from pathlib import Path
-from typing import NamedTuple, Union
+from typing import Union
 
 import igraph
 
-from custom_benchmark_problems.diamon_problem.data_structures.link import Link
-from custom_benchmark_problems.diamon_problem.data_structures.node import Node
 from custom_benchmark_problems.diamon_problem.core.validators import (
     validate_tree_minima,
 )
+from custom_benchmark_problems.diamon_problem.data_structures.link import Link
+from custom_benchmark_problems.diamon_problem.data_structures.node import Node
 from utils import file_utils
 
 

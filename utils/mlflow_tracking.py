@@ -1,14 +1,12 @@
+import atexit
 import datetime
 import os
-from pathlib import Path
+from typing import Optional
 
 import mlflow
 import numpy as np
 import urllib3
 from urllib3.exceptions import InsecureRequestWarning
-from typing import Optional
-import atexit
-import os
 
 
 class Tracking:
