@@ -50,7 +50,7 @@ class Tree:
                     target=edge.pop("target", None),
                     attrs=edge,
                 )
-        # self.__validate()
+        self.__validate()
 
     def from_json(self, data_path: Union[str, Path]):
         tree_data = file_utils.read_json_tree(data_path)
@@ -169,5 +169,5 @@ if __name__ == "__main__":
     data_path = base_path / "sample.json"
     tree.from_json(data_path)
     tree.to_sequence()
-    print(tree)
-    print(tree.to_sequence())
+    # print(tree)
+    # print(tree.to_sequence())
