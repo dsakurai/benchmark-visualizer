@@ -19,7 +19,7 @@ def validate_tree_minima(sequence_data: list, dim_space: int):
     sorted_sequence = sorted(
         sequence_data, key=lambda node: len(node["attrs"]["symbol"])
     )
-    t = 15
+    t = len(sorted_sequence[-1]["attrs"]["symbol"]) + 5
     minimal_errs = []
     while sorted_sequence:
         current_node = sorted_sequence.pop()
