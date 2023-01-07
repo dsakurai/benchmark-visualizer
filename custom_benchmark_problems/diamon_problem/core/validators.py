@@ -1,25 +1,41 @@
 from custom_benchmark_problems.diamon_problem.core.evaluation import BMP
+import numpy as np
+
 
 def validate_tree_minima(sequence_data: list, dim_space: int):
-    print("Validating ...")
-    sorted_sequence = parse_node_info(sequence_data)
-    t=15
+    """Validate the correctness of the tree, raise value error if the input do not meet the requirements.
+
+    Parameters
+    ----------
+    sequence_data : list
+        A list contains tree information.
+    dim_space : int
+        Dimension of the solution space
+
+    Returns
+    -------
+    None
+    """
+    sorted_sequence = sorted(
+        sequence_data, key=lambda node: len(node["attrs"]["symbol"])
+    )
+    t = 15
+    minimal_errs = []
     while sorted_sequence:
         current_node = sorted_sequence.pop()
-        bmp = BMP(sequence_info=sorted_sequence,dim_space=dim_space)
+        bmp = BMP(sequence_info=sorted_sequence, dim_space=dim_space, rotate=False)
         minimal_coordinates = bmp.compute_coordinates(current_node["attrs"]["symbol"])
-        computed_minimal = bmp.evaluate()
+        solution_variables = np.insert(minimal_coordinates, 0, t, axis=0)
+        computed_minimal = bmp.evaluate(solution_variables=solution_variables)
+        if computed_minimal[1] < current_node["minima"]:
+            minimal_errs.append(
+                f"Node: {current_node['name']}'s minima value should be less than {computed_minimal[1]}"
+            )
+    if minimal_errs:
+        raise ValueError(minimal_errs)
 
 
-def compute_minimal():
-    pass
-
-
-def get_minimal_coordinates():
-    pass
-
-
-def parse_node_info(sequence_data:list) -> list:
-    sequence_data = sorted(sequence_data, key=lambda node: len(node["attrs"]["symbol"]))
-    return sequence_data
-
+if __name__ == "__main__":
+    a = np.array([1, 2, 3])
+    print(a)
+    print(np.insert(a, 0, 999, axis=0))

@@ -21,6 +21,17 @@ class BMP:
         self.rotation_matrix = np.array(((c, -s), (s, c)))
 
     def evaluate(self, solution_variables: np.ndarray) -> tuple:
+        """Main evaluation function, solution space is defined when the problem is constructed
+
+        Parameters
+        ----------
+        solution_variables : np.ndarray
+            Solution variables provided by the solver/user. Formatted in [t,x_i] as t and x are concatenated
+
+        Returns
+        -------
+
+        """
         x = solution_variables[1:]
         t = solution_variables[0]
         y = self.f_t_x(
@@ -65,7 +76,7 @@ class BMP:
 
         Parameters
         ----------
-        symbol_sequence: list
+        symbol_sequence : list
             List of ints representing the symbol sequence
 
         Returns

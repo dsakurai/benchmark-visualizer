@@ -95,44 +95,6 @@ class Tree:
     def structure(self) -> dict:
         pass
 
-    # TODO: Check if this is necessary
-    # def read_path(self, node_id: int):
-    #     class SequenceInfo(NamedTuple):
-    #         node_id: int
-    #         minima: float
-    #         axis: int
-    #         direction: int
-    #
-    #     path_sequence = []
-    #
-    #     def get_parent(current_id: int):
-    #         current_vertex = self._tree.vs[current_id]
-    #         edge_info = current_vertex.in_edges()[0]
-    #         up_link = Link(edge_info)
-    #         path_sequence.append(
-    #             SequenceInfo(
-    #                 current_id,
-    #                 Node(current_vertex).minima,
-    #                 up_link.axis,
-    #                 up_link.direction,
-    #             )
-    #         )
-    #         return edge_info.source
-    #
-    #     current_node = self._tree.vs[node_id]
-    #     if current_node.out_edges():
-    #         # TODO: Change this to warning
-    #         print("Not terminal node")
-    #
-    #     while node_id != 0:
-    #         source_node = get_parent(node_id)
-    #         node_id = source_node
-    #
-    #     path_sequence.append(
-    #         SequenceInfo(self.root_node.node_id, self.root_node.minima, 0, 0)
-    #     )
-    #     return path_sequence
-
     def to_sequence(self) -> list:
         sequence_info = []
         for vertex in self._tree.vs:
