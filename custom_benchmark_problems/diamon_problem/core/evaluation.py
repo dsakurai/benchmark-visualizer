@@ -232,6 +232,7 @@ class BMP:
                     f_tau_x = self.f_t_x(t=tau, x=x, sequences=sequences)
                     sequences_tau = sequences[tau]
                     g_s_values = [f_tau_x]
+                    node_ids = [-999]
                     for s_tau in sequences_tau:
                         m_s = s_tau.minima
                         delta_t = t - tau
@@ -246,8 +247,13 @@ class BMP:
                         h_x_ = self.h_x(x=x, x_s=x_s, tau=tau)
                         nabla_g = (self.f_t_x(tau, x_s + h_x_, sequences) - m_s) / h_x_
                         g_s_values.append(M_s + np.dot(nabla_g, delta_x.T))
+                        node_ids.append(s_tau.name)
                     # self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
-                    return min(g_s_values)
+                    g_s_values = np.array(g_s_values)
+                    min_index = np. argmax(g_s_values)
+                    minimal_value = g_s_values[min_index]
+                    print(node_ids[min_index])
+                    return minimal_value
 
 
 if __name__ == "__main__":
@@ -260,11 +266,12 @@ if __name__ == "__main__":
             },
             {
                 "minima": -0.4,
-                "attrs": {"symbol": [1], "id": 0, "minima": -0.4},
-                "name": 0,
+                "attrs": {"symbol": [1], "id": 1, "minima": -0.4},
+                "name": 1,
             },
         ],
         dim_space=1,
+        rotate=False
     )
     x_ts = [
         [0, 0],
@@ -284,6 +291,7 @@ if __name__ == "__main__":
         [0.75, 1.5],
     ]
     for x_t in x_ts:
+        x_t.reverse()
         print(bmp.evaluate(solution_variables=np.array(x_t, dtype="float64")))
     #
     # bmp = BMP(
