@@ -41,7 +41,6 @@ class BMP:
         )
         if self.rotate:
             t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
-        print(node_id)
         return t, y
 
     def h_x(
