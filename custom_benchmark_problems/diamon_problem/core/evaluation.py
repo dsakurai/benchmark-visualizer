@@ -250,7 +250,7 @@ class BMP:
                         node_ids.append(s_tau.name)
                     # self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
                     g_s_values = np.array(g_s_values)
-                    min_index = np. argmax(g_s_values)
+                    min_index = np. argmin(g_s_values)
                     minimal_value = g_s_values[min_index]
                     print(node_ids[min_index])
                     return minimal_value
