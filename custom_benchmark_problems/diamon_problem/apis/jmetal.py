@@ -56,7 +56,9 @@ class Diamond(FloatProblem):
         solution.objectives[1] = eval_results[1]
         if self.enable_tracking:
             self.tracking.log_step(
-                variables=solution.variables, objectives=solution.objectives, eval_node_id=eval_results[2]
+                variables=solution.variables,
+                objectives=solution.objectives,
+                eval_node_id=eval_results[2],
             )
         return solution
 

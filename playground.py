@@ -5,11 +5,9 @@ from jmetal.problem import ZDT1
 from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
-from core.status_logger import StatusLogger
 from custom_benchmark_problems.diamon_problem.apis import jmetal
 from custom_benchmark_problems.single_objective import HolderTable
 
-logger = StatusLogger()
 problem = ZDT1()
 problem2 = HolderTable(logger=logger)
 problem3 = jmetal.Diamond(

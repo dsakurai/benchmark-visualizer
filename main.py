@@ -64,3 +64,8 @@ def get_all_solvers():
 @app.post("/api/construct_problem")
 def construct_problem(graph: dict):
     return graph
+
+
+@app.get("/api/demo_data")
+def demo_data():
+    pass
