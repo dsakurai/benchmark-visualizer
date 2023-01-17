@@ -2,14 +2,22 @@
   <el-container>
     <el-header>
       <el-card>
-        <el-slider v-model="currentStep" :step="stepSize" :marks="marks" :format-tooltip="formatTooltip"/>
+        <el-row>
+          <el-slider v-model="sliderStep" :step="stepSize" :marks="marks" :format-tooltip="formatTooltip"/>
+        </el-row>
+        <el-row>
+          <el-col>
+<!--            <el-button type="primary" :icon="VideoPlay" circle></el-button>-->
+          </el-col>
+        </el-row>
       </el-card>
     </el-header>
     <el-main>
       <el-tree-v2 :data="treeData" :props="props"  :height="208">
-        <template #default="{ node }">
+        <template #default="{ node ,data}">
           <span>{{ node.label }}</span>
-            <el-icon ><Location /></el-icon><span v-if="node.value!==solver_data[currentStep / stepSize].eval_node_id"> !!{{solver_data[currentStep / stepSize]}} </span>
+            <span v-if="data.id===solverData[Math.round(this.sliderStep / this.stepSize)].eval_node_id">
+              <el-icon color="green"><Location /></el-icon>{{solverData[Math.round(this.sliderStep / this.stepSize)]}}</span>
            </template>
       </el-tree-v2>
     </el-main>
@@ -24,11 +32,12 @@ export default {
     return {
       logData:'',
       treeData:'',
-      currentStep:0,
+      sliderStep:0,
       totalSteps:100,
       stepSize:1,
       allIDs:[],
-      solver_data:{},
+      solverData:[],
+      currentStep:0,
       marks:{},
       props : {
         value: 'id',
@@ -54,7 +63,7 @@ export default {
         this.marks[0] = "0";
         this.marks[100] = this.totalSteps.toString();
         for (let i = 0;i<this.totalSteps;i++){
-          this.solver_data[this.logData[i].step] = this.logData[i];
+          this.solverData[this.logData[i].step] = this.logData[i];
         }
       })
     }
