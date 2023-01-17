@@ -3,6 +3,8 @@ from typing import Union
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 from config import sample_file_path, solver_info
 from utils import file_utils
@@ -86,10 +88,12 @@ def demo_data():
             link_map[source_id] = [link["target"]]
     all_ids = list(sequence_dict.keys())
     all_ids.append(0)
-    return {"all_ids":all_ids,
+    response = {"all_ids":all_ids,
             "tree": [{"id": 0,"label":"Root", "children": construct_tree_structure(0, link_map, sequence_dict=sequence_dict)}],
             "solver_log": demo_log}
 
+
+    return JSONResponse(content=jsonable_encoder(response))
 
 def construct_tree_structure(current_key, links_map: dict, sequence_dict: dict):
     result = []
