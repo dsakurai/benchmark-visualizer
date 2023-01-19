@@ -34,14 +34,14 @@ class BMP:
         """
         x = solution_variables[1:]
         t = solution_variables[0]
-        y, node_id = self.f_t_x(
+        y, node_id, diagonal_length = self.f_t_x(
             t=t,
             x=x,
             sequences=self.process_sequence(sequence_info=self.sequence_info),
         )
         if self.rotate:
             t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
-        return t, y, node_id
+        return t, y, node_id, diagonal_length
 
     def h_x(
         self,
@@ -220,9 +220,11 @@ class BMP:
                 s_list.append(element)
         return s_list
 
-    def f_t_x(self, t: int, x: np.ndarray, sequences: dict) -> tuple[np.float, int]:
+    def f_t_x(
+        self, t: int, x: np.ndarray, sequences: dict
+    ) -> tuple[np.float, int, np.float]:
         if t == 0:
-            return 0.0, 0
+            return 0.0, 0, 0
         else:
             tau = self.get_tau(t)
             while tau >= 0:
@@ -233,6 +235,7 @@ class BMP:
                     sequences_tau = sequences[tau]
                     g_s_values = [f_tau_x[0]]
                     node_ids = [f_tau_x[1]]
+                    diagonal_lengths = [f_tau_x[2]]
                     for s_tau in sequences_tau:
                         m_s = s_tau.minima
                         delta_t = t - tau
@@ -248,13 +251,18 @@ class BMP:
                         nabla_g = (
                             self.f_t_x(tau, x_s + h_x_, sequences)[0] - m_s
                         ) / h_x_
+                        diagonal_lengths.append(h_x_)
                         g_s_values.append(M_s + np.dot(nabla_g, delta_x.T))
                         node_ids.append(s_tau.name)
                     # self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
                     g_s_values = np.array(g_s_values)
                     min_index = np.argmin(g_s_values)
                     minimal_value = g_s_values[min_index]
-                    return minimal_value, node_ids[min_index]
+                    return (
+                        minimal_value,
+                        node_ids[min_index],
+                        diagonal_lengths[min_index],
+                    )
 
 
 if __name__ == "__main__":

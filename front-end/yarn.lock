@@ -3870,6 +3870,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"d3-array@npm:^3.2.0":
+  version: 3.2.2
+  resolution: "d3-array@npm:3.2.2"
+  dependencies:
+    internmap: 1 - 2
+  checksum: 98af3db792685ceca5d9c3721efba0c567520da5532b2c7a590fd83627a598ea225d11c2cecbad404dc154120feb5ea6df0ded38f82ddf342c714cfd0c6143d1
+  languageName: node
+  linkType: hard
+
 "d3-axis@npm:3":
   version: 3.0.0
   resolution: "d3-axis@npm:3.0.0"
@@ -3906,12 +3915,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-contour@npm:3":
-  version: 3.0.1
-  resolution: "d3-contour@npm:3.0.1"
+"d3-contour@npm:4":
+  version: 4.0.2
+  resolution: "d3-contour@npm:4.0.2"
   dependencies:
-    d3-array: 2 - 3
-  checksum: efd5f092562c4883ac7372968e59018339e4448c816f9113c4d8a54c93bf93fa7395e9f97c7168dab2755aa3442c2e03e5170a3129567be15c64f8a17739089e
+    d3-array: ^3.2.0
+  checksum: 56aa082c1acf62a45b61c8d29fdd307041785aa17d9a07de7d1d848633769887a33fb6823888afa383f31c460d0f21d24756593e84e334ddb92d774214d32f1b
   languageName: node
   linkType: hard
 
@@ -4141,16 +4150,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3@npm:^7.5.0":
-  version: 7.5.0
-  resolution: "d3@npm:7.5.0"
+"d3@npm:^7.8.2":
+  version: 7.8.2
+  resolution: "d3@npm:7.8.2"
   dependencies:
     d3-array: 3
     d3-axis: 3
     d3-brush: 3
     d3-chord: 3
     d3-color: 3
-    d3-contour: 3
+    d3-contour: 4
     d3-delaunay: 6
     d3-dispatch: 3
     d3-drag: 3
@@ -4175,7 +4184,7 @@ __metadata:
     d3-timer: 3
     d3-transition: 3
     d3-zoom: 3
-  checksum: fcb83acb1988141466a062175290f37c9db3fd6fbe9605b8cb5af2eedcf1b3aa1ca664ac87f6452aea97a5c3dfa0d5389ea922c4ec4ea7612fe04e28af48957b
+  checksum: e7bf5918f2a97d0c0cc489d64348b323446aa824c32b65f0888846c26f80ed05dbee18a4b7c9a487b3e60d9d404e4672d169573fe63439e3e53abd5812bcd766
   languageName: node
   linkType: hard
 
@@ -5127,7 +5136,7 @@ __metadata:
     "@vue/cli-service": ~5.0.0
     axios: ^0.27.2
     core-js: ^3.8.3
-    d3: ^7.5.0
+    d3: ^7.8.2
     element-plus: ^2.2.6
     eslint: ^7.32.0
     eslint-plugin-vue: ^8.0.3

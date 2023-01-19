@@ -72,13 +72,17 @@ def construct_problem(graph: dict):
 
 @app.get("/api/demo_data")
 def demo_data():
-    demo_log = file_utils.load_evaluation_log("test_runx_2023-01-16T10-30-27.298413.csv")
+    demo_log = file_utils.load_evaluation_log(
+        "test_runx_2023-01-16T10-30-27.298413.csv"
+    )
     demo_tree = file_utils.read_json_tree("sample.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
-        sequence_dict[node["id"]]["label"] = f"Node ID: {node['id']}, Minimal: {node['minima']}, " \
-                                             f"Symbol: {node['symbol']}"
+        sequence_dict[node["id"]]["label"] = (
+            f"Node ID: {node['id']}, Minimal: {node['minima']}, "
+            f"Symbol: {node['symbol']}"
+        )
     link_map = {}
     for link in algs.compute_links(demo_tree):
         source_id = link["source"]
@@ -88,18 +92,30 @@ def demo_data():
             link_map[source_id] = [link["target"]]
     all_ids = list(sequence_dict.keys())
     all_ids.append(0)
-    response = {"all_ids":all_ids,
-            "tree": [{"id": 0,"label":"Root", "children": construct_tree_structure(0, link_map, sequence_dict=sequence_dict)}],
-            "solver_log": demo_log}
-
+    response = {
+        "all_ids": all_ids,
+        "tree": [
+            {
+                "id": 0,
+                "label": "Root",
+                "children": construct_tree_structure(
+                    0, link_map, sequence_dict=sequence_dict
+                ),
+            }
+        ],
+        "solver_log": demo_log,
+    }
 
     return JSONResponse(content=jsonable_encoder(response))
+
 
 def construct_tree_structure(current_key, links_map: dict, sequence_dict: dict):
     result = []
     for sub_key in links_map[current_key]:
         if sub_key in links_map.keys():
-            sequence_dict[sub_key]["children"] = construct_tree_structure(sub_key, links_map, sequence_dict)
+            sequence_dict[sub_key]["children"] = construct_tree_structure(
+                sub_key, links_map, sequence_dict
+            )
             result.append(sequence_dict[sub_key])
         else:
             result.append(sequence_dict[sub_key])
