@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import numpy as np
+
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 
 
@@ -84,12 +86,61 @@ def check_sublist(new_list: list, org_list: list) -> bool:
     return True
 
 
+def compute_coordinates(symbol_sequence: list, dim_space: int) -> np.ndarray:
+    """Compute the coordinates for the given symbol sequence.
+
+    Parameters
+    ----------
+    symbol_sequence : list
+        List of ints representing the symbol sequence
+
+    Returns
+    -------
+    np.ndarray
+        The coordinates of the given symbol sequence, each element representing value in corresponding dimension
+    """
+    coordinates = np.zeros(dim_space, dtype="float64")
+    # The origin in the x coordinates is an empty sequence.
+    # The index in Python start from 0.
+    # In the paper we start it from 1...
+    for index, symbol in enumerate(symbol_sequence):
+        index += 1  # The math index starts from 1
+        if abs(symbol) > dim_space:
+            raise ValueError(
+                f"Dimension cannot be greater than axis. Got dimension: {dim_space}, axis: {symbol}"
+            )
+        if symbol != 0:
+            movement_length = np.sign(symbol) * 2.0 / (4.0**index)
+            x = abs(symbol) - 1  # the 1st axis is x0 internally
+            coordinates[x] += movement_length
+    return coordinates
+
+
+def compute_intercept():
+    # TODO: Confirm if this can be computed with per-dimension.
+    # The diamond should be in the domain, what happen to the diamond at higher dim?
+    pass
+
+
+def compute_distance(
+    symbol_sequence: list[int],
+    solution_coordinates: np.ndarray,
+    dim_space: int,
+    diagonal_length: float,
+):
+    center_coordinates = compute_coordinates(
+        symbol_sequence=symbol_sequence, dim_space=dim_space
+    )
+    print(center_coordinates)
+    print(solution_coordinates - center_coordinates)
+
+
 if __name__ == "__main__":
-    tree = Tree(dim_space=2)
-    base_path = Path(__file__).parent.absolute().parents[2]
-    data_path = base_path / "sample.json"
-    tree.from_json(str(data_path))
-    tree.load_edge(compute_links(tree.to_json()))
-    print(tree)
-    # sequence = tree.read_path(2)
-    # tree.evaluate(sequence, [1.0, 2.0])
+    test_sequence = [1, 2, 1]
+    test_solution_coordinates = np.array([1.5, 1.5])
+    compute_distance(
+        symbol_sequence=test_sequence,
+        solution_coordinates=test_solution_coordinates,
+        dim_space=2,
+        diagonal_length=5,
+    )

@@ -220,9 +220,7 @@ class BMP:
                 s_list.append(element)
         return s_list
 
-    def f_t_x(
-        self, t: int, x: np.ndarray, sequences: dict
-    ) -> tuple[np.float, int, np.float]:
+    def f_t_x(self, t: int, x: np.ndarray, sequences: dict) -> tuple[float, int, float]:
         if t == 0:
             return 0.0, 0, 0
         else:
