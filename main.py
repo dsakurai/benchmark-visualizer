@@ -70,6 +70,11 @@ def construct_problem(graph: dict):
     return graph
 
 
+@app.get("/api/density_filter")
+def density_filter(start_step:int,end_step:int):
+    pass
+
+
 @app.get("/api/demo_data")
 def demo_data():
     demo_log = file_utils.load_evaluation_log(
@@ -97,7 +102,7 @@ def demo_data():
         "tree": [
             {
                 "id": 0,
-                "label": "Root",
+                "label": "Root,  ID:0, minima: 0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),

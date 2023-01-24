@@ -33,7 +33,7 @@
                 <template #default="{ node ,data}">
                     <span>{{ node.label }}</span>
                     <span v-if="data.id===solverData[Math.round(this.sliderStep / this.stepSize)].eval_node_id">
-              <el-icon color="green"><Location/></el-icon>{{ solverData[Math.round(this.sliderStep / this.stepSize)] }}</span>
+              <el-icon color="green"><Location/></el-icon></span>
                 </template>
             </el-tree-v2>
         </el-main>
@@ -51,7 +51,7 @@ export default {
             treeData: '',
             sliderStep: 0,
             totalSteps: 100,
-            stepSize: 1,
+            stepSize: 100,
             allIDs: [],
             solverData: [],
             currentStep: 0,
