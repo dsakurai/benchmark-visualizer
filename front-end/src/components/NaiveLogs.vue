@@ -4,7 +4,9 @@
             <el-card class="box-card">
                 <el-row :gutter="20">
                     <el-col :gutter="20" :span="24">
-                    <el-slider v-model="sliderStep" :step="stepSize" :marks="marks" :format-tooltip="formatTooltip"/>
+                        <el-slider v-model="sliderStep" range :step="stepSize" :marks="marks"
+                                   :format-tooltip="formatTooltip"
+                                   @input="filterRange"/>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
@@ -24,16 +26,24 @@
                     <el-col :gutter="20" :span="3">
                         <span>Playback Speed:</span>
                     </el-col>
-                    <el-col :gutter="20" :span="11">
+                    <el-col :gutter="20" :span="6">
                         <el-slider v-model="playbackSpeed" show-input @change="changePlaybackSpeed"></el-slider>
+                    </el-col>
+                    <el-col :span="3">
+                        <el-checkbox v-model="lockRange" label="Lock Range"/>
+                    </el-col>
+                    <el-col :span="3"><span>Current Range Size:</span></el-col>
+                    <el-col :span="2">
+                        <el-input-number v-model="stepRange" @change="changeStepRange"></el-input-number>
                     </el-col>
                 </el-row>
             </el-card>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
-                    <span>{{ node.label }}</span>
-                    <span v-if="data.id===solverData[Math.round(this.sliderStep / this.stepSize)].eval_node_id">
-              <el-icon color="green"><Location/></el-icon></span>
+                    <el-space wrap :size="50">
+                        <span>{{ node.label }}</span>
+                        <span style="color: #4281b9"> Stays: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
+                    </el-space>
                 </template>
             </el-tree-v2>
         </el-main>
@@ -49,16 +59,22 @@ export default {
         return {
             logData: '',
             treeData: '',
-            sliderStep: 0,
+            sliderStep: [0, 100],
             totalSteps: 100,
             stepSize: 100,
+            populationSize:100,
             allIDs: [],
             solverData: [],
+            filteredSolverData: [],
             currentStep: 0,
             playbackSpeed: 1,
             marks: {},
+            nodeStats: {},
             playInstance: '',
             isPlaying: false,
+            lockRange: false,
+            stepRange: 0,
+            filterOffset: 0,
             props: {
                 value: 'id',
                 label: 'label',
@@ -71,11 +87,34 @@ export default {
         this.getNaiveLogData();
     },
     methods: {
-        updateStep() {
-            if (this.currentStep < this.totalSteps) {
-                this.currentStep++;
-                this.sliderStep = this.currentStep * this.stepSize
+        updateTailSlider() {
+            let range = this.stepRange * this.stepSize;
+            console.log(range);
+            if (this.sliderStep[0] + range < 100) {
+                console.log(this.sliderStep[0]);
+                console.log(this.sliderStep[1]);
+                this.sliderStep[1] = this.sliderStep[0] + range;
+                console.log(this.sliderStep[1]);
             }
+        },
+        changeStepRange() {
+            this.sliderStep[1] = this.sliderStep[0] + Math.round(this.stepRange * this.stepSize);
+        },
+        updateStep() {
+            if (Math.round(this.sliderStep[0] / this.stepSize) < this.totalSteps) {
+                this.sliderStep[0] += this.stepSize;
+            }
+            if (this.lockRange && (this.sliderStep[1] < 100)) {
+                this.sliderStep[1] += this.stepSize;
+            } else {
+                this.stepRange = Math.round((this.sliderStep[1] - this.sliderStep[0]) / this.stepSize);
+            }
+            this.stepRange = Math.round((this.sliderStep[1] - this.sliderStep[0]) / this.stepSize);
+            let startStep = Math.round(this.sliderStep[0] / this.stepSize);
+            let endStep = Math.round(this.sliderStep[1] / this.stepSize);
+            this.filterOffset = startStep;
+            this.filteredSolverData = this.solverData.slice(startStep, endStep);
+            this.getStats();
         },
         startAutoPlay() {
             clearInterval(this.playInstance);
@@ -100,14 +139,44 @@ export default {
                 this.logData = response.data.solver_log;
                 this.treeData = response.data.tree;
                 this.totalSteps = this.logData.length;
-                this.stepSize = 100 / this.totalSteps;
+                this.stepSize = 100 / this.totalSteps * this.populationSize;
                 this.marks[0] = "0";
                 this.marks[100] = this.totalSteps.toString();
+                this.stepRange = this.totalSteps;
                 for (let i = 0; i < this.totalSteps; i++) {
                     this.solverData[this.logData[i].step] = this.logData[i];
                 }
+                this.filteredSolverData = this.solverData;
+                this.getStats();
             })
-        }
+        },
+        getStats() {
+            let range = this.filteredSolverData.length;
+            let nodeCounts = {}
+            for (let i = 0; i < range; i++) {
+                let key = this.filteredSolverData[i].eval_node_id;
+                if (!(key in nodeCounts)) {
+                    nodeCounts[key] = 1;
+                } else {
+                    nodeCounts[this.filteredSolverData[i].eval_node_id] += 1;
+                }
+            }
+            this.nodeStats = nodeCounts;
+        },
+        filterRange(input) {
+            this.sliderStep[0] = input[0];
+            this.sliderStep[1] = input[1];
+            this.stepRange = Math.round((this.sliderStep[1] - this.sliderStep[0]) / this.stepSize);
+            let startStep = Math.round(this.sliderStep[0] / this.stepSize);
+            let endStep = Math.round(this.sliderStep[1] / this.stepSize);
+            this.filterOffset = startStep;
+            this.filteredSolverData = this.solverData.slice(startStep, endStep);
+            if (this.lockRange) {
+                // TODO: Tail slider not updated!!
+                this.updateTailSlider();
+            }
+            this.getStats();
+        },
     },
 }
 </script>
