@@ -40,10 +40,13 @@
             </el-card>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
+                  <div class="tree-node">
                     <el-space wrap :size="50">
                         <span>{{ node.label }}</span>
                         <span style="color: #4281b9"> Stays: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
+                      <el-progress :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)" style="width:350px;"></el-progress>
                     </el-space>
+                  </div>
                 </template>
             </el-tree-v2>
         </el-main>
@@ -110,8 +113,8 @@ export default {
                 this.stepRange = Math.round((this.sliderStep[1] - this.sliderStep[0]) / this.stepSize);
             }
             this.stepRange = Math.round((this.sliderStep[1] - this.sliderStep[0]) / this.stepSize);
-            let startStep = Math.round(this.sliderStep[0] / this.stepSize);
-            let endStep = Math.round(this.sliderStep[1] / this.stepSize);
+            let startStep = Math.round(this.sliderStep[0] * this.populationSize / this.stepSize);
+            let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
             this.getStats();
@@ -132,7 +135,7 @@ export default {
             this.isPlaying = false;
         },
         formatTooltip(val) {
-            return Math.round(val * this.totalSteps / 100);
+            return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
             axios.get("/api/demo_data").then(response => {
@@ -142,7 +145,7 @@ export default {
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
                 this.marks[0] = "0";
                 this.marks[100] = this.totalSteps.toString();
-                this.stepRange = this.totalSteps;
+                this.stepRange = Math.round(this.totalSteps / this.populationSize);
                 for (let i = 0; i < this.totalSteps; i++) {
                     this.solverData[this.logData[i].step] = this.logData[i];
                 }
@@ -167,8 +170,8 @@ export default {
             this.sliderStep[0] = input[0];
             this.sliderStep[1] = input[1];
             this.stepRange = Math.round((this.sliderStep[1] - this.sliderStep[0]) / this.stepSize);
-            let startStep = Math.round(this.sliderStep[0] / this.stepSize);
-            let endStep = Math.round(this.sliderStep[1] / this.stepSize);
+            let startStep = Math.round(this.sliderStep[0] * this.populationSize / this.stepSize);
+            let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
             if (this.lockRange) {
