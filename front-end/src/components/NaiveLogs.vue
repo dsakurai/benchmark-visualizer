@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <el-main>
-            <el-card class="box-card">
+            <el-card class="box-card" header="Visualization Controls">
                 <el-row :gutter="20">
                     <el-col :gutter="20" :span="24">
                         <el-slider v-model="sliderStep" range :step="stepSize" :marks="marks"
@@ -35,6 +35,11 @@
                     <el-col :span="3"><span>Current Range Size:</span></el-col>
                     <el-col :span="2">
                         <el-input-number v-model="stepRange" @change="changeStepRange"></el-input-number>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :gutter="20" :span="8">
+                        <span>Population Size:</span> <el-input-number v-model="populationSize"></el-input-number>
                     </el-col>
                 </el-row>
             </el-card>
@@ -185,5 +190,8 @@ export default {
 </script>
 
 <style scoped>
-
+.el-row {
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
 </style>
