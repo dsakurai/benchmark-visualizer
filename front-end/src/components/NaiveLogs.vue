@@ -49,8 +49,11 @@
                     <el-space wrap :size="50">
                         <span>{{ node.label }}</span>
                         <span style="color: #4281b9"> Stays: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
-                      <el-progress :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)" style="width:350px;"></el-progress>
                     </el-space>
+                      <div class="progress-bar">
+                      <el-progress :stroke-width="20" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)" style="width:600px;"><span style="width: 10px" v-text="nodaMinima[data.id].toFixed(2)"> </span></el-progress>
+                      </div>
+
                   </div>
                 </template>
             </el-tree-v2>
@@ -71,6 +74,7 @@ export default {
             totalSteps: 100,
             stepSize: 100,
             populationSize:100,
+            nodaMinima:{},
             allIDs: [],
             solverData: [],
             filteredSolverData: [],
@@ -160,9 +164,18 @@ export default {
         },
         getStats() {
             let range = this.filteredSolverData.length;
-            let nodeCounts = {}
+            let nodeCounts = {};
+            let nodeMinima = {};
             for (let i = 0; i < range; i++) {
                 let key = this.filteredSolverData[i].eval_node_id;
+                if (!(key in nodeMinima)){
+                nodeMinima[key] = this.filteredSolverData[i].y2;
+                }
+                else{
+                    if (nodeMinima[key] > this.filteredSolverData[i].y2){
+                        nodeMinima[key] = this.filteredSolverData[i].y2
+                    }
+                }
                 if (!(key in nodeCounts)) {
                     nodeCounts[key] = 1;
                 } else {
@@ -170,6 +183,7 @@ export default {
                 }
             }
             this.nodeStats = nodeCounts;
+            this.nodaMinima = nodeMinima;
         },
         filterRange(input) {
             this.sliderStep[0] = input[0];
@@ -179,6 +193,7 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
+            console.log(this.filteredSolverData);
             if (this.lockRange) {
                 // TODO: Tail slider not updated!!
                 this.updateTailSlider();
@@ -193,5 +208,13 @@ export default {
 .el-row {
     margin-top: 10px;
     margin-bottom: 0px;
+}
+.tree-node{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 20px;
+  padding-right: 400px;
 }
 </style>
