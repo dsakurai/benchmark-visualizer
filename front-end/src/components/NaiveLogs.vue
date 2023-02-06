@@ -48,11 +48,11 @@
                   <div class="tree-node">
                     <el-space wrap :size="30">
                         <span>{{ node.label }}</span>
-<!--                        <span style="color: #ff4949"> Eval-Minimal: {{nodaMinima[data.id].toFixed(2)}}</span>-->
+                        <span style="color: #ff4949"> Eval-Minimal: {{locatedMinima[data.id].toFixed(2)}}</span>
                         <span style="color: #4281b9"> Count: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
                     </el-space>
                       <div class="progress-bar">
-                      <el-progress :stroke-width="15" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)" style="width:600px;"><span style="width: 10px" v-text="nodaMinima[data.id].toFixed(2)"> </span></el-progress>
+                      <el-progress :stroke-width="15" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))" style="width:600px;"><span style="width: 10px" v-text="locatedMinima[data.id].toFixed(2)"> </span></el-progress>
                       </div>
 
                   </div>
@@ -75,7 +75,9 @@ export default {
             totalSteps: 100,
             stepSize: 100,
             populationSize:100,
+            locatedMinima:{},
             nodaMinima:{},
+            elapsedData:[],
             allIDs: [],
             solverData: [],
             filteredSolverData: [],
@@ -102,7 +104,6 @@ export default {
     methods: {
         updateTailSlider() {
             let range = this.stepRange * this.stepSize;
-            console.log(range);
             if (this.sliderStep[0] + range < 100) {
                 console.log(this.sliderStep[0]);
                 console.log(this.sliderStep[1]);
@@ -183,8 +184,23 @@ export default {
                     nodeCounts[this.filteredSolverData[i].eval_node_id] += 1;
                 }
             }
+
+
+            for (let i=0;i<this.elapsedData.length;i++){
+                let key = this.elapsedData[i].eval_node_id;
+                if (!(key in nodeMinima)){
+                    nodeMinima[key] = this.elapsedData[i].y2;
+                }
+                else{
+                    if (nodeMinima[key] > this.elapsedData[i].y2){
+                        nodeMinima[key] = this.elapsedData[i].y2
+                    }
+                }
+
+            }
+            this.locatedMinima = nodeMinima;
             this.nodeStats = nodeCounts;
-            this.nodaMinima = nodeMinima;
+            this.locatedMinima = nodeMinima;
         },
         filterRange(input) {
             this.sliderStep[0] = input[0];
@@ -194,7 +210,8 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
-            console.log(this.filteredSolverData);
+            this.elaspedData = this.solverData.slice(0, endStep);
+            console.log(this.locatedMinima);
             if (this.lockRange) {
                 // TODO: Tail slider not updated!!
                 this.updateTailSlider();
