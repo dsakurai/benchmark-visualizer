@@ -64,6 +64,7 @@
 
 <script>
 import axios from 'axios';
+import computeUtils from "@/functions/ComputeUtils";
 
 export default {
     name: "NaiveLogs",
@@ -162,6 +163,7 @@ export default {
                 }
                 this.filteredSolverData = this.solverData;
                 this.getStats();
+                computeUtils.someFunc();
             })
         },
         getStats() {
