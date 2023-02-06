@@ -78,15 +78,17 @@ def density_filter(start_step:int,end_step:int):
 @app.get("/api/demo_data")
 def demo_data():
     demo_log = file_utils.load_evaluation_log(
-        "test_runx_2023-01-16T10-30-27.298413.csv"
+        "test_runx_2023-02-02T09-50-04.172411.csv"
+        # "test_runx_2023-01-16T10-30-27.298413.csv"
     )
     demo_tree = file_utils.read_json_tree("sample.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
         sequence_dict[node["id"]]["label"] = (
-            f"Node ID: {node['id']}, Minimal: {node['minima']}, "
-            f"Symbol: {node['symbol']}"
+            f"Node ID: {node['id']},  "
+            f"Symbol: {node['symbol']},"
+            f"Minimal: {node['minima']}"
         )
     link_map = {}
     for link in algs.compute_links(demo_tree):
@@ -102,7 +104,7 @@ def demo_data():
         "tree": [
             {
                 "id": 0,
-                "label": "Root,  ID:0, minima: 0",
+                "label": "Root,  ID: 0, minima: -1",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),

@@ -46,12 +46,13 @@
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
                   <div class="tree-node">
-                    <el-space wrap :size="50">
+                    <el-space wrap :size="30">
                         <span>{{ node.label }}</span>
-                        <span style="color: #4281b9"> Stays: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
+<!--                        <span style="color: #ff4949"> Eval-Minimal: {{nodaMinima[data.id].toFixed(2)}}</span>-->
+                        <span style="color: #4281b9"> Count: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
                     </el-space>
                       <div class="progress-bar">
-                      <el-progress :stroke-width="20" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)" style="width:600px;"><span style="width: 10px" v-text="nodaMinima[data.id].toFixed(2)"> </span></el-progress>
+                      <el-progress :stroke-width="15" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)" style="width:600px;"><span style="width: 10px" v-text="nodaMinima[data.id].toFixed(2)"> </span></el-progress>
                       </div>
 
                   </div>
@@ -214,7 +215,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 20px;
-  padding-right: 400px;
+  font-size: 18px;
+  padding-right: 50px;
 }
 </style>
