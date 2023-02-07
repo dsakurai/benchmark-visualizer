@@ -106,10 +106,7 @@ export default {
         updateTailSlider() {
             let range = this.stepRange * this.stepSize;
             if (this.sliderStep[0] + range < 100) {
-                console.log(this.sliderStep[0]);
-                console.log(this.sliderStep[1]);
                 this.sliderStep[1] = this.sliderStep[0] + range;
-                console.log(this.sliderStep[1]);
             }
         },
         changeStepRange() {
@@ -200,7 +197,6 @@ export default {
                 }
 
             }
-            this.locatedMinima = nodeMinima;
             this.nodeStats = nodeCounts;
             this.locatedMinima = nodeMinima;
         },
@@ -212,8 +208,8 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
-            this.elaspedData = this.solverData.slice(0, endStep);
-            console.log(this.locatedMinima);
+            this.elapsedData = this.solverData.slice(0, endStep);
+
             if (this.lockRange) {
                 // TODO: Tail slider not updated!!
                 this.updateTailSlider();
