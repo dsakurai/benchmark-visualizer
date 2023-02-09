@@ -5,9 +5,9 @@ from typing import Optional
 
 import mlflow
 import numpy as np
+import pandas as pd
 import urllib3
 from urllib3.exceptions import InsecureRequestWarning
-import pandas as pd
 
 
 class Tracking:
@@ -63,6 +63,8 @@ class Tracking:
         variables: list,
         objectives: list,
         eval_node_id: int,
+        diagonal_length: float,
+        org_objectives: list,
         constrains: list = None,
     ):
         if constrains:
@@ -70,7 +72,12 @@ class Tracking:
         if not self.headers:
             self.create_headers(variables=variables, objectives=objectives)
 
-        self.step_metrics.append(variables + objectives + [eval_node_id, self.step])
+        self.step_metrics.append(
+            variables
+            + objectives
+            + [eval_node_id, diagonal_length, self.step]
+            + org_objectives
+        )
         self.step += 1
 
     def create_headers(
@@ -79,12 +86,16 @@ class Tracking:
         variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
         variable_header.insert(0, "t")
         objective_header = [f"y{x + 1}" for x in range(len(objectives))]
-        self.headers = variable_header + objective_header + ["eval_node_id", "step"]
+        self.headers = (
+            variable_header
+            + objective_header
+            + ["eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
+        )
 
     def send_data(self):
         # TODO: Use CSV format
         self.step_metrics = np.array(self.step_metrics)
         step_metrics_df = pd.DataFrame(self.step_metrics, columns=self.headers)
-        file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat().replace(':','-')}.csv"
+        file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat().replace(':', '-')}.csv"
         step_metrics_df.to_csv(file_name)
         mlflow.log_artifact(local_path=file_name)

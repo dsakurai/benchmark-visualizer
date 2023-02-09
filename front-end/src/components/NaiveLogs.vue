@@ -149,6 +149,7 @@ export default {
         getNaiveLogData() {
             axios.get("/api/demo_data").then(response => {
                 this.logData = response.data.solver_log;
+                this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
                 this.totalSteps = this.logData.length;
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
@@ -160,45 +161,11 @@ export default {
                 }
                 this.filteredSolverData = this.solverData;
                 this.getStats();
-                computeUtils.someFunc();
             })
         },
         getStats() {
-            let range = this.filteredSolverData.length;
-            let nodeCounts = {};
-            let nodeMinima = {};
-            for (let i = 0; i < range; i++) {
-                let key = this.filteredSolverData[i].eval_node_id;
-                if (!(key in nodeMinima)){
-                nodeMinima[key] = this.filteredSolverData[i].y2;
-                }
-                else{
-                    if (nodeMinima[key] > this.filteredSolverData[i].y2){
-                        nodeMinima[key] = this.filteredSolverData[i].y2
-                    }
-                }
-                if (!(key in nodeCounts)) {
-                    nodeCounts[key] = 1;
-                } else {
-                    nodeCounts[this.filteredSolverData[i].eval_node_id] += 1;
-                }
-            }
-
-
-            for (let i=0;i<this.elapsedData.length;i++){
-                let key = this.elapsedData[i].eval_node_id;
-                if (!(key in nodeMinima)){
-                    nodeMinima[key] = this.elapsedData[i].y2;
-                }
-                else{
-                    if (nodeMinima[key] > this.elapsedData[i].y2){
-                        nodeMinima[key] = this.elapsedData[i].y2
-                    }
-                }
-
-            }
-            this.nodeStats = nodeCounts;
-            this.locatedMinima = nodeMinima;
+            this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
+            this.nodeStats = computeUtils.computeNodeCounts(this.filteredSolverData, this.allIDs);
         },
         filterRange(input) {
             this.sliderStep[0] = input[0];
@@ -223,7 +190,7 @@ export default {
 <style scoped>
 .el-row {
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 .tree-node{
   flex: 1;

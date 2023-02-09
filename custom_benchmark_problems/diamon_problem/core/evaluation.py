@@ -39,9 +39,11 @@ class BMP:
             x=x,
             sequences=self.process_sequence(sequence_info=self.sequence_info),
         )
+        t_org = t
+        y_org = y
         if self.rotate:
             t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
-        return t, y, node_id, diagonal_length
+        return t, y, node_id, diagonal_length, [t_org, y_org]
 
     def h_x(
         self,

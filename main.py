@@ -71,7 +71,7 @@ def construct_problem(graph: dict):
 
 
 @app.get("/api/density_filter")
-def density_filter(start_step:int,end_step:int):
+def density_filter(start_step: int, end_step: int):
     pass
 
 

@@ -59,6 +59,8 @@ class Diamond(FloatProblem):
                 variables=solution.variables,
                 objectives=solution.objectives,
                 eval_node_id=eval_results[2],
+                diagonal_length=eval_results[3],
+                org_objectives=eval_results[4],
             )
         return solution
 
