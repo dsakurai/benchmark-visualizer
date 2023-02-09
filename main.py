@@ -78,8 +78,7 @@ def density_filter(start_step: int, end_step: int):
 @app.get("/api/demo_data")
 def demo_data():
     demo_log = file_utils.load_evaluation_log(
-        "test_runx_2023-02-02T09-50-04.172411.csv"
-        # "test_runx_2023-01-16T10-30-27.298413.csv"
+        "demo_log_latest.csv"
     )
     demo_tree = file_utils.read_json_tree("sample.json")
     sequence_dict = {}
