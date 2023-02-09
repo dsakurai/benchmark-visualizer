@@ -103,7 +103,7 @@ def demo_data():
         "tree": [
             {
                 "id": 0,
-                "label": "Root,  ID: 0, minima: -1",
+                f"label": f"Root,  ID: 0, minima: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),

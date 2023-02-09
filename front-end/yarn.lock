@@ -3879,7 +3879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-axis@npm:3":
+"d3-axis@npm:3, d3-axis@npm:^3.0.0":
   version: 3.0.0
   resolution: "d3-axis@npm:3.0.0"
   checksum: 227ddaa6d4bad083539c1ec245e2228b4620cca941997a8a650cb0af239375dc20271993127eedac66f0543f331027aca09385e1e16eed023f93eac937cddf0b
@@ -5137,6 +5137,7 @@ __metadata:
     axios: ^0.27.2
     core-js: ^3.8.3
     d3: ^7.8.2
+    d3-axis: ^3.0.0
     element-plus: ^2.2.6
     eslint: ^7.32.0
     eslint-plugin-vue: ^8.0.3
