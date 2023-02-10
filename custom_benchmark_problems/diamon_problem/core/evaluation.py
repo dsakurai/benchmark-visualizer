@@ -34,14 +34,16 @@ class BMP:
         """
         x = solution_variables[1:]
         t = solution_variables[0]
-        y = self.f_t_x(
+        y, node_id, diagonal_length = self.f_t_x(
             t=t,
             x=x,
             sequences=self.process_sequence(sequence_info=self.sequence_info),
         )
+        t_org = t
+        y_org = y
         if self.rotate:
             t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
-        return t, y
+        return t, y, node_id, diagonal_length, [t_org, y_org]
 
     def h_x(
         self,
@@ -150,7 +152,7 @@ class BMP:
             self.name = name
 
     @staticmethod
-    def process_sequence(sequence_info: list):
+    def process_sequence(sequence_info: list) -> dict:
         """Pre-process the sequence and group symbol sequence with the same size togather
 
         Parameters
@@ -220,9 +222,9 @@ class BMP:
                 s_list.append(element)
         return s_list
 
-    def f_t_x(self, t: int, x: np.ndarray, sequences: dict) -> float:
+    def f_t_x(self, t: int, x: np.ndarray, sequences: dict) -> tuple[float, int, float]:
         if t == 0:
-            return 0.0
+            return 0.0, 0, 0
         else:
             tau = self.get_tau(t)
             while tau >= 0:
@@ -231,8 +233,9 @@ class BMP:
                 else:
                     f_tau_x = self.f_t_x(t=tau, x=x, sequences=sequences)
                     sequences_tau = sequences[tau]
-                    g_s_values = [f_tau_x]
-                    node_ids = [-999]
+                    g_s_values = [f_tau_x[0]]
+                    node_ids = [f_tau_x[1]]
+                    diagonal_lengths = [f_tau_x[2]]
                     for s_tau in sequences_tau:
                         m_s = s_tau.minima
                         delta_t = t - tau
@@ -240,20 +243,26 @@ class BMP:
                             raise Exception("sign error")
 
                         x_s = self.compute_coordinates(symbol_sequence=s_tau.symbol)
-                        M_s = (1.0 - delta_t) * self.f_t_x(
-                            tau, x_s, sequences
-                        ) + delta_t * m_s
+                        M_s = (1.0 - delta_t) * self.f_t_x(tau, x_s, sequences)[
+                            0
+                        ] + delta_t * m_s
                         delta_x = x - x_s
                         h_x_ = self.h_x(x=x, x_s=x_s, tau=tau)
-                        nabla_g = (self.f_t_x(tau, x_s + h_x_, sequences) - m_s) / h_x_
+                        nabla_g = (
+                            self.f_t_x(tau, x_s + h_x_, sequences)[0] - m_s
+                        ) / h_x_
+                        diagonal_lengths.append(h_x_)
                         g_s_values.append(M_s + np.dot(nabla_g, delta_x.T))
                         node_ids.append(s_tau.name)
                     # self.f_t_x_[(t, tuple(x.tolist()))] = min(candidates)
                     g_s_values = np.array(g_s_values)
-                    min_index = np. argmin(g_s_values)
+                    min_index = np.argmin(g_s_values)
                     minimal_value = g_s_values[min_index]
-                    print(node_ids[min_index])
-                    return minimal_value
+                    return (
+                        minimal_value,
+                        node_ids[min_index],
+                        diagonal_lengths[min_index],
+                    )
 
 
 if __name__ == "__main__":
@@ -271,14 +280,14 @@ if __name__ == "__main__":
             },
         ],
         dim_space=1,
-        rotate=False
+        rotate=False,
     )
     x_ts = [
         [0, 0],
         [0, 0.5],
         [0, 1],
         [0, 1.5],
-        [0,2],
+        [0, 2],
         [0.25, 0],
         [0.25, 0.5],
         [0.25, 1],

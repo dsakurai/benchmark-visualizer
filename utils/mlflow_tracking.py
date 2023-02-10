@@ -5,6 +5,7 @@ from typing import Optional
 
 import mlflow
 import numpy as np
+import pandas as pd
 import urllib3
 from urllib3.exceptions import InsecureRequestWarning
 
@@ -53,7 +54,7 @@ class Tracking:
         else:
             mlflow.start_run()
         self.step = 0
-        self.dict_keys = None
+        self.headers = None
         self.step_metrics = []
         atexit.register(self.send_data)
 
@@ -61,27 +62,40 @@ class Tracking:
         self,
         variables: list,
         objectives: list,
+        eval_node_id: int,
+        diagonal_length: float,
+        org_objectives: list,
         constrains: list = None,
     ):
         if constrains:
             raise NotImplementedError("Constrains logging is not available yet")
-        if not self.dict_keys:
-            self.create_dict_keys(variables=variables, objectives=objectives)
+        if not self.headers:
+            self.create_headers(variables=variables, objectives=objectives)
 
-        self.step_metrics.append(variables + objectives + [self.step])
+        self.step_metrics.append(
+            variables
+            + objectives
+            + [eval_node_id, diagonal_length, self.step]
+            + org_objectives
+        )
         self.step += 1
 
-    def create_dict_keys(
+    def create_headers(
         self, variables: list, objectives: list, constrains: list = None
     ) -> None:
         variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
         variable_header.insert(0, "t")
         objective_header = [f"y{x + 1}" for x in range(len(objectives))]
-        self.dict_keys = variable_header + objective_header
+        self.headers = (
+            variable_header
+            + objective_header
+            + ["eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
+        )
 
     def send_data(self):
         # TODO: Use CSV format
         self.step_metrics = np.array(self.step_metrics)
-        file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat().replace(':','-')}.npz"
-        self.step_metrics.dump(file_name)
+        step_metrics_df = pd.DataFrame(self.step_metrics, columns=self.headers)
+        file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat().replace(':', '-')}.csv"
+        step_metrics_df.to_csv(file_name)
         mlflow.log_artifact(local_path=file_name)

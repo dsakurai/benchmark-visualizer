@@ -114,7 +114,7 @@ class Tree:
 
     @property
     def root_minima(self) -> float:
-        return 0.0
+        return -1.0
 
     @property
     def root_symbol(self) -> list:

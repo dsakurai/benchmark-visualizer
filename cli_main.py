@@ -50,7 +50,6 @@ def cli_main(opts):
     # Get solutions
     solutions = algorithm.get_result()
 
-    # TODO: Validate json tree via pop, the mimima should not be greater than the computed mimima value with out current node
     # Print the results
     for solution in solutions:
         x_1 = solution.variables[0]

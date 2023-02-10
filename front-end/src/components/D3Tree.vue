@@ -73,6 +73,14 @@ export default {
             this.treemap = d3.tree().size([height, width])
             // Assigns parent, children, height, depth
             this.root = d3.hierarchy(this.treeData, function (d) { return d.children })
+
+            let data= [10,20,30,40,50];
+            let scale = d3.scaleLinear().domain([d3.min(data),d3.max(data)]).range([0,width-100]);
+            let xAxis = d3.axisBottom().scale(scale);
+            let yAxis = d3.axisLeft().scale(scale);
+            this.svg.append("g").call(xAxis);
+            this.svg.append("g").call(yAxis);
+
             this.root.x0 = height / 2
             this.root.y0 = 0
             // Collapse after the second level

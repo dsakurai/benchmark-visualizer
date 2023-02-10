@@ -27,7 +27,7 @@ class Diamond(FloatProblem):
         self.problem = evaluation.BMP(sequence_info=sequence_info, dim_space=dim_space)
 
         self.obj_directions = [self.MINIMIZE]
-        self.obj_lables = ["f(x)"]
+        self.obj_labels = ["f(x)"]
         # TODO: Known issue here, cause huge problem
         # Exit code -1073741571 (0xC00000FD)
         self.lower_bound = dim_space * [-1.0]
@@ -56,7 +56,11 @@ class Diamond(FloatProblem):
         solution.objectives[1] = eval_results[1]
         if self.enable_tracking:
             self.tracking.log_step(
-                variables=solution.variables, objectives=solution.objectives
+                variables=solution.variables,
+                objectives=solution.objectives,
+                eval_node_id=eval_results[2],
+                diagonal_length=eval_results[3],
+                org_objectives=eval_results[4],
             )
         return solution
 

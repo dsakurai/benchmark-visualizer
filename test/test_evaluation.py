@@ -60,6 +60,6 @@ class TestEvaluation(unittest.TestCase):
         for x_t, y in zip(x_ts, y_s):
             assert_almost_equal(
                 y,
-                bmp.evaluate(solution_variables=np.array(x_t, dtype="float64")),
+                bmp.evaluate(solution_variables=np.array(x_t, dtype="float64"))[:2],
                 decimal=16,
             )

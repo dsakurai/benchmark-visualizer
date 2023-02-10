@@ -14,7 +14,6 @@
                 <Expand/>
             </el-icon>
         </el-button>
-<!--        <img src="./assets/logo.png" alt="logo" style="height: 40px; margin: 10px"/><h3>Benchmark Visualizer</h3>-->
         <div class="flex-grow"/>
         <el-menu-item index="1" @click="d3TreeActive=!d3TreeActive">D3Tree</el-menu-item>
         <el-menu-item index="2" @click="d3TreeActive=!d3TreeActive">D3ForceTree</el-menu-item>
@@ -24,16 +23,20 @@
            <ComputationMenu :asideExpansion="asideExpansion"></ComputationMenu>
         </el-aside>
         <el-main>
-            <D3Tree v-if="d3TreeActive"></D3Tree>
-            <D3ForceTree v-else></D3ForceTree>
+<!--            <D3Tree v-if="d3TreeActive"></D3Tree>-->
+<!--            <D3ForceTree v-else></D3ForceTree>-->
+          <div v-if="!d3TreeActive"><NaiveLogs></NaiveLogs></div>
+          <div v-else><ReebSpace></ReebSpace></div>
         </el-main>
     </el-container>
 </template>
 
 <script>
-import D3Tree from "@/components/D3Tree";
-import D3ForceTree from "@/components/D3ForceTree";
+// import D3Tree from "@/components/D3Tree";
+// import D3ForceTree from "@/components/D3ForceTree";
 import ComputationMenu from "@/components/ComputationMenu";
+import NaiveLogs from "@/components/NaiveLogs.vue";
+import ReebSpace from "@/components/ReebSpace.vue";
 
 export default {
     name: 'App',
@@ -45,9 +48,12 @@ export default {
         };
     },
     components: {
-        D3Tree,
+      ReebSpace,
+      NaiveLogs,
+        // D3Tree,
+        // D3ForceTree
         ComputationMenu,
-        D3ForceTree
+
     },
     methods: {
         handleSelect(key, keyPath) {
@@ -63,7 +69,7 @@ html, body, #app {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #fff;
+    color: #000;
     margin-top: 0;
     margin-left: 0;
     margin-right: 0;
