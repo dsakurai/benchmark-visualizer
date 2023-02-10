@@ -58,6 +58,7 @@
                   </div>
                 </template>
             </el-tree-v2>
+            <ReebSpace></ReebSpace>
         </el-main>
     </el-container>
 </template>
@@ -65,6 +66,7 @@
 <script>
 import axios from 'axios';
 import computeUtils from "@/functions/ComputeUtils";
+import ReebSpace from "@/components/ReebSpace.vue";
 
 export default {
     name: "NaiveLogs",
@@ -98,6 +100,9 @@ export default {
             }
         }
 
+    },
+    components:{
+        ReebSpace,
     },
     created() {
         this.getNaiveLogData();
