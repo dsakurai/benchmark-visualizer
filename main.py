@@ -1,3 +1,4 @@
+import time
 from multiprocessing.connection import Listener
 from typing import Union
 
@@ -70,9 +71,15 @@ def construct_problem(graph: dict):
     return graph
 
 
-@app.get("/api/density_filter")
-def density_filter(start_step: int, end_step: int):
-    pass
+@app.get("/api/reeb_space")
+def reeb_space_info():
+    demo_tree = file_utils.read_json_tree("sample.json")
+    sequence_dict = {}
+    for node in demo_tree["nodes"]:
+        sequence_dict[node["id"]] = node
+        convergence_time = len(node["symbol"])
+    return JSONResponse(content=jsonable_encoder(sequence_dict))
+
 
 
 @app.get("/api/demo_data")
