@@ -12,19 +12,28 @@
 
 <script>
 import * as d3 from 'd3';
+import axios from 'axios';
 
 export default {
   name: "ReebSpace",
-  props:{
-
-  },
+  props: {},
   data() {
-    return {}
+    return {
+      reebData: [],
+      promisedReebData: '',
+    }
   },
   mounted() {
-    this.loadInitialGraph();
+    this.getReebInfo();
+
   },
   methods: {
+    getReebInfo() {
+      axios.get("/api/reeb_space").then(response => {
+        this.reebData = response.data;
+        this.loadInitialGraph();
+      })
+    },
     drawAxis() {
       let width = 800;
       let height = 800;
@@ -38,8 +47,26 @@ export default {
       let xAxisTranslate = height / 2 + 10;
       this.svg.append("g").attr("transform", "translate(50, " + xAxisTranslate + ")").call(xAxis);
     },
+    drawSheets() {
+      this.reebData.forEach(node => {
+        console.log(node);
+        let line = d3.line()
+            .x(function (d) {
+              return d.x;
+            })
+            .y(function (d) {
+              return d.y;
+            });
+        let points = [{x: 100, y: 100}, {x: 500, y: 100}, {x: 375, y: 150}, {x: 125, y: 150}];
+        this.svg.append("path").attr("d", line(points) + 'Z')
+            .style("fill", "orange")
+            .style("stroke", "black");
+
+      })
+    },
     loadInitialGraph() {
       this.drawAxis();
+      this.drawSheets();
     }
   },
 }

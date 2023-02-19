@@ -4,12 +4,15 @@ from typing import Union
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from config import sample_file_path, solver_info
 from utils import file_utils
 from custom_benchmark_problems.diamon_problem.core import algs
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from custom_benchmark_problems.diamon_problem.core import evaluation
 
 app = FastAPI()
 
@@ -24,30 +27,9 @@ app.add_middleware(
 )
 
 
-# address = ("localhost", 6000)  # family is deduced to be 'AF_INET'
-# listener = Listener(address, authkey=b"secret password")
-# conn = listener.accept()
-
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-# @app.websocket("/api/test_ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     cmd = await websocket.receive_text()
-#     if cmd == "run_program":
-#         pass
-#     else:
-#         counter = 0
-#         while True:
-#             msg = conn.recv()
-#             await websocket.send_text(f"Counting: {msg}")
-#             counter += 1
-#             if counter >= 1000:
-#                 await websocket.close()
 
 
 @app.get("/items/{item_id}")
@@ -73,13 +55,23 @@ def construct_problem(graph: dict):
 
 @app.get("/api/reeb_space")
 def reeb_space_info():
-    demo_tree = file_utils.read_json_tree("sample.json")
-    sequence_dict = {}
-    for node in demo_tree["nodes"]:
-        sequence_dict[node["id"]] = node
-        convergence_time = len(node["symbol"])
-    return JSONResponse(content=jsonable_encoder(sequence_dict))
-
+    tree = Tree(dim_space=2)
+    tree.from_json("sample.json")
+    sequence_info = tree.to_sequence()
+    bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=2)
+    reeb_info = []
+    for node in sequence_info:
+        node_id = node["name"]
+        symbols = node["attrs"]["symbol"]
+        minimal = node["minima"]
+        max_t = len(symbols) + 1
+        central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
+        step_back = bmp.evaluate(np.insert(central_coordinates, 0, max_t - 1))
+        reeb_info.append({"node_id": node_id, "symbols": symbols, "minimal": minimal,
+                          "central_coordinates": central_coordinates.tolist(),
+                          "step_back": {"t": step_back.t, "y": step_back.y, "unrotated_t": step_back.unrotated_value[0],
+                                        "unrotated_y": step_back.unrotated_value[1]}})
+    return JSONResponse(reeb_info)
 
 
 @app.get("/api/demo_data")

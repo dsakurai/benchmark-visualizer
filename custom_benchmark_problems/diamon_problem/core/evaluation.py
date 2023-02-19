@@ -4,11 +4,12 @@ from collections import namedtuple
 import numpy as np
 
 NodeInfo = namedtuple("NodeInfo", ["symbol", "minima", "name"])
+EvaluationResult = namedtuple("EvaluationResult", ["t", "y", "node_id", "diagonal_length", "unrotated_value"])
 
 
 class BMP:
     def __init__(
-        self, sequence_info: list[dict], dim_space: int = 2, rotate: bool = True
+            self, sequence_info: list[dict], dim_space: int = 2, rotate: bool = True
     ):
         self.sequence_info = sequence_info
         self.s_lengths = self.s_lengths(sequence_info)
@@ -20,7 +21,7 @@ class BMP:
         c, s = np.cos(theta), np.sin(theta)
         self.rotation_matrix = np.array(((c, -s), (s, c)))
 
-    def evaluate(self, solution_variables: np.ndarray) -> tuple:
+    def evaluate(self, solution_variables: np.ndarray) -> EvaluationResult:
         """Main evaluation function, solution space is defined when the problem is constructed
 
         Parameters
@@ -43,13 +44,14 @@ class BMP:
         y_org = y
         if self.rotate:
             t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
-        return t, y, node_id, diagonal_length, [t_org, y_org]
+        return EvaluationResult(t=t, y=y, node_id=node_id, diagonal_length=diagonal_length,
+                                unrotated_value=[t_org, y_org])
 
     def h_x(
-        self,
-        x: np.ndarray,
-        x_s: np.ndarray,
-        tau: int,
+            self,
+            x: np.ndarray,
+            x_s: np.ndarray,
+            tau: int,
     ) -> np.ndarray:
         """Compute h(x) with solution variables and candidate coordinates and tau
 
@@ -71,7 +73,7 @@ class BMP:
             x=x,
             x_s=x_s,
         )
-        return signs / (4.0**tau)
+        return signs / (4.0 ** tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
@@ -97,7 +99,7 @@ class BMP:
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
                 )
             if symbol != 0:
-                movement_length = np.sign(symbol) * 2.0 / (4.0**index)
+                movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
                 x = abs(symbol) - 1  # the 1st axis is x0 internally
                 coordinates[x] += movement_length
         return coordinates
@@ -121,7 +123,7 @@ class BMP:
         """
         diff = x - x_s
         return np.sign(diff) + (
-            diff == 0
+                diff == 0
         )  # if x - x_s is 0, set the sign to 1 (by default it's 0).
 
     @staticmethod
@@ -249,8 +251,8 @@ class BMP:
                         delta_x = x - x_s
                         h_x_ = self.h_x(x=x, x_s=x_s, tau=tau)
                         nabla_g = (
-                            self.f_t_x(tau, x_s + h_x_, sequences)[0] - m_s
-                        ) / h_x_
+                                          self.f_t_x(tau, x_s + h_x_, sequences)[0] - m_s
+                                  ) / h_x_
                         diagonal_lengths.append(h_x_)
                         g_s_values.append(M_s + np.dot(nabla_g, delta_x.T))
                         node_ids.append(s_tau.name)
