@@ -59,19 +59,34 @@ def reeb_space_info():
     tree.from_json("sample.json")
     sequence_info = tree.to_sequence()
     bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=2)
-    reeb_info = []
+
+    node_info = []
+    max_t = 0
+    maximal = -1
+    minimal = -1
+    node_count = 0
+
     for node in sequence_info:
         node_id = node["name"]
         symbols = node["attrs"]["symbol"]
-        minimal = node["minima"]
-        max_t = len(symbols) + 1
+        node_minimal = node["minima"]
+        minimal_time = len(symbols) + 1
+        if minimal_time > max_t:
+            max_t = minimal_time
+        if maximal < node_minimal:
+            maximal = node_minimal
+        if minimal > node_minimal:
+            minimal = node_minimal
         central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
-        step_back = bmp.evaluate(np.insert(central_coordinates, 0, max_t - 1))
-        reeb_info.append({"node_id": node_id, "symbols": symbols, "minimal": minimal,
+        step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
+        node_info.append({"node_id": node_id, "symbols": symbols, "minimal": node_minimal,
+                          "minimal_time": minimal_time,
                           "central_coordinates": central_coordinates.tolist(),
                           "step_back": {"t": step_back.t, "y": step_back.y, "unrotated_t": step_back.unrotated_value[0],
                                         "unrotated_y": step_back.unrotated_value[1]}})
-    return JSONResponse(reeb_info)
+        node_count += 1
+
+    return JSONResponse({"nodeInfo":node_info, "treeInfo":{"nodeCount":node_count, "maxTime":max_t,"minimal":minimal,"maximal":maximal}})
 
 
 @app.get("/api/demo_data")

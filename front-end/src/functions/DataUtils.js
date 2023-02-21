@@ -2,6 +2,13 @@ import axios from "axios";
 
 export default {
     getDemoData,
+    parseReebData,
+}
+
+function parseReebData(reebData){
+    let nodeInfo = reebData.nodeInfo;
+    let treeInfo = reebData.treeInfo;
+    return {"nodeInfo":nodeInfo, "treeInfo":treeInfo}
 }
 
 function getDemoData(){
