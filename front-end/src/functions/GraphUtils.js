@@ -1,19 +1,13 @@
 import * as d3 from "d3";
 
 export default {
-    composeSheet,
+    composeSheet: composeSheets,
     composeAxis,
 }
 
-function composeSheet(nodeData){
-    console.log(nodeData);
-    // let line = d3.line()
-    //     .x(function (d) {
-    //         return d.x;
-    //     })
-    //     .y(function (d) {
-    //         return d.y;
-    //     });
+function composeSheets(treeInfo, figureInfo, nodeData){
+    dataToCoordinates(treeInfo, figureInfo, nodeData);
+
     let points = [{x: 100, y: 100}, {x: 500, y: 100}, {x: 125, y: 150}, {x: 375, y: 150}];
     let p = d3.path();
     p.moveTo(points[0].x,points[0].y);
@@ -21,16 +15,12 @@ function composeSheet(nodeData){
     p.lineTo(points[3].x,points[3].y);
     p.lineTo(points[2].x,points[2].y);
     p.closePath();
-    nodeData.forEach(node => {
-      console.log(node);
-    })
     return p;
 }
 function composeAxis(treeInfo, figureInfo){
     let minimal = treeInfo.minimal;
     let maximal = treeInfo.maximal;
     let maxTime = treeInfo.maxTime;
-    // let nodeCount = treeInfo.nodeCount;
     let width = figureInfo.width;
     let height = figureInfo.height;
 
@@ -40,5 +30,34 @@ function composeAxis(treeInfo, figureInfo){
     let yAxis = d3.axisLeft().scale(yScale);
 
     return {"xAxis":xAxis, "yAxis": yAxis};
+
+}
+
+function dataToCoordinates(treeInfo, figureInfo, nodeData){
+    let minimal = treeInfo.minimal;
+    let maximal = treeInfo.maximal;
+    let maxTime = treeInfo.maxTime;
+    let width = figureInfo.width;
+    let height = figureInfo.height;
+
+    let yRange = maximal - minimal;
+    let xRange = maxTime;
+
+    let yInterval = height / yRange;
+    let xInterval = width / xRange;
+
+    let sheetData = {};
+
+    nodeData.forEach(node => {
+        let points = []
+        points.push({"y": (maximal - node.step_back.unrotated_y) * yInterval , "x": node.step_back.unrotated_t * xInterval});
+        points.push({"y":(maximal - node.step_back.unrotated_y) * yInterval, "x":maxTime * xInterval});
+        points.push({"y": (maximal - node.minimal) * yInterval, "x":maxTime * xInterval});
+        points.push({"y": (maximal - node.minimal) * yInterval, "x":node.minimal_time * xInterval})
+        sheetData[node.node_id] = points;
+    })
+    console.log(sheetData);
+    console.log(treeInfo);
+    return sheetData;
 
 }

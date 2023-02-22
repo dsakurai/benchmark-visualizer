@@ -37,7 +37,6 @@ export default {
         this.reebData = response.data;
         this.loadInitialGraph();
         let {treeInfo, nodeInfo} =  DataUtils.parseReebData(response.data);
-        console.log(nodeInfo);
 
         let {xAxis, yAxis} = GraphUtils.composeAxis(treeInfo, {"width": this.figureWidth,"height": this.figureHeight});
 
@@ -45,7 +44,7 @@ export default {
         let xAxisTranslate = this.figureWidth / 2 + 10;
         this.svg.append("g").attr("transform", "translate(50, 10)").call(yAxis);
         this.svg.append("g").attr("transform", "translate(50, " + xAxisTranslate + ")").call(xAxis);
-        let sheet = GraphUtils.composeSheet(nodeInfo);
+        let sheet = GraphUtils.composeSheet(treeInfo, {"width": this.figureWidth,"height": this.figureHeight},nodeInfo);
         this.svg.append("path").attr("d",sheet).style("fill", "orange").style("stroke", "black");
       })
     },
