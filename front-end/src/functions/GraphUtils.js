@@ -1,21 +1,25 @@
 import * as d3 from "d3";
 
 export default {
-    composeSheet: composeSheets,
+    composeSheets,
     composeAxis,
 }
 
 function composeSheets(treeInfo, figureInfo, nodeData){
-    dataToCoordinates(treeInfo, figureInfo, nodeData);
+    let sheetsData = dataToCoordinates(treeInfo, figureInfo, nodeData);
 
-    let points = [{x: 100, y: 100}, {x: 500, y: 100}, {x: 125, y: 150}, {x: 375, y: 150}];
-    let p = d3.path();
-    p.moveTo(points[0].x,points[0].y);
-    p.lineTo(points[1].x,points[1].y);
-    p.lineTo(points[3].x,points[3].y);
-    p.lineTo(points[2].x,points[2].y);
-    p.closePath();
-    return p;
+    let sheets = {}
+    for (let node_id in sheetsData){
+        let p = d3.path();
+        let points = sheetsData[node_id]
+        p.moveTo(points[0].x,points[0].y);
+        p.lineTo(points[1].x,points[1].y);
+        p.lineTo(points[2].x,points[2].y);
+        p.lineTo(points[3].x,points[3].y);
+        p.closePath();
+        sheets[node_id] = p;
+    }
+    return sheets;
 }
 function composeAxis(treeInfo, figureInfo){
     let minimal = treeInfo.minimal;
@@ -49,6 +53,14 @@ function dataToCoordinates(treeInfo, figureInfo, nodeData){
     let sheetData = {};
 
     nodeData.forEach(node => {
+        console.log(node.node_id);
+        console.log(node.step_back.unrotated_y);
+        console.log(maximal);
+        console.log(minimal);
+        console.log(node.minimal_time);
+        console.log(node.minimal);
+        console.log(maxTime)
+        console.log("************************")
         let points = []
         points.push({"y": (maximal - node.step_back.unrotated_y) * yInterval , "x": node.step_back.unrotated_t * xInterval});
         points.push({"y":(maximal - node.step_back.unrotated_y) * yInterval, "x":maxTime * xInterval});
@@ -57,7 +69,6 @@ function dataToCoordinates(treeInfo, figureInfo, nodeData){
         sheetData[node.node_id] = points;
     })
     console.log(sheetData);
-    console.log(treeInfo);
     return sheetData;
 
 }
