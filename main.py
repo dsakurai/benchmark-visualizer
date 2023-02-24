@@ -79,14 +79,14 @@ def reeb_space_info():
             minimal = node_minimal
         central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
         step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
-        node_info.append({"node_id": node_id, "symbols": symbols, "minimal": node_minimal,
+        node_info.append({"node_id": node_id, "symbols": symbols, "minimal": -1 if symbols == [] else node_minimal,
                           "minimal_time": minimal_time,
                           "central_coordinates": central_coordinates.tolist(),
                           "step_back": {"t": step_back.t, "y": step_back.y, "unrotated_t": step_back.unrotated_value[0],
                                         "unrotated_y": step_back.unrotated_value[1]}})
         node_count += 1
 
-    return JSONResponse({"nodeInfo":node_info, "treeInfo":{"nodeCount":node_count, "maxTime":max_t,"minimal":minimal,"maximal":maximal}})
+    return JSONResponse({"nodeInfo":node_info, "treeInfo":{"nodeCount":node_count, "maxTime":max_t + 1,"minimal":minimal,"maximal":maximal}})
 
 
 @app.get("/api/demo_data")
@@ -101,7 +101,7 @@ def demo_data():
         sequence_dict[node["id"]]["label"] = (
             f"Node ID: {node['id']},  "
             f"Symbol: {node['symbol']},"
-            f"Minimal: {node['minima']}"
+            f"Minimum: {node['minima']}"
         )
     link_map = {}
     for link in algs.compute_links(demo_tree):
@@ -117,7 +117,7 @@ def demo_data():
         "tree": [
             {
                 "id": 0,
-                f"label": f"Root,  ID: 0, minima: -1.0",
+                f"label": f"Root,  ID: 0, Minimum: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),

@@ -39,6 +39,7 @@ function composeAxis(treeInfo, figureInfo){
 
 function dataToCoordinates(treeInfo, figureInfo, nodeData){
     let minimal = treeInfo.minimal;
+    // Maximal = -1
     let maximal = treeInfo.maximal;
     let maxTime = treeInfo.maxTime;
     let width = figureInfo.width;
@@ -47,19 +48,19 @@ function dataToCoordinates(treeInfo, figureInfo, nodeData){
     let yRange = maximal - minimal;
     let xRange = maxTime;
 
-    let yInterval = height / yRange;
+
+    let yInterval = height / yRange / 2;
     let xInterval = width / xRange;
+
+    console.log(yRange);
+    console.log(yInterval);
 
     let sheetData = {};
 
     nodeData.forEach(node => {
-        console.log(node.node_id);
         console.log(node.step_back.unrotated_y);
-        console.log(maximal);
-        console.log(minimal);
-        console.log(node.minimal_time);
         console.log(node.minimal);
-        console.log(maxTime)
+        console.log(node);
         console.log("************************")
         let points = []
         points.push({"y": (maximal - node.step_back.unrotated_y) * yInterval , "x": node.step_back.unrotated_t * xInterval});
@@ -68,7 +69,6 @@ function dataToCoordinates(treeInfo, figureInfo, nodeData){
         points.push({"y": (maximal - node.minimal) * yInterval, "x":node.minimal_time * xInterval})
         sheetData[node.node_id] = points;
     })
-    console.log(sheetData);
     return sheetData;
 
 }
