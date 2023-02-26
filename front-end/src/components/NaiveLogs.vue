@@ -153,6 +153,8 @@ export default {
         },
         getNaiveLogData() {
             axios.get("/api/demo_data").then(response => {
+              console.log("Logging Response!!!");
+              console.log(response.data);
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;

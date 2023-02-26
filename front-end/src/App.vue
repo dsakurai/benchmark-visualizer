@@ -25,7 +25,7 @@
         <el-main>
 <!--            <D3Tree v-if="d3TreeActive"></D3Tree>-->
 <!--            <D3ForceTree v-else></D3ForceTree>-->
-          <div v-if="!d3TreeActive"><NaiveLogs></NaiveLogs></div>
+          <div v-if="d3TreeActive"><NaiveLogs></NaiveLogs></div>
           <div v-else><ReebSpace></ReebSpace></div>
         </el-main>
     </el-container>
