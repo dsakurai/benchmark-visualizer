@@ -3,10 +3,34 @@ import * as d3 from "d3";
 export default {
     composeSheets,
     composeAxis,
+    dataToCoordinates,
 }
 
 function composeSheets(treeInfo, figureInfo, nodeData){
-    let sheetsData = dataToCoordinates(treeInfo, figureInfo, nodeData);
+    let minimal = treeInfo.minimal;
+    // Maximal = -1
+    let maximal = treeInfo.maximal;
+    let maxTime = treeInfo.maxTime;
+    let width = figureInfo.width;
+    let height = figureInfo.height;
+
+    let yRange = maximal - minimal;
+    let xRange = maxTime;
+
+
+    let yInterval = height / yRange / 2;
+    let xInterval = width / xRange;
+
+    let sheetsData = {};
+
+    nodeData.forEach(node => {
+        let points = []
+        points.push({"y": (maximal - node.step_back.unrotated_y) * yInterval , "x": node.step_back.unrotated_t * xInterval});
+        points.push({"y":(maximal - node.step_back.unrotated_y) * yInterval, "x":maxTime * xInterval});
+        points.push({"y": (maximal - node.minimal) * yInterval, "x":maxTime * xInterval});
+        points.push({"y": (maximal - node.minimal) * yInterval, "x":node.minimal_time * xInterval})
+        sheetsData[node.node_id] = points;
+    })
 
     let sheets = {}
     for (let node_id in sheetsData){
@@ -36,8 +60,7 @@ function composeAxis(treeInfo, figureInfo){
     return {"xAxis":xAxis, "yAxis": yAxis};
 
 }
-
-function dataToCoordinates(treeInfo, figureInfo, nodeData){
+function dataToCoordinates(treeInfo, figureInfo, solverData){
     let minimal = treeInfo.minimal;
     // Maximal = -1
     let maximal = treeInfo.maximal;
@@ -52,23 +75,12 @@ function dataToCoordinates(treeInfo, figureInfo, nodeData){
     let yInterval = height / yRange / 2;
     let xInterval = width / xRange;
 
-    console.log(yRange);
-    console.log(yInterval);
+    let coordinates = [];
 
-    let sheetData = {};
-
-    nodeData.forEach(node => {
-        console.log(node.step_back.unrotated_y);
-        console.log(node.minimal);
-        console.log(node);
-        console.log("************************")
-        let points = []
-        points.push({"y": (maximal - node.step_back.unrotated_y) * yInterval , "x": node.step_back.unrotated_t * xInterval});
-        points.push({"y":(maximal - node.step_back.unrotated_y) * yInterval, "x":maxTime * xInterval});
-        points.push({"y": (maximal - node.minimal) * yInterval, "x":maxTime * xInterval});
-        points.push({"y": (maximal - node.minimal) * yInterval, "x":node.minimal_time * xInterval})
-        sheetData[node.node_id] = points;
+    solverData.forEach(dataPoint => {
+        let x = dataPoint.t1 * xInterval;
+        let y = (maximal - dataPoint.y_org) * yInterval;
+        coordinates.push({"x":x, "y":y});
     })
-    return sheetData;
-
+    return coordinates;
 }

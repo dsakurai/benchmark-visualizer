@@ -43,6 +43,7 @@
                     </el-col>
                 </el-row>
             </el-card>
+            <ReebSpace :solver-data="filteredSolverData"></ReebSpace>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
                   <div class="tree-node">
@@ -54,11 +55,9 @@
                       <div class="progress-bar">
                       <el-progress :stroke-width="15" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))" style="width:600px;"><span style="width: 10px" v-text="locatedMinima[data.id].toFixed(2)"> </span></el-progress>
                       </div>
-
                   </div>
                 </template>
             </el-tree-v2>
-            <ReebSpace></ReebSpace>
         </el-main>
     </el-container>
 </template>
@@ -153,8 +152,6 @@ export default {
         },
         getNaiveLogData() {
             axios.get("/api/demo_data").then(response => {
-              console.log("Logging Response!!!");
-              console.log(response.data);
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
