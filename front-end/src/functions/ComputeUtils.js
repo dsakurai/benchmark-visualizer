@@ -1,6 +1,7 @@
 export default {
     computeElapsedMinimal,
     computeNodeCounts,
+    rotateValues,
 }
 
 
@@ -39,4 +40,13 @@ function computeNodeCounts(filteredData, allIDs){
         }
     }
     return nodeCounts;
+}
+
+function rotateValues(x,y){
+    let radians = (Math.PI / 180) * 45,
+        cos = Math.cos(radians),
+        sin = Math.sin(radians),
+        nx = (cos * (x)) + (sin * (y)),
+        ny = (cos * (y)) - (sin * (x));
+    return [nx, ny];
 }
