@@ -43,7 +43,10 @@
                     </el-col>
                 </el-row>
             </el-card>
-            <ReebSpace :solver-data="filteredSolverData"></ReebSpace>
+            <el-row>
+                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>
+            </el-row>
+            <el-row>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
                   <div class="tree-node">
@@ -58,6 +61,7 @@
                   </div>
                 </template>
             </el-tree-v2>
+        </el-row>
         </el-main>
     </el-container>
 </template>

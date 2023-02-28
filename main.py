@@ -1,18 +1,16 @@
-import time
-from multiprocessing.connection import Listener
 from typing import Union
 
-from fastapi import FastAPI, WebSocket
-from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
+from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import sample_file_path, solver_info
-from utils import file_utils
 from custom_benchmark_problems.diamon_problem.core import algs
-from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from custom_benchmark_problems.diamon_problem.core import evaluation
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from utils import file_utils
 
 app = FastAPI()
 
@@ -79,21 +77,40 @@ def reeb_space_info():
             minimal = node_minimal
         central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
         step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
-        node_info.append({"node_id": node_id, "symbols": symbols, "minimal": -1 if symbols == [] else node_minimal,
-                          "minimal_time": minimal_time,
-                          "central_coordinates": central_coordinates.tolist(),
-                          "step_back": {"t": step_back.t, "y": step_back.y, "unrotated_t": step_back.unrotated_value[0],
-                                        "unrotated_y": step_back.unrotated_value[1]}})
+        node_info.append(
+            {
+                "node_id": node_id,
+                "symbols": symbols,
+                "minimal": -1 if symbols == [] else node_minimal,
+                "minimal_time": minimal_time,
+                "central_coordinates": central_coordinates.tolist(),
+                "step_back": {
+                    "t": step_back.t,
+                    "y": step_back.y,
+                    "unrotated_t": step_back.unrotated_value[0],
+                    "unrotated_y": step_back.unrotated_value[1],
+                },
+            }
+        )
         node_count += 1
 
-    return JSONResponse({"nodeInfo":node_info, "treeInfo":{"nodeCount":node_count, "maxTime":max_t + 1,"minimal":minimal,"maximal":maximal}})
+    return JSONResponse(
+        {
+            "nodeInfo": node_info,
+            "treeInfo": {
+                "nodeCount": node_count,
+                "maxTime": max_t + 1,
+                "minimal": minimal,
+                "maximal": maximal,
+                "minTime": 0
+            },
+        }
+    )
 
 
 @app.get("/api/demo_data")
 def demo_data():
-    demo_log = file_utils.load_evaluation_log(
-        "demo_log_latest.csv"
-    )
+    demo_log = file_utils.load_evaluation_log("demo_log_latest.csv")
     demo_tree = file_utils.read_json_tree("sample.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:

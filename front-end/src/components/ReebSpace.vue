@@ -1,13 +1,17 @@
 <template>
-    <el-container>
-        <el-main>
+    <el-row>
+        <el-col :span="22">
+            <svg id="reebSpace"></svg>
+        </el-col>
+        <el-col :span="2">
             <el-row>
-                <el-col :span="12">
-                    <svg id="reebSpace"></svg>
-                </el-col>
+                <el-switch v-model="rotate" active-text="Rotate" inactive-text="Normal" @change="rotateGraph"/>
             </el-row>
-        </el-main>
-    </el-container>
+            <el-row>
+                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear"/>
+            </el-row>
+        </el-col>
+    </el-row>
 </template>
 
 <script>
@@ -29,12 +33,16 @@ export default {
     data() {
         return {
             reebData: [],
-            figureWidth: 800,
-            figureHeight: 800,
+            figureInfo: {
+                "width": 800,
+                "height": 800,
+            },
             promisedReebData: '',
             treeInfo: '',
             nodeInfo: '',
-            svg:'',
+            svg: '',
+            rotate: false,
+            logScale: false,
         }
     },
     mounted() {
@@ -64,31 +72,47 @@ export default {
                 this.treeInfo = reebData.treeInfo;
                 this.nodeInfo = reebData.nodeInfo;
 
-                let {xAxis, yAxis} = GraphUtils.composeAxis(this.treeInfo, {
-                    "width": this.figureWidth,
-                    "height": this.figureHeight
-                });
 
-                this.svg = d3.select("#reebSpace").attr("width", this.figureWidth).attr("height", this.figureHeight);
-                let xAxisTranslate = this.figureWidth / 2 + 10;
+
+                let {xAxis, yAxis} = GraphUtils.composeAxis(this.treeInfo, this.figureInfo, this.rotate);
+
+                this.svg = d3.select("#reebSpace").attr("width", this.figureInfo.width).attr("height", this.figureInfo.height);
+                let xAxisTranslate = this.figureInfo.width / 2 + 10;
                 this.svg.append("g").attr("transform", "translate(50, 10)").call(yAxis);
                 this.svg.append("g").attr("transform", "translate(50, " + xAxisTranslate + ")").call(xAxis);
-                let sheets = GraphUtils.composeSheets(this.treeInfo, {
-                    "width": this.figureWidth,
-                    "height": this.figureHeight
-                }, this.nodeInfo);
+                let sheets = GraphUtils.composeSheets(this.treeInfo, this.figureInfo, this.nodeInfo, this.rotate);
 
                 for (let node_id in sheets) {
                     this.svg.append("path")
-                        .attr("id",node_id)
+                        .attr("id", node_id)
                         .attr("d", sheets[node_id])
-                        .attr("transform", "translate(100,0) scale(0.5,0.5) rotate(45)")
+                        .attr("transform", "translate(100,10)")
                         .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
                         .style("stroke", "black")
                         .style("opacity", 0.5);
                 }
 
             })
+        },
+        rotateGraph() {
+            d3.selectAll("svg > *").remove();
+            let sheetsCoordinates = GraphUtils.computeSheetsCoordinates(this.treeInfo, this.figureInfo, this.nodeInfo, this.rotate);
+            let viewBox = GraphUtils.sheetsDataToBox(sheetsCoordinates);
+            let {xAxis, yAxis} = GraphUtils.composeAxisBySheets(this.figureInfo, viewBox);
+            let sheets = GraphUtils.composeSheetsV2(viewBox,this.figureInfo,sheetsCoordinates);
+            this.svg = d3.select("#reebSpace").attr("width", this.figureInfo.width).attr("height", this.figureInfo.height);
+            let xAxisTranslate = this.figureInfo.width / 2 + 10;
+            this.svg.append("g").attr("transform", "translate(50, 10)").call(yAxis);
+            this.svg.append("g").attr("transform", "translate(50, " + xAxisTranslate + ")").call(xAxis);
+            for (let node_id in sheets) {
+                this.svg.append("path")
+                    .attr("id", node_id)
+                    .attr("d", sheets[node_id])
+                    .attr("transform", "translate(0,10)")
+                    .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
+                    .style("stroke", "black")
+                    .style("opacity", 0.5);
+            }
         },
         drawAxis() {
 
