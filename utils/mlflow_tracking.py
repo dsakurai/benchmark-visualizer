@@ -93,7 +93,6 @@ class Tracking:
         )
 
     def send_data(self):
-        # TODO: Use CSV format
         self.step_metrics = np.array(self.step_metrics)
         step_metrics_df = pd.DataFrame(self.step_metrics, columns=self.headers)
         file_name = f"{self.experiment_name}_{datetime.datetime.now().isoformat().replace(':', '-')}.csv"
