@@ -5,160 +5,89 @@ import ComputeUtils from "@/functions/ComputeUtils";
 export default {
     composeSheets,
     composeAxis,
-    dataToCoordinates,
     computeSheetsCoordinates,
     sheetsDataToBox,
-    composeAxisBySheets,
-    composeSheetsV2,
+    dataToCoordinates,
     composeScales,
+    marginConvention,
+    sheetCoordinatesToScale,
 }
 
-function computeSheetsCoordinates(treeInfo, figureInfo, nodeData, rotate){
+
+function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
+    let sheetsScale = {}
+    for (let nodeId in sheetsData) {
+        let points = [];
+        sheetsData[nodeId].forEach(point => {
+            if (logScale && point.y === 0) {
+                point.y = -0.1;
+            }
+            points.push({"x": xScale(point.x), "y": yScale(point.y)});
+        })
+        sheetsScale[nodeId] = points;
+    }
+    return sheetsScale;
+}
+
+function composeScales(treeInfo, figureInfo, logScale) {
+    let [minimal, maximal, minTime, maxTime] = DataUtils.parseTreeData(treeInfo);
+    console.log(maximal);
+    let xScale, yScale;
+    if (logScale) {
+        // xScale = d3.scaleLog().domain([1, maxTime]).range([0, figureInfo.width]);
+        xScale = d3.scaleLinear().domain([minTime, maxTime]).range([0, figureInfo.width]);
+        yScale = d3.scaleLog().domain([minimal, -0.1]).range([figureInfo.height, 0]);
+    } else {
+        xScale = d3.scaleLinear().domain([minTime, maxTime]).range([0, figureInfo.width]);
+        yScale = d3.scaleLinear().domain([minimal, 0]).range([figureInfo.height, 0]);
+    }
+
+    return [xScale, yScale];
+}
+
+function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
     let maxTime = treeInfo.maxTime;
     let sheetsData = {};
     nodeData.forEach(node => {
         let points = [];
-        let [x,y] = rotate ? ComputeUtils.rotateValues(node.step_back.unrotated_t,node.step_back.unrotated_y) :[node.step_back.unrotated_t,node.step_back.unrotated_y];
-        points.push({"x":x,"y":y});
-        [x,y] = rotate ? ComputeUtils.rotateValues(maxTime, node.step_back.unrotated_y) :[maxTime, node.step_back.unrotated_y];
-        points.push({"x":x,"y":y});
-        [x,y] = rotate ? ComputeUtils.rotateValues(maxTime,node.minimal) :[maxTime,node.minimal];
-        points.push({"x":x,"y":y});
-        [x,y] = rotate ? ComputeUtils.rotateValues(node.minimal_time,node.minimal) :[node.minimal_time,node.minimal];
-        points.push({"x":x,"y":y});
+        let [x, y] = rotate ? ComputeUtils.rotateValues(node.step_back.unrotated_t, node.step_back.unrotated_y) : [node.step_back.unrotated_t, node.step_back.unrotated_y];
+        points.push({"x": x, "y": y});
+        [x, y] = rotate ? ComputeUtils.rotateValues(maxTime, node.step_back.unrotated_y) : [maxTime, node.step_back.unrotated_y];
+        points.push({"x": x, "y": y});
+        [x, y] = rotate ? ComputeUtils.rotateValues(maxTime, node.minimal) : [maxTime, node.minimal];
+        points.push({"x": x, "y": y});
+        [x, y] = rotate ? ComputeUtils.rotateValues(node.minimal_time, node.minimal) : [node.minimal_time, node.minimal];
+        points.push({"x": x, "y": y});
         sheetsData[node.node_id] = points;
     });
     return sheetsData;
 }
 
 
-function composeSheetsV2(viewBox, figureInfo, sheetCoordinates) {
-    let [minimal, maximal, minTime, maxTime] = [viewBox.minimal, viewBox.maximal, viewBox.minTime, viewBox.maxTime];
-    console.log(viewBox);
-
-    let width = figureInfo.width;
-    let height = figureInfo.height;
-
-    let yRange = maximal - minimal;
-    let xRange = maxTime - minTime;
-
-    let yInterval = height / yRange / 2;
-    let xInterval = width / xRange;
-
-    let sheetsData = {};
-
-    for (let nodeId in sheetCoordinates){
-        let points = []
-        sheetCoordinates[nodeId].forEach(point => {
-            points.push({"x": (point.x - minTime) * xInterval,"y": (maximal - point.y) * yInterval});
-        })
-        sheetsData[nodeId] = points;
-    }
-
-    let sheets = {};
+function sheetsDataToBox(sheetsData) {
+    let [minTime, maxTime] = [0, 0];
+    let [maximal, minimal] = [0, -1];
     for (let node_id in sheetsData) {
-        let p = d3.path();
-        let points = sheetsData[node_id]
-        p.moveTo(points[0].x, points[0].y);
-        p.lineTo(points[1].x, points[1].y);
-        p.lineTo(points[2].x, points[2].y);
-        p.lineTo(points[3].x, points[3].y);
-        p.closePath();
-        sheets[node_id] = p;
-    }
-    return sheets;
-}
-
-
-function sheetsDataToBox(sheetsData){
-    console.log(sheetsData);
-    let [minTime,maxTime] = [0,0];
-    let [maximal,minimal] = [-1,-1];
-    for (let node_id in sheetsData){
         let points = sheetsData[node_id];
         points.forEach(point => {
-            if (point.x < minTime){
+            if (point.x < minTime) {
                 minTime = point.x;
             }
-            if (point.x > maxTime){
+            if (point.x > maxTime) {
                 maxTime = point.x;
             }
-            if (point.y > maximal){
+            if (point.y > maximal) {
                 maximal = point.y;
             }
-            if (point.y < minimal){
+            if (point.y < minimal) {
                 minimal = point.y;
             }
         })
     }
-    return {"minimal":minimal,"maximal": maximal, "minTime": minTime, "maxTime":maxTime}
+    return {"minimal": minimal, "maximal": maximal, "minTime": minTime, "maxTime": maxTime}
 }
 
-function composeAxisBySheets(figureInfo, viewBox){
-
-    let width = figureInfo.width;
-    let height = figureInfo.height;
-
-    let xScale = d3.scaleLinear().domain([viewBox.minTime, viewBox.maxTime]).range([0, width - 100]);
-    let yScale = d3.scaleLinear().domain([viewBox.minimal, viewBox.maximal]).range([height / 2, 0]);
-    let xAxis = d3.axisBottom().scale(xScale);
-    let yAxis = d3.axisLeft().scale(yScale);
-
-    return {"xAxis": xAxis, "yAxis": yAxis};
-}
-
-
-/**
- *
- * @param {dictionary} treeInfo
- * @param {dictionary} figureInfo
- * @param {Array} nodeData
- * @param {Boolean} rotate
- * @returns {{}}
- */
-function composeSheets(treeInfo, figureInfo, nodeData, rotate) {
-    let [minimal, maximal, minTime, maxTime] = DataUtils.parseTreeData(treeInfo, rotate);
-    let width = figureInfo.width;
-    let height = figureInfo.height;
-
-    let yRange = maximal - minimal;
-    let xRange = maxTime - minTime;
-
-    let yInterval = height / yRange / 2;
-    let xInterval = width / xRange;
-
-    let sheetsData = {};
-
-    nodeData.forEach(node => {
-        let points = [];
-        if (rotate) {
-            let [x,y] = ComputeUtils.rotateValues(node.step_back.unrotated_t,node.step_back.unrotated_y)
-            points.push({"x": (x-minTime) * xInterval, "y": (maximal - y) * yInterval});
-
-
-            [x,y] = ComputeUtils.rotateValues(maxTime, node.step_back.unrotated_y);
-            points.push({"x": (x-minTime) * xInterval, "y":  (maximal - y) * yInterval});
-
-
-            [x,y] = ComputeUtils.rotateValues(maxTime,node.minimal);
-            points.push({"x": (x-minTime) * xInterval, "y":  (maximal - y) * yInterval});
-
-
-            [x,y] = ComputeUtils.rotateValues(node.minimal_time,node.minimal);
-            points.push({"x": (x-minTime) * xInterval, "y":  (maximal - y) * yInterval});
-        }
-        else{
-            points.push({
-                "y": (maximal - node.step_back.unrotated_y) * yInterval,
-                "x": node.step_back.unrotated_t * xInterval
-            });
-            points.push({"y": (maximal - node.step_back.unrotated_y) * yInterval, "x": maxTime * xInterval});
-            points.push({"y": (maximal - node.minimal) * yInterval, "x": maxTime * xInterval});
-            points.push({"y": (maximal - node.minimal) * yInterval, "x": node.minimal_time * xInterval})
-        }
-        sheetsData[node.node_id] = points;
-    })
-
+function composeSheets(sheetsData) {
     let sheets = {};
     for (let node_id in sheetsData) {
         let p = d3.path();
@@ -174,51 +103,31 @@ function composeSheets(treeInfo, figureInfo, nodeData, rotate) {
 }
 
 
-function composeScales(treeInfo, figureInfo, rotate, ){
-    let [minimal, maximal, minTime, maxTime] = DataUtils.parseTreeData(treeInfo, rotate);
-
-    let width = figureInfo.width;
-    let height = figureInfo.height;
-
-    let xScale = d3.scaleLog().domain([minTime, maxTime]).range([0, width - 100]);
-    let yScale = d3.scaleLog().domain([minimal, maximal]).range([height / 2, 0]);
-    return {"xScale": xScale, "yScale": yScale}
-}
-
-function composeAxis(treeInfo, figureInfo, rotate) {
-    let [minimal, maximal, minTime, maxTime] = DataUtils.parseTreeData(treeInfo, rotate);
-
-    let width = figureInfo.width;
-    let height = figureInfo.height;
-
-    let xScale = d3.scaleLog().domain([minTime, maxTime]).range([0, width - 100]);
-    let yScale = d3.scaleLog().domain([minimal, maximal]).range([height / 2, 0]);
+function composeAxis(xScale, yScale) {
     let xAxis = d3.axisBottom().scale(xScale);
     let yAxis = d3.axisLeft().scale(yScale);
-
     return {"xAxis": xAxis, "yAxis": yAxis};
 }
 
-function dataToCoordinates(treeInfo, figureInfo, solverData) {
-    let minimal = treeInfo.minimal;
-    // Maximal = -1
-    let maximal = treeInfo.maximal;
-    let maxTime = treeInfo.maxTime;
-    let width = figureInfo.width;
-    let height = figureInfo.height;
+function marginConvention(figureInfo, margin) {
+    let innerWidth = figureInfo.width - margin.left - margin.right;
+    let innerHeight = figureInfo.height - margin.top - margin.bottom;
+    return [innerWidth, innerHeight]
+}
 
-    let yRange = maximal - minimal;
-    let xRange = maxTime;
-
-
-    let yInterval = height / yRange / 2;
-    let xInterval = width / xRange;
-
+function dataToCoordinates(solverData, xScale, yScale, rotate) {
     let coordinates = [];
 
     solverData.forEach(dataPoint => {
-        let x = dataPoint.t1 * xInterval;
-        let y = (maximal - dataPoint.y_org) * yInterval;
+        let x,y;
+        if (rotate) {
+            x = xScale(dataPoint.y1);
+            y = yScale(dataPoint.y2);
+        } else {
+            x = xScale(dataPoint.t);
+            y = yScale(dataPoint.y_org);
+
+        }
         coordinates.push({"x": x, "y": y});
     })
     return coordinates;
