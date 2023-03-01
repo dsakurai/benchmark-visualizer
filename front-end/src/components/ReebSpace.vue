@@ -71,9 +71,6 @@ export default {
                 let reebData = DataUtils.parseReebData(response.data);
                 this.treeInfo = reebData.treeInfo;
                 this.nodeInfo = reebData.nodeInfo;
-
-
-
                 let {xAxis, yAxis} = GraphUtils.composeAxis(this.treeInfo, this.figureInfo, this.rotate);
 
                 this.svg = d3.select("#reebSpace").attr("width", this.figureInfo.width).attr("height", this.figureInfo.height);
@@ -91,7 +88,6 @@ export default {
                         .style("stroke", "black")
                         .style("opacity", 0.5);
                 }
-
             })
         },
         rotateGraph() {
