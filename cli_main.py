@@ -2,8 +2,10 @@ import argparse
 import math
 
 from jmetal.algorithm.multiobjective.gde3 import GDE3
+from jmetal.algorithm.multiobjective.nsgaii import NSGAII
 from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByEvaluations
+from jmetal.operator import SBXCrossover, PolynomialMutation
 
 from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
@@ -36,11 +38,21 @@ def cli_main(opts):
 
     # GDE3 Settings
     max_evaluations = 25000
+
     algorithm = GDE3(
         problem=problem,
         population_size=100,
         cr=0.5,
         f=0.5,
+        termination_criterion=StoppingByEvaluations(max_evaluations),
+    )
+
+    algorithm = NSGAII(
+        problem=problem,
+        population_size=100,
+        offspring_population_size=100,
+        mutation=PolynomialMutation(probability=1.0 / problem.number_of_variables, distribution_index=20),
+        crossover=SBXCrossover(probability=1.0, distribution_index=20),
         termination_criterion=StoppingByEvaluations(max_evaluations),
     )
 

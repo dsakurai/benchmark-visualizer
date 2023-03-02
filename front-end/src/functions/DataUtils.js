@@ -1,5 +1,4 @@
 import axios from "axios";
-import ComputeUtils from "@/functions/ComputeUtils";
 
 export default {
     getDemoData,
@@ -31,26 +30,11 @@ function getDemoData(){
     })
 }
 
-/**
- *
- * @param {Dictionary} treeInfo
- * @param {Boolean} rotate
- * @returns {{maxTime: *, minimal: *, minTime: *, maximal: *}}
- */
-function parseTreeData(treeInfo, rotate){
+function parseTreeData(treeInfo){
     let minimal = treeInfo.minimal;
     let maximal = treeInfo.maximal;
     let minTime = treeInfo.minTime;
     let maxTime = treeInfo.maxTime;
-
-    if (rotate){
-        minimal = ComputeUtils.rotateValues(maxTime,minimal)[1];
-        maxTime = ComputeUtils.rotateValues(maxTime,0)[0];
-        let temp = minTime;
-        minTime = ComputeUtils.rotateValues(minTime,minimal)[0];
-        maximal = ComputeUtils.rotateValues(temp,maximal)[1];
-    }
-
 
     return [minimal,maximal,minTime,maxTime]
 }
