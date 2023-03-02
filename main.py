@@ -116,7 +116,7 @@ def demo_data(solver: str):
         demo_log = file_utils.load_evaluation_log("demo_log_latest.csv")
     else:
         demo_log = file_utils.load_evaluation_log("test_runx_2023-03-02T10-30-42.503866.csv")
-    demo_tree = file_utils.read_json_tree("sample.json")
+    demo_tree = file_utils.read_json_tree("experiment_trees/sample.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node

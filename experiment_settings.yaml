@@ -1,0 +1,3 @@
+- experiment_name: test_v1
+  tree_file: depth
+  algorithm: GDE3
