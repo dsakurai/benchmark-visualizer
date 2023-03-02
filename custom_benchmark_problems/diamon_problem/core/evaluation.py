@@ -4,11 +4,14 @@ from collections import namedtuple
 import numpy as np
 
 NodeInfo = namedtuple("NodeInfo", ["symbol", "minima", "name"])
+EvaluationResult = namedtuple(
+    "EvaluationResult", ["t", "y", "node_id", "diagonal_length", "unrotated_value"]
+)
 
 
 class BMP:
     def __init__(
-        self, sequence_info: list[dict], dim_space: int = 2, rotate: bool = True
+        self, sequence_info: list[dict], dim_space: int, rotate: bool = True
     ):
         self.sequence_info = sequence_info
         self.s_lengths = self.s_lengths(sequence_info)
@@ -20,7 +23,10 @@ class BMP:
         c, s = np.cos(theta), np.sin(theta)
         self.rotation_matrix = np.array(((c, -s), (s, c)))
 
-    def evaluate(self, solution_variables: np.ndarray) -> tuple:
+    def t_upper_bound(self) -> float:
+        return float(max(self.s_lengths)) + 2.0
+
+    def evaluate(self, solution_variables: np.ndarray) -> EvaluationResult:
         """Main evaluation function, solution space is defined when the problem is constructed
 
         Parameters
@@ -43,7 +49,13 @@ class BMP:
         y_org = y
         if self.rotate:
             t, y = np.matmul(np.array([t, y]), self.rotation_matrix)
-        return t, y, node_id, diagonal_length, [t_org, y_org]
+        return EvaluationResult(
+            t=t,
+            y=y,
+            node_id=node_id,
+            diagonal_length=diagonal_length,
+            unrotated_value=[t_org, y_org],
+        )
 
     def h_x(
         self,

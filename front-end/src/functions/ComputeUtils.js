@@ -1,6 +1,7 @@
 export default {
     computeElapsedMinimal,
     computeNodeCounts,
+    rotateValues,
 }
 
 
@@ -13,11 +14,11 @@ function computeElapsedMinimal(elapsedData, allIDs){
     for (let i=0;i<dataLength;i++){
         let key = elapsedData[i].eval_node_id;
         if (!(key in elapsedMinimal)){
-            elapsedMinimal[key] = elapsedData[i].y2;
+            elapsedMinimal[key] = elapsedData[i].y_org;
         }
         else{
-            if (elapsedMinimal[key] > elapsedData[i].y2){
-                elapsedMinimal[key] = elapsedData[i].y2
+            if (elapsedMinimal[key] > elapsedData[i].y_org){
+                elapsedMinimal[key] = elapsedData[i].y_org
             }
         }
     }
@@ -39,4 +40,13 @@ function computeNodeCounts(filteredData, allIDs){
         }
     }
     return nodeCounts;
+}
+
+function rotateValues(x,y){
+    let radians = (Math.PI / 180) * 45,
+        cos = Math.cos(radians),
+        sin = Math.sin(radians),
+        nx = (cos * (x)) + (sin * (y)),
+        ny = (cos * (y)) - (sin * (x));
+    return [nx, ny];
 }

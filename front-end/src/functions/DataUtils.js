@@ -2,6 +2,14 @@ import axios from "axios";
 
 export default {
     getDemoData,
+    parseReebData,
+    parseTreeData,
+}
+
+function parseReebData(reebData){
+    let nodeInfo = reebData.nodeInfo;
+    let treeInfo = reebData.treeInfo;
+    return {"nodeInfo":nodeInfo, "treeInfo":treeInfo}
 }
 
 function getDemoData(){
@@ -20,4 +28,13 @@ function getDemoData(){
         this.filteredSolverData = this.solverData;
         this.getStats();
     })
+}
+
+function parseTreeData(treeInfo){
+    let minimal = treeInfo.minimal;
+    let maximal = treeInfo.maximal;
+    let minTime = treeInfo.minTime;
+    let maxTime = treeInfo.maxTime;
+
+    return [minimal,maximal,minTime,maxTime]
 }

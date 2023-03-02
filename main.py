@@ -1,14 +1,16 @@
-from multiprocessing.connection import Listener
 from typing import Union
 
-from fastapi import FastAPI, WebSocket
-from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
+from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import sample_file_path, solver_info
-from utils import file_utils
 from custom_benchmark_problems.diamon_problem.core import algs
+from custom_benchmark_problems.diamon_problem.core import evaluation
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from utils import file_utils
 
 app = FastAPI()
 
@@ -23,30 +25,9 @@ app.add_middleware(
 )
 
 
-# address = ("localhost", 6000)  # family is deduced to be 'AF_INET'
-# listener = Listener(address, authkey=b"secret password")
-# conn = listener.accept()
-
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-# @app.websocket("/api/test_ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     cmd = await websocket.receive_text()
-#     if cmd == "run_program":
-#         pass
-#     else:
-#         counter = 0
-#         while True:
-#             msg = conn.recv()
-#             await websocket.send_text(f"Counting: {msg}")
-#             counter += 1
-#             if counter >= 1000:
-#                 await websocket.close()
 
 
 @app.get("/items/{item_id}")
@@ -70,16 +51,71 @@ def construct_problem(graph: dict):
     return graph
 
 
-@app.get("/api/density_filter")
-def density_filter(start_step: int, end_step: int):
-    pass
+@app.get("/api/reeb_space")
+def reeb_space_info():
+    tree = Tree(dim_space=2)
+    tree.from_json("sample.json")
+    sequence_info = tree.to_sequence()
+    bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=2)
+
+    node_info = []
+    max_t = 0
+    maximal = -1
+    minimal = -1
+    node_count = 0
+
+    for node in sequence_info:
+        node_id = node["name"]
+        symbols = node["attrs"]["symbol"]
+        node_minimal = node["minima"]
+        minimal_time = len(symbols) + 1
+        if minimal_time > max_t:
+            max_t = minimal_time
+        if maximal < node_minimal:
+            maximal = node_minimal
+        if minimal > node_minimal:
+            minimal = node_minimal
+        central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
+        step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
+        node_info.append(
+            {
+                "node_id": node_id,
+                "symbols": symbols,
+                "minimal": -1 if symbols == [] else node_minimal,
+                "minimal_time": minimal_time,
+                "central_coordinates": central_coordinates.tolist(),
+                "step_back": {
+                    "t": step_back.t,
+                    "y": step_back.y,
+                    "unrotated_t": step_back.unrotated_value[0],
+                    "unrotated_y": step_back.unrotated_value[1],
+                },
+            }
+        )
+        node_count += 1
+
+    return JSONResponse(
+        {
+            "nodeInfo": node_info,
+            "treeInfo": {
+                "nodeCount": node_count,
+                "maxTime": max_t + 1,
+                "minimal": minimal,
+                "maximal": maximal,
+                "minTime": 0
+            },
+        }
+    )
 
 
 @app.get("/api/demo_data")
-def demo_data():
-    demo_log = file_utils.load_evaluation_log(
-        "demo_log_latest.csv"
-    )
+def demo_data(solver: str):
+    # TODO: Demo purpose for 20230302
+    print(solver)
+    if solver == "GDE3":
+        demo_log = file_utils.load_evaluation_log("demo_log_latest.csv")
+    else:
+        demo_log = file_utils.load_evaluation_log("test_runx_2023-03-02T10-30-42.503866.csv")
     demo_tree = file_utils.read_json_tree("sample.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:
@@ -87,7 +123,7 @@ def demo_data():
         sequence_dict[node["id"]]["label"] = (
             f"Node ID: {node['id']},  "
             f"Symbol: {node['symbol']},"
-            f"Minimal: {node['minima']}"
+            f"Minimum: {node['minima']}"
         )
     link_map = {}
     for link in algs.compute_links(demo_tree):
@@ -103,7 +139,7 @@ def demo_data():
         "tree": [
             {
                 "id": 0,
-                f"label": f"Root,  ID: 0, minima: -1.0",
+                f"label": f"Root,  ID: 0, Minimum: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),

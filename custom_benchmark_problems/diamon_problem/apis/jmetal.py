@@ -28,12 +28,10 @@ class Diamond(FloatProblem):
 
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ["f(x)"]
-        # TODO: Known issue here, cause huge problem
-        # Exit code -1073741571 (0xC00000FD)
         self.lower_bound = dim_space * [-1.0]
         self.lower_bound.insert(0, 0.0)
         self.upper_bound = dim_space * [1.0]
-        self.upper_bound.insert(0, 10.0)
+        self.upper_bound.insert(0, self.problem.t_upper_bound())
         self.enable_tracking = enable_tracking
         if enable_tracking:
             assert experiment_name is not None, "Experiment name not set"
