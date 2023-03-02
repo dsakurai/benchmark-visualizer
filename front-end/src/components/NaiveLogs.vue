@@ -38,14 +38,21 @@
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
-                    <el-col :gutter="20" :span="8">
+                    <el-col :span="8">
                         <span>Population Size:</span> <el-input-number v-model="populationSize"></el-input-number>
+                    </el-col >
+                    <el-col :span="12">
+                        <el-select-v2
+                            v-model="solverType"
+                            :options="solverOptions"
+                            @change="getNaiveLogData"
+                        />
                     </el-col>
                 </el-row>
             </el-card>
-            <el-row>
-                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>
-            </el-row>
+<!--            <el-row>-->
+<!--                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>-->
+<!--            </el-row>-->
             <el-row>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
@@ -69,7 +76,7 @@
 <script>
 import axios from 'axios';
 import computeUtils from "@/functions/ComputeUtils";
-import ReebSpace from "@/components/ReebSpace.vue";
+// import ReebSpace from "@/components/ReebSpace.vue";
 
 export default {
     name: "NaiveLogs",
@@ -96,6 +103,10 @@ export default {
             lockRange: false,
             stepRange: 0,
             filterOffset: 0,
+            solverType: "GDE3",
+            solverOptions:[{
+                value:"GDE3",label:"GDE3"},{value: "NSGA-II",label: "NSGA-II"}
+            ],
             props: {
                 value: 'id',
                 label: 'label',
@@ -105,7 +116,7 @@ export default {
 
     },
     components:{
-        ReebSpace,
+        // ReebSpace,
     },
     created() {
         this.getNaiveLogData();
@@ -155,7 +166,7 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
-            axios.get("/api/demo_data").then(response => {
+            axios.get(`/api/demo_data?solver=${this.solverType}`).then(response => {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;

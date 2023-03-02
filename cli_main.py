@@ -79,6 +79,8 @@ def cli_main(opts):
 
 
 if __name__ == "__main__":
+    import time
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-f", "--file", type=str, help="Specify the input json file", required=True
@@ -86,3 +88,4 @@ if __name__ == "__main__":
     parser.add_argument("--dim", type=int, help="Dimension of the problem", default=2)
     parser.add_argument("--disable_tracking", action="store_false")
     cli_main(parser.parse_args())
+    print(time.time()-start_time)

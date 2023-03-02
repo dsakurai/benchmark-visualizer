@@ -11,7 +11,7 @@ EvaluationResult = namedtuple(
 
 class BMP:
     def __init__(
-        self, sequence_info: list[dict], dim_space: int = 2, rotate: bool = True
+        self, sequence_info: list[dict], dim_space: int, rotate: bool = True
     ):
         self.sequence_info = sequence_info
         self.s_lengths = self.s_lengths(sequence_info)
@@ -22,6 +22,9 @@ class BMP:
         theta = np.radians(45)
         c, s = np.cos(theta), np.sin(theta)
         self.rotation_matrix = np.array(((c, -s), (s, c)))
+
+    def t_upper_bound(self) -> float:
+        return float(max(self.s_lengths)) + 2.0
 
     def evaluate(self, solution_variables: np.ndarray) -> EvaluationResult:
         """Main evaluation function, solution space is defined when the problem is constructed
