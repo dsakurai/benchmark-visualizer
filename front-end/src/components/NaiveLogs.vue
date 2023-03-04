@@ -50,9 +50,9 @@
                     </el-col>
                 </el-row>
             </el-card>
-<!--            <el-row>-->
-<!--                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>-->
-<!--            </el-row>-->
+            <el-row>
+                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>
+            </el-row>
             <el-row>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
                 <template #default="{ node ,data}">
@@ -76,7 +76,7 @@
 <script>
 import axios from 'axios';
 import computeUtils from "@/functions/ComputeUtils";
-// import ReebSpace from "@/components/ReebSpace.vue";
+import ReebSpace from "@/components/ReebSpace.vue";
 
 export default {
     name: "NaiveLogs",
@@ -116,7 +116,7 @@ export default {
 
     },
     components:{
-        // ReebSpace,
+        ReebSpace,
     },
     created() {
         this.getNaiveLogData();
