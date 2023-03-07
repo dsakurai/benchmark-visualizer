@@ -1,5 +1,5 @@
 - experiment_name: test_v1
-  tree_file: depth.json
+  tree_file: sample.json
   dimension: 2
   algorithm: GDE3
   algorithm_parameters:
@@ -8,10 +8,10 @@
     f: 0.5
   termination_criterion:
     criterion_name: StoppingByTime
-    termination_parameter: 25000
+    termination_parameter: 100
 
 - experiment_name: test_v2
-  tree_file: depth.json
+  tree_file: sample.json
   dimension: 2
   algorithm: NSGAII
   algorithm_parameters:
@@ -27,10 +27,10 @@
       distribution_index: 20
   termination_criterion:
     criterion_name: StoppingByTime
-    termination_parameter: 25000
+    termination_parameter: 100
 
 - experiment_name: test_v3
-  tree_file: depth.json
+  tree_file: sample.json
   dimension: 2
   algorithm: MOEAD
   algorithm_parameters:
@@ -40,7 +40,7 @@
       probability: n_variables
       distribution_index: 20
     crossover:
-      crossover: DifferentialEvolutionCrossover(CR=1.0, F=0.5, K=0.5)
+      crossover: DifferentialEvolutionCrossover
       CR: 1.0
       F: 0.5
       K: 0.5
@@ -53,10 +53,10 @@
     weight_files_path: resources/MOEAD_weights
   termination_criterion:
     criterion_name: StoppingByTime
-    termination_parameter: 25000
+    termination_parameter: 100
 
 - experiment_name: test_v4
-  tree_file: depth.json
+  tree_file: sample.json
   dimension: 2
   algorithm: OMOPSO
   algorithm_parameters:
@@ -76,4 +76,4 @@
       maximum_size: 100
   termination_criterion:
     criterion_name: StoppingByTime
-    termination_parameter: 25000
+    termination_parameter: 100
