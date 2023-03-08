@@ -94,11 +94,12 @@ class MlflowTracker:
         ]
         file_name = (
             f"{algorithm}_"
-            f"{tree_file}_"
+            f"{tree_file.split('/')[1]}_" 
             f"{dimension}_"
             f"{termination_criterion}_"
             f"{datetime.datetime.now().isoformat().replace(':', '-')}.csv"
         )
+        print(file_name)
         step_metrics_df.to_csv(file_name)
         mlflow.log_artifact(local_path=file_name)
 

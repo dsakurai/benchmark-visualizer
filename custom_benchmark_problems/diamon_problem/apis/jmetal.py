@@ -33,7 +33,7 @@ class Diamond(FloatProblem):
         if enable_tracking:
             self.tracking_list = []
             self.tracker = tracker
-            mlflow.log_params({"sequence": sequence_info})
+            mlflow.log_dict(sequence_info, "sequence.json")
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         eval_results = self.problem.evaluate(
