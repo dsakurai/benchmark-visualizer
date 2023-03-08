@@ -3,7 +3,6 @@ import math
 import typing
 from enum import Enum
 from pathlib import Path
-from typing import NamedTuple, Dict, Any
 
 import yaml
 from jmetal.algorithm.multiobjective import NSGAII, MOEAD, OMOPSO
@@ -18,19 +17,13 @@ from jmetal.operator.mutation import NonUniformMutation
 from jmetal.util.aggregative_function import Tschebycheff
 from jmetal.util.archive import CrowdingDistanceArchive
 from jmetal.util.solution import get_non_dominated_solutions
-from jmetal.util.termination_criterion import StoppingByTime
+from jmetal.util.termination_criterion import StoppingByTime, StoppingByEvaluations
+from tqdm import tqdm
 
 from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
-
-
-class ExperimentSettings(NamedTuple):
-    experiment_name: str
-    tree_file: str
-    dimension: int
-    algorithm: str
-    algorithm_parameters: Dict[str, Any]
-    termination_criterion: Dict[str, Any]
+from utils.data_structures import ExperimentSettings
+from utils.tracking import MlflowTracker
 
 
 class Algorithms(Enum):
@@ -45,9 +38,18 @@ def gde3(**kwargs):
     population_size = parameters["population_size"]
     cr = parameters["cr"]
     f = parameters["f"]
-    termination_criterion = StoppingByTime(
-        kwargs["termination_criterion"]["termination_parameter"]
-    )
+
+    stopping_criterion = kwargs["termination_criterion"]
+    if stopping_criterion["criterion_name"] == "StoppingByTime":
+        termination_criterion = StoppingByTime(
+            stopping_criterion["termination_parameter"]
+        )
+    elif stopping_criterion["criterion_name"] == "StoppingByEvaluations":
+        termination_criterion = StoppingByEvaluations(
+            stopping_criterion["termination_parameter"]
+        )
+    else:
+        raise NotImplementedError("Termination criterion not supported")
 
     return GDE3(
         problem=kwargs["problem"],
@@ -78,9 +80,17 @@ def nsgaii(**kwargs):
         probability=crossover_parameters["probability"],
         distribution_index=crossover_parameters["distribution_index"],
     )
-    termination_criterion = StoppingByTime(
-        kwargs["termination_criterion"]["termination_parameter"]
-    )
+    stopping_criterion = kwargs["termination_criterion"]
+    if stopping_criterion["criterion_name"] == "StoppingByTime":
+        termination_criterion = StoppingByTime(
+            stopping_criterion["termination_parameter"]
+        )
+    elif stopping_criterion["criterion_name"] == "StoppingByEvaluations":
+        termination_criterion = StoppingByEvaluations(
+            stopping_criterion["termination_parameter"]
+        )
+    else:
+        raise NotImplementedError("Termination criterion not supported")
 
     return NSGAII(
         problem=kwargs["problem"],
@@ -113,9 +123,17 @@ def moead(**kwargs):
         K=crossover_parameters["K"],
     )
     aggregative_function = Tschebycheff(dimension=kwargs["exp_config"].dimension + 1)
-    termination_criterion = StoppingByTime(
-        kwargs["termination_criterion"]["termination_parameter"]
-    )
+    stopping_criterion = kwargs["termination_criterion"]
+    if stopping_criterion["criterion_name"] == "StoppingByTime":
+        termination_criterion = StoppingByTime(
+            stopping_criterion["termination_parameter"]
+        )
+    elif stopping_criterion["criterion_name"] == "StoppingByEvaluations":
+        termination_criterion = StoppingByEvaluations(
+            stopping_criterion["termination_parameter"]
+        )
+    else:
+        raise NotImplementedError("Termination criterion not supported")
 
     return MOEAD(
         problem=kwargs["problem"],
@@ -166,9 +184,17 @@ def omopso(**kwargs):
     leaders = CrowdingDistanceArchive(
         maximum_size=parameters["leaders"]["maximum_size"]
     )
-    termination_criterion = StoppingByTime(
-        kwargs["termination_criterion"]["termination_parameter"]
-    )
+    stopping_criterion = kwargs["termination_criterion"]
+    if stopping_criterion["criterion_name"] == "StoppingByTime":
+        termination_criterion = StoppingByTime(
+            stopping_criterion["termination_parameter"]
+        )
+    elif stopping_criterion["criterion_name"] == "StoppingByEvaluations":
+        termination_criterion = StoppingByEvaluations(
+            stopping_criterion["termination_parameter"]
+        )
+    else:
+        raise NotImplementedError("Termination criterion not supported")
 
     return OMOPSO(
         problem=kwargs["problem"],
@@ -189,50 +215,48 @@ def load_experiment_settings(file_path: Path) -> typing.List[ExperimentSettings]
 
 def yaml_main(opts):
     exps_config = load_experiment_settings(file_path=Path(opts.file))
-    tracking_parameters = {
-        "run_id": None,
-        "experiment_id": None,
-        "run_name": "First Run",
-        "tags": {"test_version": "0.0.1"},
-        "description": "Tracking parameters are not required, but is a Nice-to-have."
-        " You could fill some of these parameters for identification",
-    }
-    for exp_config in exps_config:
-        tree = Tree(dim_space=exp_config.dimension)
-        tree.from_json(exp_config.tree_file)
-        problem = Diamond(
-            dim_space=exp_config.dimension,
-            sequence_info=tree.to_sequence(),
-            enable_tracking=opts.disable_tracking,
-            tracking_uri="http://xomics.cc.kyushu-u.ac.jp:5000",
-            experiment_name="test_runx",
-            tracking_parameters=tracking_parameters,
-        )
-        algorithm = globals()[Algorithms(exp_config.algorithm).name](
-            problem=problem,
-            exp_config=exp_config,
-            parameters=exp_config.algorithm_parameters,
-            termination_criterion=exp_config.termination_criterion,
-        )
-        algorithm.run()
+    for exp_config in tqdm(exps_config, desc="Experiment Progress"):
+        try:
+            with MlflowTracker(
+                run_name=exp_config.experiment_name, experiment_config=exp_config
+            ) as tracker:
+                tree = Tree(dim_space=exp_config.dimension)
+                tree.from_json(exp_config.tree_file)
+                problem = Diamond(
+                    dim_space=exp_config.dimension,
+                    sequence_info=tree.to_sequence(),
+                    enable_tracking=opts.disable_tracking,
+                    tracker=tracker,
+                )
+                algorithm = globals()[Algorithms(exp_config.algorithm).name](
+                    problem=problem,
+                    exp_config=exp_config,
+                    parameters=exp_config.algorithm_parameters,
+                    termination_criterion=exp_config.termination_criterion,
+                )
+                algorithm.run()
 
-        # Get solutions
-        solutions = algorithm.get_result()
+                # Get solutions
+                solutions = algorithm.get_result()
 
-        # Print the results
-        for solution in solutions:
-            x_1 = solution.variables[0]
-            x_2 = solution.variables[1]
-            y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
-            y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
-            if y - solution.objectives[0] > 0:
-                print(solution)
+                # Print the results
+                for solution in solutions:
+                    x_1 = solution.variables[0]
+                    x_2 = solution.variables[1]
+                    y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
+                    y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
+                    if y - solution.objectives[0] > 0:
+                        pass
+                        # print(solution)
 
-        print("**********************")
+                # print("**********************")
 
-        fronts = get_non_dominated_solutions(solutions)
-        for front in fronts:
-            print(front)
+                fronts = get_non_dominated_solutions(solutions)
+                for front in fronts:
+                    pass
+                    # print(front)
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":

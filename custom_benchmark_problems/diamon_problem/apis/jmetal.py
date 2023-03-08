@@ -6,7 +6,7 @@ from jmetal.core.problem import FloatProblem
 from jmetal.core.solution import FloatSolution
 
 from custom_benchmark_problems.diamon_problem.core import evaluation
-from utils import mlflow_tracking
+from utils.tracking import MlflowTracker
 
 
 class Diamond(FloatProblem):
@@ -15,10 +15,7 @@ class Diamond(FloatProblem):
         dim_space: int,
         sequence_info: list[dict],
         enable_tracking: bool = False,
-        experiment_name: Optional[str] = None,
-        tracking_uri: Optional[str] = None,
-        tracking_parameters: Optional[dict] = None,
-        algorithm_parameters: Optional[dict] = None,
+        tracker: Optional[MlflowTracker] = None,
     ):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
@@ -34,17 +31,9 @@ class Diamond(FloatProblem):
         self.upper_bound.insert(0, self.problem.t_upper_bound())
         self.enable_tracking = enable_tracking
         if enable_tracking:
-            assert experiment_name is not None, "Experiment name not set"
-            assert tracking_uri is not None, "Tracking URI not set"
-            self.tracking = mlflow_tracking.Tracking(
-                experiment_name=experiment_name,
-                tracking_uri=tracking_uri,
-                tracking_parameters=tracking_parameters,
-            )
             self.tracking_list = []
+            self.tracker = tracker
             mlflow.log_params({"sequence": sequence_info})
-            if algorithm_parameters:
-                mlflow.log_params(algorithm_parameters)
 
     def evaluate(self, solution: FloatSolution) -> FloatSolution:
         eval_results = self.problem.evaluate(
@@ -53,7 +42,7 @@ class Diamond(FloatProblem):
         solution.objectives[0] = eval_results[0]
         solution.objectives[1] = eval_results[1]
         if self.enable_tracking:
-            self.tracking.log_step(
+            self.tracker.log_step(
                 variables=solution.variables,
                 objectives=solution.objectives,
                 eval_node_id=eval_results[2],

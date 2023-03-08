@@ -1,8 +1,4 @@
-from pathlib import Path
-
 import numpy as np
-
-from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 
 
 def s_lengths(sequence_info: list) -> list:

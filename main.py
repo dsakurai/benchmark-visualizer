@@ -102,7 +102,7 @@ def reeb_space_info():
                 "maxTime": max_t + 1,
                 "minimal": minimal,
                 "maximal": maximal,
-                "minTime": 0
+                "minTime": 0,
             },
         }
     )
@@ -115,7 +115,9 @@ def demo_data(solver: str):
     if solver == "GDE3":
         demo_log = file_utils.load_evaluation_log("demo_log_latest.csv")
     else:
-        demo_log = file_utils.load_evaluation_log("test_runx_2023-03-02T10-30-42.503866.csv")
+        demo_log = file_utils.load_evaluation_log(
+            "test_runx_2023-03-02T10-30-42.503866.csv"
+        )
     demo_tree = file_utils.read_json_tree("experiment_trees/sample.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:

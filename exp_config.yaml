@@ -1,0 +1,1824 @@
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v0
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v1
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v2
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v3
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v4
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v5
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v6
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v7
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v8
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v9
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v10
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v11
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v12
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v13
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v14
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v15
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 2
+  experiment_name: test_exp_v16
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 2
+  experiment_name: test_exp_v17
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 10
+  experiment_name: test_exp_v18
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 10
+  experiment_name: test_exp_v19
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 100
+  experiment_name: test_exp_v20
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 100
+  experiment_name: test_exp_v21
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 1000
+  experiment_name: test_exp_v22
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 1000
+  experiment_name: test_exp_v23
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 2
+  experiment_name: test_exp_v24
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 2
+  experiment_name: test_exp_v25
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 10
+  experiment_name: test_exp_v26
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 10
+  experiment_name: test_exp_v27
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 100
+  experiment_name: test_exp_v28
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 100
+  experiment_name: test_exp_v29
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 1000
+  experiment_name: test_exp_v30
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/breadth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 1000
+  experiment_name: test_exp_v31
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/breadth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v32
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v33
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v34
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v35
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v36
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v37
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v38
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v39
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v40
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v41
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v42
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v43
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v44
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v45
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v46
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v47
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 2
+  experiment_name: test_exp_v48
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 2
+  experiment_name: test_exp_v49
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 10
+  experiment_name: test_exp_v50
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 10
+  experiment_name: test_exp_v51
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 100
+  experiment_name: test_exp_v52
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 100
+  experiment_name: test_exp_v53
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 1000
+  experiment_name: test_exp_v54
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 1000
+  experiment_name: test_exp_v55
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 2
+  experiment_name: test_exp_v56
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 2
+  experiment_name: test_exp_v57
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 10
+  experiment_name: test_exp_v58
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 10
+  experiment_name: test_exp_v59
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 100
+  experiment_name: test_exp_v60
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 100
+  experiment_name: test_exp_v61
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 1000
+  experiment_name: test_exp_v62
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/depth.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 1000
+  experiment_name: test_exp_v63
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v64
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v65
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v66
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v67
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v68
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v69
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v70
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v71
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v72
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  experiment_name: test_exp_v73
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v74
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 10
+  experiment_name: test_exp_v75
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v76
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 100
+  experiment_name: test_exp_v77
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v78
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 1000
+  experiment_name: test_exp_v79
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 2
+  experiment_name: test_exp_v80
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 2
+  experiment_name: test_exp_v81
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 10
+  experiment_name: test_exp_v82
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 10
+  experiment_name: test_exp_v83
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 100
+  experiment_name: test_exp_v84
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 100
+  experiment_name: test_exp_v85
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 1000
+  experiment_name: test_exp_v86
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 1000
+  experiment_name: test_exp_v87
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 2
+  experiment_name: test_exp_v88
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 2
+  experiment_name: test_exp_v89
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 10
+  experiment_name: test_exp_v90
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 10
+  experiment_name: test_exp_v91
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 100
+  experiment_name: test_exp_v92
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 100
+  experiment_name: test_exp_v93
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 1000
+  experiment_name: test_exp_v94
+  termination_criterion:
+    criterion_name: StoppingByTime
+    termination_parameter: 200
+  tree_file: experiment_trees/sample.json
+- algorithm: OMOPSO
+  algorithm_parameters:
+    epsilon: 0.0075
+    leaders:
+      leaders: CrowdingDistanceArchive
+      maximum_size: 100
+    non_uniform_mutation:
+      max_iterations: max_evaluations/swarm_size
+      non_uniform_mutation: NonUniformMutation
+      perturbation: 0.5
+      probability: n_variables
+    swarm_size: 100
+    uniform_mutation:
+      perturbation: 0.5
+      probability: n_variables
+      uniform_mutation: UniformMutation
+  dimension: 1000
+  experiment_name: test_exp_v95
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/sample.json

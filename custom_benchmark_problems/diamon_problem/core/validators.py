@@ -1,5 +1,6 @@
-from custom_benchmark_problems.diamon_problem.core.evaluation import BMP
 import numpy as np
+
+from custom_benchmark_problems.diamon_problem.core.evaluation import BMP
 
 
 def validate_tree_minima(sequence_data: list, dim_space: int):
