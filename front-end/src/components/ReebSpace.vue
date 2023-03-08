@@ -24,10 +24,18 @@ export default {
     name: "ReebSpace",
     props: {
         solverData: Array,
+        treeName: String,
+        dimension: Number,
     },
     watch: {
         solverData: function (oldVal, newVal) {
             this.plotSolverData(newVal);
+        },
+        treeName: function () {
+            this.getReebInfo();
+        },
+        dimension: function () {
+            this.getReebInfo();
         },
     },
     data() {
@@ -75,7 +83,8 @@ export default {
             })
         },
         getReebInfo() {
-            axios.get("/api/reeb_space").then(response => {
+            axios.get(`/api/reeb_space?tree_name=${this.treeName}&dimension=${this.dimension}`).then(response => {
+                d3.selectAll("svg").remove();
                 this.reebData = response.data;
                 let reebData = DataUtils.parseReebData(response.data);
                 this.treeInfo = reebData.treeInfo;

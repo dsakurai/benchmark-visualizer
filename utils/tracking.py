@@ -94,7 +94,7 @@ class MlflowTracker:
         ]
         file_name = (
             f"{algorithm}_"
-            f"{tree_file.split('/')[1]}_" 
+            f"{tree_file.split('/')[1]}_"
             f"{dimension}_"
             f"{termination_criterion}_"
             f"{datetime.datetime.now().isoformat().replace(':', '-')}.csv"

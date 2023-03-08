@@ -38,20 +38,45 @@
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
-                    <el-col :span="8">
+                    <el-col :span="5">
                         <span>Population Size:</span> <el-input-number v-model="populationSize"></el-input-number>
                     </el-col >
-                    <el-col :span="12">
+                    <el-col :span="4">
+                        <span>Solver: </span>
                         <el-select-v2
                             v-model="solverType"
                             :options="solverOptions"
                             @change="getNaiveLogData"
                         />
                     </el-col>
+                    <el-col :span="4">
+                        <span>Tree: </span>
+                        <el-select-v2
+                            v-model="treeType"
+                            :options="treeOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
+                    <el-col :span="5">
+                        <span>Dimension: </span>
+                        <el-select-v2
+                            v-model="dimension"
+                            :options="dimensionOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
+                    <el-col :span="6">
+                        <span>Stopping Criterion: </span>
+                        <el-select-v2
+                            v-model="stoppingCriterion"
+                            :options="stoppingCriterionOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
                 </el-row>
             </el-card>
             <el-row>
-                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>
+                    <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
             </el-row>
             <el-row>
             <el-tree-v2 :data="treeData" :props="props" :height="208">
@@ -104,9 +129,14 @@ export default {
             stepRange: 0,
             filterOffset: 0,
             solverType: "GDE3",
-            solverOptions:[{
-                value:"GDE3",label:"GDE3"},{value: "NSGA-II",label: "NSGA-II"}
+            treeType: "sample",
+            dimension: 2,
+            stoppingCriterion:"StoppingByEvaluations",
+            solverOptions:[{value:"GDE3",label:"GDE3"},{value: "NSGAII",label: "NSGA-II"},{value:"MOEAD",label: "MOEAD"},{value:"OMOPSO",label:"OMOPSO"}
             ],
+            treeOptions:[{value:"sample",label:"Sample"},{value:"depth",label: "Depth"},{value:"breadth",label: "Breadth"}],
+            dimensionOptions:[{value:2,label:2},{value:10,label:10},{value:100,label:100},{value:1000,label: 1000}],
+            stoppingCriterionOptions:[{value:"StoppingByTime",label:"By Time"},{value:"StoppingByEvaluations",label: "By Evaluations"}],
             props: {
                 value: 'id',
                 label: 'label',
@@ -166,7 +196,7 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
-            axios.get(`/api/demo_data?solver=${this.solverType}`).then(response => {
+            axios.get(`/api/demo_data?solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
