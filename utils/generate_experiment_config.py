@@ -67,9 +67,9 @@ def compose_solver_settings(solver_name) -> dict:
 if __name__ == "__main__":
     exp_base_name = "test_exp"
     trees = [
+        "experiment_trees/sample.json",
         "experiment_trees/breadth.json",
         "experiment_trees/depth.json",
-        "experiment_trees/sample.json",
     ]
     solvers = ["GDE3", "NSGAII", "MOEAD", "OMOPSO"]
     dimensions = [2, 10, 100, 1000]
