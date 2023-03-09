@@ -83,8 +83,8 @@ def compose_solver_settings(solver_name) -> dict:
 if __name__ == "__main__":
     exp_base_name = "test_exp"
     trees = []
-    depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
-    breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
+    depth_trees = [f"experiment_trees/depth_base{i}.json" for i in range(1, 7)]
+    breadth_trees = [f"experiment_trees/breadth_base{i}.json" for i in range(1, 7)]
     trees.extend(breadth_trees)
     trees.extend(depth_trees)
     solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD", "OMOPSO"]

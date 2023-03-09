@@ -23,11 +23,11 @@ for incremental_base in incremental_bases:
         ]
     }
     with open(
-        f"../experiment_trees/breadth_base_{incremental_base}.json", "w"
+        f"../experiment_trees/breadth_base{incremental_base}.json", "w"
     ) as breadth_file:
         json.dump(breadth, breadth_file)
 
     with open(
-        f"../experiment_trees/depth_base_{incremental_base}.json", "w"
+        f"../experiment_trees/depth_base{incremental_base}.json", "w"
     ) as depth_file:
         json.dump(depth, depth_file)

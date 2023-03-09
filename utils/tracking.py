@@ -8,6 +8,7 @@ import typing
 import mlflow
 import numpy as np
 import pandas as pd
+from mlflow.tracking import MlflowClient
 
 from config import mlflow_tracking_uri, data_dir
 from utils.data_structures import ExperimentSettings
@@ -28,6 +29,7 @@ class MlflowTracker:
 
     def __enter__(self):
         try:
+            client = MlflowClient()
             mlflow.set_tracking_uri(mlflow_tracking_uri)
             experiment_name = os.getenv("MLFLOW_EXPERIMENT_NAME")
 
