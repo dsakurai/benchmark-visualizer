@@ -58,12 +58,14 @@ def cli_main(opts):
 
     algorithm = IBEA(
         problem=problem,
-        kappa=1.,
+        kappa=1.0,
         population_size=100,
         offspring_population_size=100,
-        mutation=PolynomialMutation(probability=1.0 / problem.number_of_variables, distribution_index=20),
+        mutation=PolynomialMutation(
+            probability=1.0 / problem.number_of_variables, distribution_index=20
+        ),
         crossover=SBXCrossover(probability=1.0, distribution_index=20),
-        termination_criterion=StoppingByEvaluations(max_evaluations)
+        termination_criterion=StoppingByEvaluations(max_evaluations),
     )
 
     # Run GDE3

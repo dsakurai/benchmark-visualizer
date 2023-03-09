@@ -5,7 +5,7 @@ from enum import Enum
 from pathlib import Path
 
 import yaml
-from jmetal.algorithm.multiobjective import NSGAII, MOEAD, OMOPSO
+from jmetal.algorithm.multiobjective import NSGAII, MOEAD, OMOPSO, IBEA
 from jmetal.algorithm.multiobjective.gde3 import GDE3
 from jmetal.operator import (
     PolynomialMutation,
@@ -29,6 +29,7 @@ from utils.tracking import MlflowTracker
 class Algorithms(Enum):
     gde3 = "GDE3"
     nsgaii = "NSGAII"
+    ibea = "IBEA"
     moead = "MOEAD"
     omopso = "OMOPSO"
 
@@ -94,6 +95,50 @@ def nsgaii(**kwargs):
 
     return NSGAII(
         problem=kwargs["problem"],
+        population_size=population_size,
+        offspring_population_size=offspring_population_size,
+        mutation=mutation,
+        crossover=crossover,
+        termination_criterion=termination_criterion,
+    )
+
+
+def ibea(**kwargs):
+    parameters = kwargs["parameters"]
+    kappa = parameters["kappa"]
+    population_size = parameters["population_size"]
+    offspring_population_size = parameters["offspring_population_size"]
+    mutation_parameters = parameters["mutation"]
+    crossover_parameters = parameters["crossover"]
+    if mutation_parameters["probability"] == "n_variables":
+        probability = 1 / kwargs["exp_config"].dimension
+    elif type(mutation_parameters["probability"]) is float:
+        probability = mutation_parameters["probability"]
+    else:
+        raise NotImplementedError("Invalid mutation probability")
+    mutation = PolynomialMutation(
+        probability=probability,
+        distribution_index=mutation_parameters["distribution_index"],
+    )
+    crossover = SBXCrossover(
+        probability=crossover_parameters["probability"],
+        distribution_index=crossover_parameters["distribution_index"],
+    )
+    stopping_criterion = kwargs["termination_criterion"]
+    if stopping_criterion["criterion_name"] == "StoppingByTime":
+        termination_criterion = StoppingByTime(
+            stopping_criterion["termination_parameter"]
+        )
+    elif stopping_criterion["criterion_name"] == "StoppingByEvaluations":
+        termination_criterion = StoppingByEvaluations(
+            stopping_criterion["termination_parameter"]
+        )
+    else:
+        raise NotImplementedError("Termination criterion not supported")
+
+    return IBEA(
+        problem=kwargs["problem"],
+        kappa=kappa,
         population_size=population_size,
         offspring_population_size=offspring_population_size,
         mutation=mutation,

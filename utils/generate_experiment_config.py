@@ -19,6 +19,22 @@ def compose_solver_settings(solver_name) -> dict:
                 "distribution_index": 20,
             },
         }
+    elif solver_name == "IBEA":
+        settings = {
+            "kappa": 1.0,
+            "population_size": 100,
+            "offspring_population_size": 100,
+            "mutation": {
+                "mutation": "PolynomialMutation",
+                "probability": "n_variables",
+                "distribution_index": 20,
+            },
+            "crossover": {
+                "crossover": "SBXCrossover",
+                "probability": 1.0,
+                "distribution_index": 20,
+            },
+        }
     elif solver_name == "MOEAD":
         settings = {
             "population_size": 100,
@@ -66,12 +82,12 @@ def compose_solver_settings(solver_name) -> dict:
 
 if __name__ == "__main__":
     exp_base_name = "test_exp"
-    trees = [
-        "experiment_trees/sample.json",
-        "experiment_trees/breadth.json",
-        "experiment_trees/depth.json",
-    ]
-    solvers = ["GDE3", "NSGAII", "MOEAD", "OMOPSO"]
+    trees = []
+    depth_trees = [f"experiment_trees/depth_base_{i}" for i in range(1, 7)]
+    breadth_trees = [f"experiment_trees/breadth_base_{i}" for i in range(1, 7)]
+    trees.extend(depth_trees)
+    trees.extend(breadth_trees)
+    solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD", "OMOPSO"]
     dimensions = [2, 10, 100, 1000]
     termination_criterions = [
         {"criterion_name": "StoppingByTime", "termination_parameter": 200},
