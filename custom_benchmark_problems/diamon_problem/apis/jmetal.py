@@ -26,7 +26,8 @@ class Diamond(FloatProblem):
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ["f(x)"]
         self.lower_bound = dim_space * [-1.0]
-        self.lower_bound.insert(0, 0.0)
+        # Probably would make gradient-based alg work, algs like OMOPSO would return 0 in gradient
+        self.lower_bound.insert(0, 1e-2)
         self.upper_bound = dim_space * [1.0]
         self.upper_bound.insert(0, self.problem.t_upper_bound())
         self.enable_tracking = enable_tracking

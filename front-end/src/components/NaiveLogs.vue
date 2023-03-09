@@ -200,6 +200,7 @@ export default {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
+                this.$message.success("Solver data loaded");
                 this.totalSteps = this.logData.length;
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
                 this.marks[0] = "0";
@@ -210,7 +211,9 @@ export default {
                 }
                 this.filteredSolverData = this.solverData;
                 this.getStats();
-            })
+            }).catch(error => {
+                this.$message.error("Solver data failed @ " + error.toString());
+            });
         },
         getStats() {
             this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);

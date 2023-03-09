@@ -1,79 +1,18 @@
-- experiment_name: test_v1
-  tree_file: sample.json
-  dimension: 2
-  algorithm: GDE3
+- algorithm: NSGAII
   algorithm_parameters:
-    population_size: 100
-    cr: 0.5
-    f: 0.5
-  termination_criterion:
-    criterion_name: StoppingByTime
-    termination_parameter: 100
-
-- experiment_name: test_v2
-  tree_file: sample.json
-  dimension: 2
-  algorithm: NSGAII
-  algorithm_parameters:
-    population_size: 100
-    offspring_population_size: 100
-    mutation:
-      mutation: PolynomialMutation
-      probability: n_variables
-      distribution_index: 20
     crossover:
       crossover: SBXCrossover
-      probability: 1.0
       distribution_index: 20
-  termination_criterion:
-    criterion_name: StoppingByTime
-    termination_parameter: 100
-
-- experiment_name: test_v3
-  tree_file: sample.json
-  dimension: 2
-  algorithm: MOEAD
-  algorithm_parameters:
-    population_size: 100
+      probability: 1.0
     mutation:
+      distribution_index: 20
       mutation: PolynomialMutation
       probability: n_variables
-      distribution_index: 20
-    crossover:
-      crossover: DifferentialEvolutionCrossover
-      CR: 1.0
-      F: 0.5
-      K: 0.5
-    aggregative_function:
-      aggregative_function: Tschebycheff
-      dimension: n_variables
-    neighbor_size: 20
-    neighbourhood_selection_probability: 0.9
-    max_number_of_replaced_solutions: 2
-    weight_files_path: resources/MOEAD_weights
-  termination_criterion:
-    criterion_name: StoppingByTime
-    termination_parameter: 100
-
-- experiment_name: test_v4
-  tree_file: sample.json
+    offspring_population_size: 100
+    population_size: 100
   dimension: 2
-  algorithm: OMOPSO
-  algorithm_parameters:
-    swarm_size: 100
-    epsilon: 0.0075
-    uniform_mutation:
-      uniform_mutation: UniformMutation
-      probability: n_variables
-      perturbation: 0.5
-    non_uniform_mutation:
-      non_uniform_mutation: NonUniformMutation
-      probability: n_variables;
-      perturbation: 0.5
-      max_iterations: max_evaluations / swarm_size
-    leaders:
-      leaders: CrowdingDistanceArchive
-      maximum_size: 100
+  experiment_name: test_exp_v8
   termination_criterion:
-    criterion_name: StoppingByTime
-    termination_parameter: 100
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: experiment_trees/depth.json

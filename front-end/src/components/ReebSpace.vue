@@ -87,13 +87,16 @@ export default {
                 d3.selectAll("svg").remove();
                 this.reebData = response.data;
                 let reebData = DataUtils.parseReebData(response.data);
+                this.$message.success("Reeb space data loaded");
                 this.treeInfo = reebData.treeInfo;
                 this.nodeInfo = reebData.nodeInfo;
                 this.svg = d3.select("#reebSpace").append("svg").attr("width", this.figureInfo.width).attr("height", this.figureInfo.height);
                 [this.xScale, this.yScale] = GraphUtils.composeScales(this.treeInfo, {"width":this.innerWidth,"height": this.innerHeight},this.logScale);
                 this.drawAxis();
                 this.drawSheets();
-            })
+            }).catch(error => {
+                this.$message.error("Reeb space data failed @ " + error.toString());
+            });
         },
         rotateGraph() {
             d3.selectAll("svg > *").remove();

@@ -1,6 +1,7 @@
 import argparse
 import math
 
+from jmetal.algorithm.multiobjective import IBEA
 from jmetal.algorithm.multiobjective.gde3 import GDE3
 from jmetal.algorithm.multiobjective.nsgaii import NSGAII
 from jmetal.operator import SBXCrossover, PolynomialMutation
@@ -31,9 +32,6 @@ def cli_main(opts):
         dim_space=opts.dim,
         sequence_info=tree.to_sequence(),
         enable_tracking=opts.disable_tracking,
-        tracking_uri="http://xomics.cc.kyushu-u.ac.jp:5000",
-        experiment_name="test_runx",
-        tracking_parameters=tracking_parameters,
     )
 
     # GDE3 Settings
@@ -56,6 +54,16 @@ def cli_main(opts):
         ),
         crossover=SBXCrossover(probability=1.0, distribution_index=20),
         termination_criterion=StoppingByEvaluations(max_evaluations),
+    )
+
+    algorithm = IBEA(
+        problem=problem,
+        kappa=1.,
+        population_size=100,
+        offspring_population_size=100,
+        mutation=PolynomialMutation(probability=1.0 / problem.number_of_variables, distribution_index=20),
+        crossover=SBXCrossover(probability=1.0, distribution_index=20),
+        termination_criterion=StoppingByEvaluations(max_evaluations)
     )
 
     # Run GDE3
