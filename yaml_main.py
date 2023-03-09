@@ -309,6 +309,5 @@ if __name__ == "__main__":
     parser.add_argument(
         "-f", "--file", type=str, help="Specify the input json file", required=True
     )
-    parser.add_argument("--dim", type=int, help="Dimension of the problem", default=2)
     parser.add_argument("--disable_tracking", action="store_false")
     yaml_main(parser.parse_args())
