@@ -85,8 +85,8 @@ if __name__ == "__main__":
     trees = []
     depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
     breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
-    trees.extend(depth_trees)
     trees.extend(breadth_trees)
+    trees.extend(depth_trees)
     solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD", "OMOPSO"]
     dimensions = [2, 10, 100, 1000]
     termination_criterions = [
