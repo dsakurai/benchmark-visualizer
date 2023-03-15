@@ -39,8 +39,9 @@
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="5">
-                        <span>Population Size:</span> <el-input-number v-model="populationSize"></el-input-number>
-                    </el-col >
+                        <span>Population Size:</span>
+                        <el-input-number v-model="populationSize"></el-input-number>
+                    </el-col>
                     <el-col :span="4">
                         <span>Solver: </span>
                         <el-select-v2
@@ -76,24 +77,32 @@
                 </el-row>
             </el-card>
             <el-row>
-                    <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
+                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
             </el-row>
             <el-row>
-            <el-tree-v2 :data="treeData" :props="props" :height="208">
-                <template #default="{ node ,data}">
-                  <div class="tree-node">
-                    <el-space wrap :size="30">
-                        <span>{{ node.label }}</span>
-                        <span style="color: #ff4949"> Eval-Minimal: {{locatedMinima[data.id].toFixed(2)}}</span>
-                        <span style="color: #4281b9"> Count: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
-                    </el-space>
-                      <div class="progress-bar">
-                      <el-progress :stroke-width="15" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))" style="width:600px;"><span style="width: 10px" v-text="locatedMinima[data.id].toFixed(2)"> </span></el-progress>
-                      </div>
-                  </div>
-                </template>
-            </el-tree-v2>
-        </el-row>
+                <el-tree-v2 :data="treeData" :props="props" :height="208">
+                    <template #default="{ node ,data}">
+                        <div class="tree-node">
+                            <el-space wrap :size="30">
+                                <span>{{ node.label }}</span>
+                                <span
+                                    style="color: #ff4949"> Eval-Minimal: {{ locatedMinima[data.id].toFixed(2) }}</span>
+                                <span
+                                    style="color: #4281b9"> Count: {{
+                                        data.id in nodeStats ? nodeStats[data.id] : 0
+                                    }}</span>
+                            </el-space>
+                            <div class="progress-bar">
+                                <el-progress :stroke-width="15"
+                                             :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))"
+                                             style="width:600px;"><span style="width: 10px"
+                                                                        v-text="locatedMinima[data.id].toFixed(2)"> </span>
+                                </el-progress>
+                            </div>
+                        </div>
+                    </template>
+                </el-tree-v2>
+            </el-row>
         </el-main>
     </el-container>
 </template>
@@ -112,10 +121,10 @@ export default {
             sliderStep: [0, 100],
             totalSteps: 100,
             stepSize: 100,
-            populationSize:100,
-            locatedMinima:{},
-            nodaMinima:{},
-            elapsedData:[],
+            populationSize: 100,
+            locatedMinima: {},
+            nodaMinima: {},
+            elapsedData: [],
             allIDs: [],
             solverData: [],
             filteredSolverData: [],
@@ -129,14 +138,47 @@ export default {
             stepRange: 0,
             filterOffset: 0,
             solverType: "GDE3",
-            treeType: "sample",
+            treeType: "depth_base_1",
             dimension: 2,
-            stoppingCriterion:"StoppingByEvaluations",
-            solverOptions:[{value:"GDE3",label:"GDE3"},{value: "NSGAII",label: "NSGA-II"},{value:"MOEAD",label: "MOEAD"},{value:"OMOPSO",label:"OMOPSO"}
+            stoppingCriterion: "StoppingByEvaluations",
+            solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "NSGAII", label: "NSGA-II"}, {
+                value: "MOEAD",
+                label: "MOEAD"
+            }, {value: "OMOPSO", label: "OMOPSO"}
             ],
-            treeOptions:[{value:"sample",label:"Sample"},{value:"depth",label: "Depth"},{value:"breadth",label: "Breadth"}],
-            dimensionOptions:[{value:2,label:2},{value:10,label:10},{value:100,label:100},{value:1000,label: 1000}],
-            stoppingCriterionOptions:[{value:"StoppingByTime",label:"By Time"},{value:"StoppingByEvaluations",label: "By Evaluations"}],
+            treeOptions: [
+                {value: "sample", label: "Sample"},
+                {value: "depth_base_1", label: "Depth 1"},
+                {value: "depth_base_2", label: "Depth 2"},
+                {value: "depth_base_3", label: "Depth 3"},
+                {value: "depth_base_4", label: "Depth 4"},
+                {value: "depth_base_5", label: "Depth 5"},
+                {value: "depth_base_6", label: "Depth 6"},
+                // {value: "breadth", label: "Breadth"},
+                {value: "breadth_base_1", label: "Breadth 1"},
+                {value: "breadth_base_2", label: "Breadth 2"},
+                {value: "breadth_base_3", label: "Breadth 3"},
+                {value: "breadth_base_4", label: "Breadth 4"},
+                {value: "breadth_base_5", label: "Breadth 5"},
+                {value: "breadth_base_6", label: "Breadth 6"},
+            ],
+            dimensionOptions: [{value: 2, label: 2},
+                {value: 3, label: 3},
+                {value: 4, label: 4},
+                {value: 5, label: 5},
+                {value: 6, label: 6},
+                {value: 7, label: 7},
+                {value: 8, label: 8},
+                {value: 9, label: 9},
+                {value: 10, label: 10},
+                {value: 100, label: 100}, {
+                value: 1000,
+                label: 1000
+            }],
+            stoppingCriterionOptions: [{value: "StoppingByTime", label: "By Time"}, {
+                value: "StoppingByEvaluations",
+                label: "By Evaluations"
+            }],
             props: {
                 value: 'id',
                 label: 'label',
@@ -145,7 +187,7 @@ export default {
         }
 
     },
-    components:{
+    components: {
         ReebSpace,
     },
     created() {
@@ -244,12 +286,13 @@ export default {
     margin-top: 10px;
     margin-bottom: 0;
 }
-.tree-node{
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 18px;
-  padding-right: 50px;
+
+.tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    padding-right: 50px;
 }
 </style>
