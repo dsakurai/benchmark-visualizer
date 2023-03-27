@@ -22,21 +22,14 @@
         <el-aside width="auto">
            <ComputationMenu :asideExpansion="asideExpansion"></ComputationMenu>
         </el-aside>
-        <el-main>
-<!--            <D3Tree v-if="d3TreeActive"></D3Tree>-->
-<!--            <D3ForceTree v-else></D3ForceTree>-->
-          <div v-if="d3TreeActive"><NaiveLogs></NaiveLogs></div>
-          <div v-else><ReebSpace></ReebSpace></div>
+        <el-main><NaiveLogs></NaiveLogs>
         </el-main>
     </el-container>
 </template>
 
 <script>
-// import D3Tree from "@/components/D3Tree";
-// import D3ForceTree from "@/components/D3ForceTree";
 import ComputationMenu from "@/components/ComputationMenu";
 import NaiveLogs from "@/components/NaiveLogs.vue";
-import ReebSpace from "@/components/ReebSpace.vue";
 
 export default {
     name: 'App',
@@ -48,10 +41,7 @@ export default {
         };
     },
     components: {
-      ReebSpace,
       NaiveLogs,
-        // D3Tree,
-        // D3ForceTree
         ComputationMenu,
 
     },

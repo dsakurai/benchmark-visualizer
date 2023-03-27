@@ -77,10 +77,8 @@
                 </el-row>
             </el-card>
             <el-row>
-                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
-            </el-row>
-            <el-row>
-                <el-tree-v2 :data="treeData" :props="props" :height="208">
+                <el-col :span="24">
+                <el-tree-v2 :data="treeData" :props="props">
                     <template #default="{ node ,data}">
                         <div class="tree-node">
                             <el-space wrap :size="30">
@@ -88,9 +86,7 @@
                                 <span
                                     style="color: #ff4949"> Eval-Minimal: {{ locatedMinima[data.id].toFixed(2) }}</span>
                                 <span
-                                    style="color: #4281b9"> Count: {{
-                                        data.id in nodeStats ? nodeStats[data.id] : 0
-                                    }}</span>
+                                    style="color: #4281b9"> Count: {{data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
                             </el-space>
                             <div class="progress-bar">
                                 <el-progress :stroke-width="15"
@@ -102,6 +98,10 @@
                         </div>
                     </template>
                 </el-tree-v2>
+                </el-col>
+            </el-row>
+            <el-row>
+                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
             </el-row>
         </el-main>
     </el-container>
@@ -117,7 +117,7 @@ export default {
     data() {
         return {
             logData: '',
-            treeData: '',
+            treeData: [],
             sliderStep: [0, 100],
             totalSteps: 100,
             stepSize: 100,
@@ -137,9 +137,9 @@ export default {
             lockRange: false,
             stepRange: 0,
             filterOffset: 0,
-            solverType: "GDE3",
+            solverType: "MOEAD",
             treeType: "depth_base_1",
-            dimension: 2,
+            dimension: 10,
             stoppingCriterion: "StoppingByEvaluations",
             solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "NSGAII", label: "NSGA-II"}, {
                 value: "MOEAD",
@@ -171,6 +171,8 @@ export default {
                 {value: 8, label: 8},
                 {value: 9, label: 9},
                 {value: 10, label: 10},
+                {value: 11, label: 11},
+                {value: 20, label: 20},
                 {value: 100, label: 100}, {
                 value: 1000,
                 label: 1000
@@ -238,10 +240,14 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
+            console.log("function called");
             axios.get(`/api/demo_data?solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
+                console.log("function calledv2");
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
+                console.log(response.data);
+                console.log(this.treeData);
                 this.$message.success("Solver data loaded");
                 this.totalSteps = this.logData.length;
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
