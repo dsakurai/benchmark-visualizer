@@ -7,9 +7,9 @@
             <el-row>
                 <el-switch v-model="rotate" active-text="Rotate" inactive-text="Normal" @change="rotateGraph"/>
             </el-row>
-            <el-row>
-                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear" @change="rotateGraph"/>
-            </el-row>
+<!--            <el-row>-->
+<!--                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear" @change="rotateGraph"/>-->
+<!--            </el-row>-->
         </el-col>
     </el-row>
 </template>

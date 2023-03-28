@@ -84,7 +84,7 @@
                             <el-space wrap :size="30">
                                 <span>{{ node.label }}</span>
                                 <span
-                                    style="color: #ff4949"> Eval-Minimal: {{ locatedMinima[data.id].toFixed(2) }}</span>
+                                    style="color: #ff4949"> Optimality best: {{nodeMinima[data.id].toFixed(2)}}, Best so far:{{ locatedMinima[data.id].toFixed(2) }}</span>
                                 <span
                                     style="color: #4281b9"> Count: {{data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
                             </el-space>
@@ -92,7 +92,7 @@
                                 <el-progress :stroke-width="15"
                                              :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))"
                                              style="width:600px;"><span style="width: 10px"
-                                                                        v-text="locatedMinima[data.id].toFixed(2)"> </span>
+                                                                        v-text="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)"> </span>
                                 </el-progress>
                             </div>
                         </div>
@@ -123,7 +123,7 @@ export default {
             stepSize: 100,
             populationSize: 100,
             locatedMinima: {},
-            nodaMinima: {},
+            nodeMinima: {},
             elapsedData: [],
             allIDs: [],
             solverData: [],
@@ -246,8 +246,6 @@ export default {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
-                console.log(response.data);
-                console.log(this.treeData);
                 this.$message.success("Solver data loaded");
                 this.totalSteps = this.logData.length;
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
@@ -265,6 +263,7 @@ export default {
         },
         getStats() {
             this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
+            this.nodeMinima = computeUtils.computeElapsedMinimal(this.filteredSolverData, this.allIDs);
             this.nodeStats = computeUtils.computeNodeCounts(this.filteredSolverData, this.allIDs);
         },
         filterRange(input) {
@@ -275,6 +274,7 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
+            console.log(this.filteredSolverData);
             this.elapsedData = this.solverData.slice(0, endStep);
 
             if (this.lockRange) {

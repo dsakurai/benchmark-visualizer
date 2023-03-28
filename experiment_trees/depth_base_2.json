@@ -1,1 +1,42 @@
-{"nodes": [{"id": 1, "minima": -2, "symbol": [1, 1]}, {"id": 2, "minima": -3, "symbol": [1, 1, 1, 1]}, {"id": 3, "minima": -4, "symbol": [1, 1, 1, 1, 1, 1]}, {"id": 4, "minima": -5, "symbol": [1, 1, 1, 1, 1, 1, 1, 1]}]}
+{
+  "nodes": [
+    {
+      "id": 1,
+      "minima": -2,
+      "symbol": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": 2,
+      "minima": -3,
+      "symbol": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "minima": -4,
+      "symbol": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": 4,
+      "minima": -5,
+      "symbol": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}
