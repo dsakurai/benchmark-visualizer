@@ -16,7 +16,7 @@ export default {
 
 function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
     let sheetsScale = new Map();
-    for (let [nodeId,sheetData] of sheetsData.entries()) {
+    for (let [nodeId, sheetData] of sheetsData.entries()) {
         let points = [];
         sheetData.forEach(point => {
             if (logScale && point.y === 0) {
@@ -24,7 +24,7 @@ function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
             }
             points.push({"x": xScale(point.x), "y": yScale(point.y)});
         })
-        sheetsScale.set(nodeId,points);
+        sheetsScale.set(nodeId, points);
     }
     return sheetsScale;
 }
@@ -59,7 +59,7 @@ function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
         [x, y] = rotate ? ComputeUtils.rotateValues(node.minimal_time, node.minimal) : [node.minimal_time, node.minimal];
         points.push({"x": x, "y": y});
         // sheetsData[node.node_id] = points;
-        sheetsData.set(node.node_id,points);
+        sheetsData.set(node.node_id, points);
     });
     return sheetsData;
 }
@@ -68,9 +68,9 @@ function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
 function sheetsDataToBox(sheetsData) {
     let [minTime, maxTime] = [0, 0];
     let [maximal, minimal] = [0, -1];
-    for (let node_id in sheetsData) {
-        let points = sheetsData[node_id];
-        points.forEach(point => {
+    for (let sheetData of sheetsData.values()) {
+        console.log(sheetData);
+        sheetData.forEach(point => {
             if (point.x < minTime) {
                 minTime = point.x;
             }
@@ -121,7 +121,7 @@ function dataToCoordinates(solverData, xScale, yScale, rotate) {
     let coordinates = [];
 
     solverData.forEach(dataPoint => {
-        let x,y;
+        let x, y;
         if (rotate) {
             x = xScale(dataPoint.y1);
             y = yScale(dataPoint.y2);
