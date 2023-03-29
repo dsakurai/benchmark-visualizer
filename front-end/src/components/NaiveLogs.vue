@@ -135,13 +135,13 @@ export default {
             playInstance: '',
             isPlaying: false,
             lockRange: false,
-            stepRange: 0,
+            stepRange: 2,
             filterOffset: 0,
             solverType: "MOEAD",
             treeType: "depth_base_1",
-            dimension: 10,
+            dimension: 2,
             stoppingCriterion: "StoppingByEvaluations",
-            solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "NSGAII", label: "NSGA-II"}, {
+            solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
                 value: "MOEAD",
                 label: "MOEAD"
             }, {value: "OMOPSO", label: "OMOPSO"}
@@ -251,7 +251,7 @@ export default {
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
                 this.marks[0] = "0";
                 this.marks[100] = this.totalSteps.toString();
-                this.stepRange = Math.round(this.totalSteps / this.populationSize);
+                // this.stepRange = Math.round(this.totalSteps / this.populationSize);
                 for (let i = 0; i < this.totalSteps; i++) {
                     this.solverData[this.logData[i].step] = this.logData[i];
                 }
