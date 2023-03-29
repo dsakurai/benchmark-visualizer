@@ -15,16 +15,16 @@ export default {
 
 
 function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
-    let sheetsScale = {}
-    for (let nodeId in sheetsData) {
+    let sheetsScale = new Map();
+    for (let [nodeId,sheetData] of sheetsData.entries()) {
         let points = [];
-        sheetsData[nodeId].forEach(point => {
+        sheetData.forEach(point => {
             if (logScale && point.y === 0) {
                 point.y = -0.1;
             }
             points.push({"x": xScale(point.x), "y": yScale(point.y)});
         })
-        sheetsScale[nodeId] = points;
+        sheetsScale.set(nodeId,points);
     }
     return sheetsScale;
 }
@@ -47,7 +47,7 @@ function composeScales(treeInfo, figureInfo, logScale) {
 
 function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
     let maxTime = treeInfo.maxTime;
-    let sheetsData = {};
+    let sheetsData = new Map();
     nodeData.forEach(node => {
         let points = [];
         let [x, y] = rotate ? ComputeUtils.rotateValues(node.step_back.unrotated_t, node.step_back.unrotated_y) : [node.step_back.unrotated_t, node.step_back.unrotated_y];
@@ -58,7 +58,8 @@ function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
         points.push({"x": x, "y": y});
         [x, y] = rotate ? ComputeUtils.rotateValues(node.minimal_time, node.minimal) : [node.minimal_time, node.minimal];
         points.push({"x": x, "y": y});
-        sheetsData[node.node_id] = points;
+        // sheetsData[node.node_id] = points;
+        sheetsData.set(node.node_id,points);
     });
     return sheetsData;
 }
@@ -88,16 +89,17 @@ function sheetsDataToBox(sheetsData) {
 }
 
 function composeSheets(sheetsData) {
-    let sheets = {};
-    for (let node_id in sheetsData) {
+    let sheets = new Map();
+    for (let [node_id,sheetData] of sheetsData.entries()) {
         let p = d3.path();
-        let points = sheetsData[node_id]
+        let points = sheetData;
         p.moveTo(points[0].x, points[0].y);
         p.lineTo(points[1].x, points[1].y);
         p.lineTo(points[2].x, points[2].y);
         p.lineTo(points[3].x, points[3].y);
         p.closePath();
-        sheets[node_id] = p;
+        sheets.set(node_id,p);
+        // sheets[node_id] = p;
     }
     return sheets;
 }

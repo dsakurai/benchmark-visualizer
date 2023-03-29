@@ -125,10 +125,10 @@ export default {
             let sheetsCoordinates = GraphUtils.computeSheetsCoordinates(this.treeInfo,this.nodeInfo, this.rotate);
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
-            for (let node_id in sheets) {
+            for (let [node_id,sheet] of sheets.entries()) {
                 this.svg.append("path")
                     .attr("id", node_id)
-                    .attr("d", sheets[node_id])
+                    .attr("d", sheet)
                     .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
                     .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
                     .style("stroke", "black")

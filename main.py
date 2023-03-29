@@ -58,7 +58,6 @@ def reeb_space_info(dimension: int, tree_name: str):
     tree.from_json(f"experiment_trees/{tree_name}.json")
     sequence_info = tree.to_sequence()
     bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=dimension)
-
     node_info = []
     max_t = 0
     maximal = -1
@@ -93,7 +92,7 @@ def reeb_space_info(dimension: int, tree_name: str):
             }
         )
         node_count += 1
-
+    node_info = sorted(node_info,key=lambda k:(k["minimal_time"],k["minimal"]))
     return JSONResponse(
         {
             "nodeInfo": node_info,
