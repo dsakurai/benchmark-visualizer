@@ -38,37 +38,71 @@
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
-                    <el-col :span="8">
-                        <span>Population Size:</span> <el-input-number v-model="populationSize"></el-input-number>
-                    </el-col >
-                    <el-col :span="12">
+                    <el-col :span="5">
+                        <span>Population Size:</span>
+                        <el-input-number v-model="populationSize"></el-input-number>
+                    </el-col>
+                    <el-col :span="4">
+                        <span>Solver: </span>
                         <el-select-v2
                             v-model="solverType"
                             :options="solverOptions"
                             @change="getNaiveLogData"
                         />
                     </el-col>
+                    <el-col :span="4">
+                        <span>Tree: </span>
+                        <el-select-v2
+                            v-model="treeType"
+                            :options="treeOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
+                    <el-col :span="5">
+                        <span>Dimension: </span>
+                        <el-select-v2
+                            v-model="dimension"
+                            :options="dimensionOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
+                    <el-col :span="6">
+                        <span>Stopping Criterion: </span>
+                        <el-select-v2
+                            v-model="stoppingCriterion"
+                            :options="stoppingCriterionOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
                 </el-row>
             </el-card>
-<!--            <el-row>-->
-<!--                    <ReebSpace :solver-data="filteredSolverData"></ReebSpace>-->
-<!--            </el-row>-->
             <el-row>
-            <el-tree-v2 :data="treeData" :props="props" :height="208">
-                <template #default="{ node ,data}">
-                  <div class="tree-node">
-                    <el-space wrap :size="30">
-                        <span>{{ node.label }}</span>
-                        <span style="color: #ff4949"> Eval-Minimal: {{locatedMinima[data.id].toFixed(2)}}</span>
-                        <span style="color: #4281b9"> Count: {{ data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
-                    </el-space>
-                      <div class="progress-bar">
-                      <el-progress :stroke-width="15" :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))" style="width:600px;"><span style="width: 10px" v-text="locatedMinima[data.id].toFixed(2)"> </span></el-progress>
-                      </div>
-                  </div>
-                </template>
-            </el-tree-v2>
-        </el-row>
+                <el-col :span="24">
+                <el-tree-v2 :data="treeData" :props="props">
+                    <template #default="{ node ,data}">
+                        <div class="tree-node">
+                            <el-space wrap :size="30">
+                                <span>{{ node.label }}</span>
+                                <span
+                                    style="color: #ff4949"> Optimality best: {{nodeMinima[data.id].toFixed(2)}}, Best so far:{{ locatedMinima[data.id].toFixed(2) }}</span>
+                                <span
+                                    style="color: #4281b9"> Count: {{data.id in nodeStats ? nodeStats[data.id] : 0}}</span>
+                            </el-space>
+                            <div class="progress-bar">
+                                <el-progress :stroke-width="15"
+                                             :percentage="(nodeStats[data.id] *100 / (stepRange*populationSize))"
+                                             style="width:600px;"><span style="width: 10px"
+                                                                        v-text="(nodeStats[data.id] *100 / (stepRange*populationSize)).toFixed(2)"> </span>
+                                </el-progress>
+                            </div>
+                        </div>
+                    </template>
+                </el-tree-v2>
+                </el-col>
+            </el-row>
+            <el-row>
+                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
+            </el-row>
         </el-main>
     </el-container>
 </template>
@@ -76,21 +110,21 @@
 <script>
 import axios from 'axios';
 import computeUtils from "@/functions/ComputeUtils";
-// import ReebSpace from "@/components/ReebSpace.vue";
+import ReebSpace from "@/components/ReebSpace.vue";
 
 export default {
     name: "NaiveLogs",
     data() {
         return {
             logData: '',
-            treeData: '',
+            treeData: [],
             sliderStep: [0, 100],
             totalSteps: 100,
             stepSize: 100,
-            populationSize:100,
-            locatedMinima:{},
-            nodaMinima:{},
-            elapsedData:[],
+            populationSize: 100,
+            locatedMinima: {},
+            nodeMinima: {},
+            elapsedData: [],
             allIDs: [],
             solverData: [],
             filteredSolverData: [],
@@ -101,12 +135,52 @@ export default {
             playInstance: '',
             isPlaying: false,
             lockRange: false,
-            stepRange: 0,
+            stepRange: 2,
             filterOffset: 0,
-            solverType: "GDE3",
-            solverOptions:[{
-                value:"GDE3",label:"GDE3"},{value: "NSGA-II",label: "NSGA-II"}
+            solverType: "MOEAD",
+            treeType: "depth_base_1",
+            dimension: 2,
+            stoppingCriterion: "StoppingByEvaluations",
+            solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
+                value: "MOEAD",
+                label: "MOEAD"
+            }, {value: "OMOPSO", label: "OMOPSO"}
             ],
+            treeOptions: [
+                {value: "sample", label: "Sample"},
+                {value: "depth_base_1", label: "Depth 1"},
+                {value: "depth_base_2", label: "Depth 2"},
+                {value: "depth_base_3", label: "Depth 3"},
+                {value: "depth_base_4", label: "Depth 4"},
+                {value: "depth_base_5", label: "Depth 5"},
+                {value: "depth_base_6", label: "Depth 6"},
+                // {value: "breadth", label: "Breadth"},
+                {value: "breadth_base_1", label: "Breadth 1"},
+                {value: "breadth_base_2", label: "Breadth 2"},
+                {value: "breadth_base_3", label: "Breadth 3"},
+                {value: "breadth_base_4", label: "Breadth 4"},
+                {value: "breadth_base_5", label: "Breadth 5"},
+                {value: "breadth_base_6", label: "Breadth 6"},
+            ],
+            dimensionOptions: [{value: 2, label: 2},
+                {value: 3, label: 3},
+                {value: 4, label: 4},
+                {value: 5, label: 5},
+                {value: 6, label: 6},
+                {value: 7, label: 7},
+                {value: 8, label: 8},
+                {value: 9, label: 9},
+                {value: 10, label: 10},
+                {value: 11, label: 11},
+                {value: 20, label: 20},
+                {value: 100, label: 100}, {
+                value: 1000,
+                label: 1000
+            }],
+            stoppingCriterionOptions: [{value: "StoppingByTime", label: "By Time"}, {
+                value: "StoppingByEvaluations",
+                label: "By Evaluations"
+            }],
             props: {
                 value: 'id',
                 label: 'label',
@@ -115,8 +189,8 @@ export default {
         }
 
     },
-    components:{
-        // ReebSpace,
+    components: {
+        ReebSpace,
     },
     created() {
         this.getNaiveLogData();
@@ -166,24 +240,30 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
-            axios.get(`/api/demo_data?solver=${this.solverType}`).then(response => {
+            console.log("function called");
+            axios.get(`/api/demo_data?solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
+                console.log("function calledv2");
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
+                this.$message.success("Solver data loaded");
                 this.totalSteps = this.logData.length;
                 this.stepSize = 100 / this.totalSteps * this.populationSize;
                 this.marks[0] = "0";
                 this.marks[100] = this.totalSteps.toString();
-                this.stepRange = Math.round(this.totalSteps / this.populationSize);
+                // this.stepRange = Math.round(this.totalSteps / this.populationSize);
                 for (let i = 0; i < this.totalSteps; i++) {
                     this.solverData[this.logData[i].step] = this.logData[i];
                 }
                 this.filteredSolverData = this.solverData;
                 this.getStats();
-            })
+            }).catch(error => {
+                this.$message.error("Solver data failed @ " + error.toString());
+            });
         },
         getStats() {
             this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
+            this.nodeMinima = computeUtils.computeElapsedMinimal(this.filteredSolverData, this.allIDs);
             this.nodeStats = computeUtils.computeNodeCounts(this.filteredSolverData, this.allIDs);
         },
         filterRange(input) {
@@ -194,6 +274,7 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
+            console.log(this.filteredSolverData);
             this.elapsedData = this.solverData.slice(0, endStep);
 
             if (this.lockRange) {
@@ -211,12 +292,13 @@ export default {
     margin-top: 10px;
     margin-bottom: 0;
 }
-.tree-node{
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 18px;
-  padding-right: 50px;
+
+.tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    padding-right: 50px;
 }
 </style>

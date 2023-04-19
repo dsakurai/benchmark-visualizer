@@ -10,9 +10,7 @@ EvaluationResult = namedtuple(
 
 
 class BMP:
-    def __init__(
-        self, sequence_info: list[dict], dim_space: int, rotate: bool = True
-    ):
+    def __init__(self, sequence_info: list[dict], dim_space: int, rotate: bool = True):
         self.sequence_info = sequence_info
         self.s_lengths = self.s_lengths(sequence_info)
         self.dim_space = dim_space

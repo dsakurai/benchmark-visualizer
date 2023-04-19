@@ -17,7 +17,9 @@ def tree_to_json(file_path: str, tree_info: dict):
 def load_evaluation_log(file_path: str) -> list:
     eval_log = pd.read_csv(file_path, index_col=0)
     eval_log[["eval_node_id", "step"]] = eval_log[["eval_node_id", "step"]].astype(int)
-    return eval_log.to_dict(orient="records")
+    return eval_log[
+        ["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
+    ].to_dict(orient="records")
 
 
 if __name__ == "__main__":

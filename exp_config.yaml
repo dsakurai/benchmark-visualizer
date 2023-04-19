@@ -1,0 +1,25 @@
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 1200
+    weight_files_path: resources/MOEAD_weights
+  dimension: 20
+  experiment_name: test_exp_v0
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 600000
+  tree_file: experiment_trees/depth_base_1.json

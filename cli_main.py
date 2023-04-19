@@ -1,11 +1,12 @@
 import argparse
 import math
 
+from jmetal.algorithm.multiobjective import IBEA
 from jmetal.algorithm.multiobjective.gde3 import GDE3
 from jmetal.algorithm.multiobjective.nsgaii import NSGAII
+from jmetal.operator import SBXCrossover, PolynomialMutation
 from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByEvaluations
-from jmetal.operator import SBXCrossover, PolynomialMutation
 
 from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
@@ -31,9 +32,6 @@ def cli_main(opts):
         dim_space=opts.dim,
         sequence_info=tree.to_sequence(),
         enable_tracking=opts.disable_tracking,
-        tracking_uri="http://xomics.cc.kyushu-u.ac.jp:5000",
-        experiment_name="test_runx",
-        tracking_parameters=tracking_parameters,
     )
 
     # GDE3 Settings
@@ -51,7 +49,21 @@ def cli_main(opts):
         problem=problem,
         population_size=100,
         offspring_population_size=100,
-        mutation=PolynomialMutation(probability=1.0 / problem.number_of_variables, distribution_index=20),
+        mutation=PolynomialMutation(
+            probability=1.0 / problem.number_of_variables, distribution_index=20
+        ),
+        crossover=SBXCrossover(probability=1.0, distribution_index=20),
+        termination_criterion=StoppingByEvaluations(max_evaluations),
+    )
+
+    algorithm = IBEA(
+        problem=problem,
+        kappa=1.0,
+        population_size=100,
+        offspring_population_size=100,
+        mutation=PolynomialMutation(
+            probability=1.0 / problem.number_of_variables, distribution_index=20
+        ),
         crossover=SBXCrossover(probability=1.0, distribution_index=20),
         termination_criterion=StoppingByEvaluations(max_evaluations),
     )
@@ -79,8 +91,6 @@ def cli_main(opts):
 
 
 if __name__ == "__main__":
-    import time
-    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-f", "--file", type=str, help="Specify the input json file", required=True
@@ -88,4 +98,4 @@ if __name__ == "__main__":
     parser.add_argument("--dim", type=int, help="Dimension of the problem", default=2)
     parser.add_argument("--disable_tracking", action="store_false")
     cli_main(parser.parse_args())
-    print(time.time()-start_time)
+    print(time.time() - start_time)

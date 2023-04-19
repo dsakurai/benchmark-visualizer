@@ -7,9 +7,9 @@
             <el-row>
                 <el-switch v-model="rotate" active-text="Rotate" inactive-text="Normal" @change="rotateGraph"/>
             </el-row>
-            <el-row>
-                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear" @change="rotateGraph"/>
-            </el-row>
+<!--            <el-row>-->
+<!--                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear" @change="rotateGraph"/>-->
+<!--            </el-row>-->
         </el-col>
     </el-row>
 </template>
@@ -24,10 +24,18 @@ export default {
     name: "ReebSpace",
     props: {
         solverData: Array,
+        treeName: String,
+        dimension: Number,
     },
     watch: {
         solverData: function (oldVal, newVal) {
             this.plotSolverData(newVal);
+        },
+        treeName: function () {
+            this.getReebInfo();
+        },
+        dimension: function () {
+            this.getReebInfo();
         },
     },
     data() {
@@ -75,16 +83,20 @@ export default {
             })
         },
         getReebInfo() {
-            axios.get("/api/reeb_space").then(response => {
+            axios.get(`/api/reeb_space?tree_name=${this.treeName}&dimension=${this.dimension}`).then(response => {
+                d3.selectAll("svg").remove();
                 this.reebData = response.data;
                 let reebData = DataUtils.parseReebData(response.data);
+                this.$message.success("Reeb space data loaded");
                 this.treeInfo = reebData.treeInfo;
                 this.nodeInfo = reebData.nodeInfo;
                 this.svg = d3.select("#reebSpace").append("svg").attr("width", this.figureInfo.width).attr("height", this.figureInfo.height);
                 [this.xScale, this.yScale] = GraphUtils.composeScales(this.treeInfo, {"width":this.innerWidth,"height": this.innerHeight},this.logScale);
                 this.drawAxis();
                 this.drawSheets();
-            })
+            }).catch(error => {
+                this.$message.error("Reeb space data failed @ " + error.toString());
+            });
         },
         rotateGraph() {
             d3.selectAll("svg > *").remove();
@@ -94,10 +106,10 @@ export default {
             this.drawAxis()
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
-            for (let node_id in sheets) {
+            for (let [node_id,sheet] of sheets.entries()) {
                 this.svg.append("path")
                     .attr("id", node_id)
-                    .attr("d", sheets[node_id])
+                    .attr("d", sheet)
                     .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
                     .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
                     .style("stroke", "black")
@@ -113,10 +125,10 @@ export default {
             let sheetsCoordinates = GraphUtils.computeSheetsCoordinates(this.treeInfo,this.nodeInfo, this.rotate);
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
-            for (let node_id in sheets) {
+            for (let [node_id,sheet] of sheets.entries()) {
                 this.svg.append("path")
                     .attr("id", node_id)
-                    .attr("d", sheets[node_id])
+                    .attr("d", sheet)
                     .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
                     .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
                     .style("stroke", "black")

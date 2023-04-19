@@ -1,3 +1,4 @@
+import os
 from typing import Union
 
 import numpy as np
@@ -52,18 +53,16 @@ def construct_problem(graph: dict):
 
 
 @app.get("/api/reeb_space")
-def reeb_space_info():
-    tree = Tree(dim_space=2)
-    tree.from_json("sample.json")
+def reeb_space_info(dimension: int, tree_name: str):
+    tree = Tree(dim_space=dimension)
+    tree.from_json(f"experiment_trees/{tree_name}.json")
     sequence_info = tree.to_sequence()
-    bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=2)
-
+    bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=dimension)
     node_info = []
     max_t = 0
     maximal = -1
     minimal = -1
     node_count = 0
-
     for node in sequence_info:
         node_id = node["name"]
         symbols = node["attrs"]["symbol"]
@@ -93,7 +92,7 @@ def reeb_space_info():
             }
         )
         node_count += 1
-
+    node_info = sorted(node_info,key=lambda k:(k["minimal_time"],k["minimal"]))
     return JSONResponse(
         {
             "nodeInfo": node_info,
@@ -102,21 +101,27 @@ def reeb_space_info():
                 "maxTime": max_t + 1,
                 "minimal": minimal,
                 "maximal": maximal,
-                "minTime": 0
+                "minTime": 0,
             },
         }
     )
 
 
+def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
+    file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
+    print(file_name_pattern)
+    data_base_path = "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
+    files = [f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path+f)]
+    for file in files:
+        if file.startswith(file_name_pattern):
+            return data_base_path + file
+
+
 @app.get("/api/demo_data")
-def demo_data(solver: str):
-    # TODO: Demo purpose for 20230302
-    print(solver)
-    if solver == "GDE3":
-        demo_log = file_utils.load_evaluation_log("demo_log_latest.csv")
-    else:
-        demo_log = file_utils.load_evaluation_log("test_runx_2023-03-02T10-30-42.503866.csv")
-    demo_tree = file_utils.read_json_tree("sample.json")
+def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
+    log_path = match_experiment_file(solver, tree_name, dimension, termination)
+    demo_log = file_utils.load_evaluation_log(log_path)
+    demo_tree = file_utils.read_json_tree(f"experiment_trees/{tree_name}.json")
     sequence_dict = {}
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
@@ -147,7 +152,6 @@ def demo_data(solver: str):
         ],
         "solver_log": demo_log,
     }
-
     return JSONResponse(content=jsonable_encoder(response))
 
 
