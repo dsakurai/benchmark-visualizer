@@ -92,7 +92,7 @@ def reeb_space_info(dimension: int, tree_name: str):
             }
         )
         node_count += 1
-    node_info = sorted(node_info,key=lambda k:(k["minimal_time"],k["minimal"]))
+    node_info = sorted(node_info, key=lambda k: (k["minimal_time"], k["minimal"]))
     return JSONResponse(
         {
             "nodeInfo": node_info,
@@ -110,8 +110,12 @@ def reeb_space_info(dimension: int, tree_name: str):
 def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     print(file_name_pattern)
-    data_base_path = "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-    files = [f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path+f)]
+    data_base_path = (
+        "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
+    )
+    files = [
+        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
+    ]
     for file in files:
         if file.startswith(file_name_pattern):
             return data_base_path + file
