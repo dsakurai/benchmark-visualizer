@@ -105,6 +105,8 @@ export default {
             [this.xScale, this.yScale] = GraphUtils.composeScales(boundingBox, {"width":this.innerWidth,"height": this.innerHeight}, this.logScale);
             this.drawAxis()
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
+            // eslint-disable-next-line no-unused-vars
+            let paretoFronts = GraphUtils.getParetoFronts(sheetsScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
             for (let [node_id,sheet] of sheets.entries()) {
                 this.svg.append("path")
@@ -134,6 +136,20 @@ export default {
                     .style("stroke", "black")
                     .style("opacity", 0.5);
             }
+            // eslint-disable-next-line no-unused-vars
+            let paretoFronts = GraphUtils.getParetoFronts(sheetsScale);
+            let line = function(d) {
+                return d3.line().x(d => d.x).y(d => d.y);
+            }
+            let line = d3.svg.line()
+                .interpolate("basis")
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.y); });
+            this.svg.selectAll(".line")
+                .data(paretoFronts)
+                .enter().append("path")
+                .attr("class", "line")
+                .attr("d", line);
         },
     },
 }

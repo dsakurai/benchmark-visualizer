@@ -11,10 +11,14 @@ export default {
     composeScales,
     marginConvention,
     sheetCoordinatesToScale,
+    getParetoFronts,
 }
 
 
 function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
+    /**
+     * Convert coordinates to d3 scale
+     * **/
     let sheetsScale = new Map();
     for (let [nodeId, sheetData] of sheetsData.entries()) {
         let points = [];
@@ -30,8 +34,10 @@ function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
 }
 
 function composeScales(treeInfo, figureInfo, logScale) {
-    let [minimal, maximal, minTime, maxTime] = DataUtils.parseTreeData(treeInfo);
-    console.log(maximal);
+    /**
+     * Compose the scales of the d3 graph
+     * **/
+    let [minimal, , minTime, maxTime] = DataUtils.parseTreeData(treeInfo);
     let xScale, yScale;
     if (logScale) {
         // xScale = d3.scaleLog().domain([1, maxTime]).range([0, figureInfo.width]);
@@ -46,6 +52,9 @@ function composeScales(treeInfo, figureInfo, logScale) {
 }
 
 function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
+    /**
+     * Convert each node to corner points of the sheets
+     * **/
     let maxTime = treeInfo.maxTime;
     let sheetsData = new Map();
     nodeData.forEach(node => {
@@ -66,10 +75,12 @@ function computeSheetsCoordinates(treeInfo, nodeData, rotate) {
 
 
 function sheetsDataToBox(sheetsData) {
+    /**
+     * Get the bounding box of the graph
+     * **/
     let [minTime, maxTime] = [0, 0];
     let [maximal, minimal] = [0, -1];
     for (let sheetData of sheetsData.values()) {
-        console.log(sheetData);
         sheetData.forEach(point => {
             if (point.x < minTime) {
                 minTime = point.x;
@@ -89,6 +100,9 @@ function sheetsDataToBox(sheetsData) {
 }
 
 function composeSheets(sheetsData) {
+    /**
+     * Compose sheets path from d3 scales
+     * **/
     let sheets = new Map();
     for (let [node_id,sheetData] of sheetsData.entries()) {
         let p = d3.path();
@@ -104,6 +118,23 @@ function composeSheets(sheetsData) {
     return sheets;
 }
 
+function getParetoFronts(sheetsData){
+    /**
+     * Compute the pareto fronts.
+     * Line from point 2 to point 3 is automatically a Pareto front,
+     * Line from point 3 to point 0 is determined by slope
+     * **/
+    let fronts = [];
+    for (let [,sheetData] of sheetsData.entries()) {
+        let points = sheetData;
+        fronts.push([{x: points[2].x, y: points[2].y} , {x: points[3].x,y:points[3].y}])
+        if (points[3].x > points[0].x){
+            fronts.push([{x: points[0].x, y: points[0].y} , {x: points[3].x,y:points[3].y}])
+        }
+    }
+    console.log(fronts)
+    return fronts;
+}
 
 function composeAxis(xScale, yScale) {
     let xAxis = d3.axisBottom().scale(xScale);

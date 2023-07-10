@@ -2,7 +2,6 @@ export default {
     computeElapsedMinimal,
     computeNodeCounts,
     rotateValues,
-    identifyParetoFronts,
 }
 
 
@@ -50,9 +49,4 @@ function rotateValues(x,y){
         nx = (cos * (x)) + (sin * (y)),
         ny = (cos * (y)) - (sin * (x));
     return [nx, ny];
-}
-
-function identifyParetoFronts(p1,p2){
-    console.log(p1,p2);
-    return true;
 }
