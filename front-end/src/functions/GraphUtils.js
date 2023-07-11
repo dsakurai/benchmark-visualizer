@@ -132,7 +132,6 @@ function getParetoFronts(sheetsData){
             fronts.push([{x: points[0].x, y: points[0].y} , {x: points[3].x,y:points[3].y}])
         }
     }
-    console.log(fronts)
     return fronts;
 }
 
