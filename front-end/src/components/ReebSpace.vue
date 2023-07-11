@@ -7,6 +7,9 @@
             <el-row>
                 <el-switch v-model="rotate" active-text="Rotate" inactive-text="Normal" @change="rotateGraph"/>
             </el-row>
+            <el-row>
+                <el-switch v-model="displayFronts" active-text="Fronts" inactive-text="Normal" @change="rotateGraph"></el-switch>
+            </el-row>
 <!--            <el-row>-->
 <!--                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear" @change="rotateGraph"/>-->
 <!--            </el-row>-->
@@ -59,6 +62,7 @@ export default {
             svg: '',
             rotate: false,
             logScale: false,
+            displayFronts: false,
             xScale : '',
             yScale : '',
         }
@@ -115,11 +119,30 @@ export default {
                     .style("stroke", "black")
                     .style("opacity", 0.5);
             }
+            if (this.rotate && this.displayFronts) {
+                this.drawParetoFronts(sheetsScale);
+            }
         },
         drawAxis() {
             let {xAxis, yAxis} = GraphUtils.composeAxis(this.xScale, this.yScale);
             this.svg.append("g").attr("transform", `translate(${this.margin.left},${this.margin.top})`).call(yAxis);
             this.svg.append("g").attr("transform", `translate(${this.margin.left},${this.innerHeight + this.margin.top})`).call(xAxis);
+        },
+        drawParetoFronts(sheetsScale) {
+            let paretoFronts = GraphUtils.getParetoFronts(sheetsScale);
+            let line = d3.line()
+                .x(function(d) { return d.x; })
+                .y(function(d) { return d.y; });
+            this.svg.selectAll(".line")
+                .append("g")
+                .data(paretoFronts)
+                .enter().append("path")
+                .attr("class", "line")
+                .attr("d", line)
+                .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
+                .style("stroke-width", 2.5)
+                .style("stroke", "red")
+                .style("opacity", 0.8);
         },
         drawSheets() {
             let sheetsCoordinates = GraphUtils.computeSheetsCoordinates(this.treeInfo,this.nodeInfo, this.rotate);
