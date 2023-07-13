@@ -118,6 +118,26 @@ def compute_intercept():
     pass
 
 
+def compute_global_pareto_front(tree_data: dict):
+    """Compute the global Pareto front for a given tree
+
+    Returns
+    -------
+
+    """
+    sorted_tree = sort_tree(tree_data)
+    return None
+
+
+def sort_tree(tree_data:dict):
+    """Sort tree based on [node_minimum, symbol_length]
+
+    Returns
+    -------
+
+    """
+
+
 def compute_distance(
     symbol_sequence: list[int],
     solution_coordinates: np.ndarray,
