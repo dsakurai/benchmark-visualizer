@@ -129,13 +129,14 @@ def compute_global_pareto_front(tree_data: dict):
     return None
 
 
-def sort_tree(tree_data: dict):
+def sort_tree(tree_data: dict) -> dict:
     """Sort tree based on [node_minimum, symbol_length]
 
     Returns
     -------
 
     """
+    return {}
 
 
 def compute_distance(
