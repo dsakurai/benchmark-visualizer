@@ -10,6 +10,7 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 
 from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+import time
 
 
 def cli_main(opts):
@@ -35,7 +36,7 @@ def cli_main(opts):
     )
 
     # GDE3 Settings
-    max_evaluations = 25000
+    max_evaluations = 2500
 
     algorithm = GDE3(
         problem=problem,
@@ -73,6 +74,7 @@ def cli_main(opts):
 
     # Get solutions
     solutions = algorithm.get_result()
+    # print(solutions)
 
     # Print the results
     for solution in solutions:
@@ -98,4 +100,3 @@ if __name__ == "__main__":
     parser.add_argument("--dim", type=int, help="Dimension of the problem", default=2)
     parser.add_argument("--disable_tracking", action="store_false")
     cli_main(parser.parse_args())
-    print(time.time() - start_time)
