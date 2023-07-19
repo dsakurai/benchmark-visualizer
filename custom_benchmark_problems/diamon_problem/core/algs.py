@@ -1,4 +1,9 @@
 import numpy as np
+from collections import OrderedDict
+
+from custom_benchmark_problems.diamon_problem.core.evaluation import NodeInfo
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from custom_benchmark_problems.diamon_problem.core import evaluation
 
 
 def s_lengths(sequence_info: list) -> list:
@@ -106,7 +111,7 @@ def compute_coordinates(symbol_sequence: list, dim_space: int) -> np.ndarray:
                 f"Dimension cannot be greater than axis. Got dimension: {dim_space}, axis: {symbol}"
             )
         if symbol != 0:
-            movement_length = np.sign(symbol) * 2.0 / (4.0**index)
+            movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
             x = abs(symbol) - 1  # the 1st axis is x0 internally
             coordinates[x] += movement_length
     return coordinates
@@ -118,32 +123,52 @@ def compute_intercept():
     pass
 
 
-def compute_global_pareto_front(tree_data: dict):
+def compute_global_pareto_front(sequence_info: list,dimension:int):
     """Compute the global Pareto front for a given tree
 
     Returns
     -------
 
     """
-    sorted_tree = sort_tree(tree_data)
+    bmp = evaluation.BMP(sequence_info=sequence_info,dim_space = dimension)
+    sorted_tree = sort_tree(sequence_info)
+    for s_length in reversed(sorted(sorted_tree.keys())):
+        nodes_info = sorted_tree[s_length]
+        # Go for recursion here
+
+        central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
+        step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
+        print(nodes_info)
     return None
 
 
-def sort_tree(tree_data: dict) -> dict:
+def sort_tree(tree_data: list) -> dict:
     """Sort tree based on [node_minimum, symbol_length]
 
     Returns
     -------
 
     """
-    return {}
+    s_dict = {}
+    for item in tree_data:
+        minima = item["minima"]
+        symbol = item["attrs"]["symbol"]
+        name = item["name"]
+        len_s = len(symbol)
+        if len_s in s_dict:
+            s_dict[len_s].append(NodeInfo(symbol, minima, name))
+        else:
+            s_dict[len_s] = [NodeInfo(symbol, minima, name)]
+    for s_length in s_dict.keys():
+        s_dict[s_length] = sorted(s_dict[s_length], key=lambda x: x.minima)
+    return s_dict
 
 
 def compute_distance(
-    symbol_sequence: list[int],
-    solution_coordinates: np.ndarray,
-    dim_space: int,
-    diagonal_length: float,
+        symbol_sequence: list[int],
+        solution_coordinates: np.ndarray,
+        dim_space: int,
+        diagonal_length: float,
 ):
     center_coordinates = compute_coordinates(
         symbol_sequence=symbol_sequence, dim_space=dim_space
@@ -153,11 +178,15 @@ def compute_distance(
 
 
 if __name__ == "__main__":
-    test_sequence = [1, 2, 1]
-    test_solution_coordinates = np.array([1.5, 1.5])
-    compute_distance(
-        symbol_sequence=test_sequence,
-        solution_coordinates=test_solution_coordinates,
-        dim_space=2,
-        diagonal_length=5,
-    )
+    # test_sequence = [1, 2, 1]
+    # test_solution_coordinates = np.array([1.5, 1.5])
+    # compute_distance(
+    #     symbol_sequence=test_sequence,
+    #     solution_coordinates=test_solution_coordinates,
+    #     dim_space=2,
+    #     diagonal_length=5,
+    # )
+    test_tree = Tree(dim_space=3)
+    test_tree.from_json("/Users/conan/PycharmProjects/benchmark-visualizer/experiment_trees/sample.json")
+    sequence_info = test_tree.to_sequence()
+    compute_global_pareto_front(sequence_info)
