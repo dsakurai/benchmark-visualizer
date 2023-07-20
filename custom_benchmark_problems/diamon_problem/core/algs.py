@@ -96,27 +96,43 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
             break
         current_nodes = sorted_tree[s_length]
         pre_nodes = sorted_tree[s_lengths[index + 1]]
-        print(current_nodes)
-        print(pre_nodes)
         # Add corner points of previous node
         intersections.append(pre_nodes[0].minima_coordinates)
-
         for node in current_nodes:
             intersections.append(node.minima_coordinates)
             if node.step_back_coordinates[1] < pre_nodes[0].minima_coordinates[1]:
                 intersections.append(node.step_back_coordinates)
             else:
-                pass
-            if len(current_nodes) == 1:
-                continue
-            for sub_node in current_nodes[1:]:
-                intersection = compute_intersection(node, sub_node)
-                intersections.append(intersection)
-        break
+                slope = slope_(node.minima_coordinates,node.step_back_coordinates)
+                intercept_ = intercept(slope, node.minima_coordinates)
+                x = (pre_nodes[0].minima_coordinates[1] - intercept_) / slope
+                intersections.append([x, pre_nodes[0].minima_coordinates[1]])
+            if len(current_nodes) > 1:
+                for sub_node in current_nodes[1:]:
+                    intersection = compute_intersection(node, sub_node)
+                    intersections.append(intersection)
+            current_nodes.pop(0)
     print("intersections", intersections)
-    return None
+    intersections = get_non_dominated_points(intersections)
+    print("non-do",intersections)
+    print("fronts",extract_fronts(intersections))
+    return intersections
 
 
+def extract_fronts(intersections:list[list[float]]):
+    intersections = sorted(intersections, key=lambda x:x[0])
+    print(intersections)
+    fronts = []
+    for index, intersection in enumerate(intersections):
+        if index == len(intersections) - 1:
+            break
+        p1 = intersection
+        p2 = intersections[index+1]
+        if p1[0] != p2[0]:
+            slope = slope_(p1,p2)
+            if slope < -1:
+                fronts.append([p1,p2])
+    return fronts
 def compute_intersection(node_1: ParetoInfo, node_2: ParetoInfo) -> list[float]:
     slope_1 = slope_(node_1.minima_coordinates, node_1.step_back_coordinates)
     slope_2 = slope_(node_2.minima_coordinates, node_2.step_back_coordinates)
@@ -131,7 +147,7 @@ def slope_(p1: list[float], p2: list[float]) -> float:
     assert (
         len(p1) == 2 and len(p2) == 2
     ), "Inconsistent coordinates length (should be 2)"
-    assert p1[0] == p2[0], "Infinite slope"
+    assert p1[0] != p2[0], "Infinite slope" + str(p1) + str(p2)
     return (p1[1] - p2[1]) / (p1[0] - p2[0])
 
 
