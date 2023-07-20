@@ -12,7 +12,6 @@ from custom_benchmark_problems.diamon_problem.core import evaluation
 from config import project_base
 
 
-
 def compute_links(tree_data: dict) -> list:
     """Compute the link between nodes with nodes' symbol information
 
@@ -90,7 +89,7 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
     s_lengths = list(reversed(sorted(sorted_tree.keys())))
     # Corner cases
     final_node = sorted_tree[s_lengths[0]][0]
-    intersections = [[len(final_node.symbol) + 2,final_node.minima]]
+    intersections = [[len(final_node.symbol) + 2, final_node.minima]]
 
     for index, s_length in enumerate(s_lengths):
         if index + 1 == len(s_lengths):
@@ -111,30 +110,34 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
             if len(current_nodes) == 1:
                 continue
             for sub_node in current_nodes[1:]:
-                intersection = compute_intersection(node,sub_node)
+                intersection = compute_intersection(node, sub_node)
                 intersections.append(intersection)
         break
-    print("intersections",intersections)
+    print("intersections", intersections)
     return None
 
-def compute_intersection(node_1:ParetoInfo, node_2: ParetoInfo) -> list[float]:
-    slope_1 = slope_(node_1.minima_coordinates,node_1.step_back_coordinates)
+
+def compute_intersection(node_1: ParetoInfo, node_2: ParetoInfo) -> list[float]:
+    slope_1 = slope_(node_1.minima_coordinates, node_1.step_back_coordinates)
     slope_2 = slope_(node_2.minima_coordinates, node_2.step_back_coordinates)
     intercept_1 = intercept(slope_1, node_1.minima_coordinates)
     intercept_2 = intercept(slope_2, node_2.minima_coordinates)
     x = (intercept_2 - intercept_1) / (slope_1 - slope_2)
     y = slope_1 * x + intercept_1
-    return [x,y]
+    return [x, y]
 
-def slope_(p1:list[float], p2:list[float]) -> float:
-    assert len(p1) ==2 and len(p2) == 2, "Inconsistent coordinates length (should be 2)"
+
+def slope_(p1: list[float], p2: list[float]) -> float:
+    assert (
+        len(p1) == 2 and len(p2) == 2
+    ), "Inconsistent coordinates length (should be 2)"
     assert p1[0] == p2[0], "Infinite slope"
     return (p1[1] - p2[1]) / (p1[0] - p2[0])
 
-def intercept(slope:float, p:list[float]) -> float:
+
+def intercept(slope: float, p: list[float]) -> float:
     assert len(p) == 2, "Invalid point length"
     return p[1] - slope * p[0]
-
 
 
 def sort_tree(sequence_info: list, dimension: int) -> dict:
@@ -265,4 +268,12 @@ if __name__ == "__main__":
     test_tree.from_json(tree_path)
     test_sequence_info = test_tree.to_sequence()
     compute_global_pareto_front(test_sequence_info, 3)
-    points_list = [[1,-1],[1.5,-0.5],[2.5,-0.75],[2,-1.5],[3,-2],[4,-4],[2.5,-3]]
+    points_list = [
+        [1, -1],
+        [1.5, -0.5],
+        [2.5, -0.75],
+        [2, -1.5],
+        [3, -2],
+        [4, -4],
+        [2.5, -3],
+    ]
