@@ -108,20 +108,22 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
                 x = (pre_nodes[0].minima_coordinates[1] - intercept_) / slope
                 intersections.append([x, pre_nodes[0].minima_coordinates[1]])
             if len(current_nodes) > 1:
+                sub_sections = []
                 for sub_node in current_nodes[1:]:
                     intersection = compute_intersection(node, sub_node)
-                    intersections.append(intersection)
+                    sub_sections.append(intersection)
+                sub_sections = get_non_dominated_points(sub_sections)
+                intersections.extend(sub_sections)
             current_nodes.pop(0)
+    intersections.append([0,0])
     print("intersections", intersections)
-    intersections = get_non_dominated_points(intersections)
-    print("non-do",intersections)
+    print(sorted(intersections, key=lambda x:x[0]))
     print("fronts",extract_fronts(intersections))
     return intersections
 
 
 def extract_fronts(intersections:list[list[float]]):
     intersections = sorted(intersections, key=lambda x:x[0])
-    print(intersections)
     fronts = []
     for index, intersection in enumerate(intersections):
         if index == len(intersections) - 1:
@@ -130,7 +132,7 @@ def extract_fronts(intersections:list[list[float]]):
         p2 = intersections[index+1]
         if p1[0] != p2[0]:
             slope = slope_(p1,p2)
-            if slope < -1:
+            if slope > -1:
                 fronts.append([p1,p2])
     return fronts
 def compute_intersection(node_1: ParetoInfo, node_2: ParetoInfo) -> list[float]:
