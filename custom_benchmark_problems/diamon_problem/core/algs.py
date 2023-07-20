@@ -104,24 +104,39 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
 
         for node in current_nodes:
             intersections.append(node.minima_coordinates)
+            if node.step_back_coordinates[1] < pre_nodes[0].minima_coordinates[1]:
+                intersections.append(node.step_back_coordinates)
+            else:
+                pass
             if len(current_nodes) == 1:
                 continue
             for sub_node in current_nodes[1:]:
-                intersection = compute_intersection()
-
-
-        nodes_info = sorted_tree[s_length]
-        # Go for recursion here
-
-        print(nodes_info)
+                intersection = compute_intersection(node,sub_node)
+                intersections.append(intersection)
         break
+    print("intersections",intersections)
     return None
 
 def compute_intersection(node_1:ParetoInfo, node_2: ParetoInfo) -> list[float]:
-    p1 = node_1.minima_coordinates
-    p2 = node_2.minima_coordinates
-    slope =
-    return []
+    slope_1 = slope_(node_1.minima_coordinates,node_1.step_back_coordinates)
+    slope_2 = slope_(node_2.minima_coordinates, node_2.step_back_coordinates)
+    intercept_1 = intercept(slope_1, node_1.minima_coordinates)
+    intercept_2 = intercept(slope_2, node_2.minima_coordinates)
+    x = (intercept_2 - intercept_1) / (slope_1 - slope_2)
+    y = slope_1 * x + intercept_1
+    return [x,y]
+
+def slope_(p1:list[float], p2:list[float]) -> float:
+    assert len(p1) ==2 and len(p2) == 2, "Inconsistent coordinates length (should be 2)"
+    assert p1[0] == p2[0], "Infinite slope"
+    return (p1[1] - p2[1]) / (p1[0] - p2[0])
+
+def intercept(slope:float, p:list[float]) -> float:
+    assert len(p) == 2, "Invalid point length"
+    return p[1] - slope * p[0]
+
+
+
 def sort_tree(sequence_info: list, dimension: int) -> dict:
     """Sort tree based on [node_minimum, symbol_length]
 
@@ -251,4 +266,3 @@ if __name__ == "__main__":
     test_sequence_info = test_tree.to_sequence()
     compute_global_pareto_front(test_sequence_info, 3)
     points_list = [[1,-1],[1.5,-0.5],[2.5,-0.75],[2,-1.5],[3,-2],[4,-4],[2.5,-3]]
-    print(get_non_dominated_points(points_list))
