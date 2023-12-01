@@ -118,7 +118,7 @@ export default {
         return {
             logData: '',
             treeData: [],
-            sliderStep: [0, 100],
+            sliderStep: [0, 1],
             totalSteps: 100,
             stepSize: 100,
             populationSize: 100,
@@ -132,13 +132,14 @@ export default {
             playbackSpeed: 1,
             marks: {},
             nodeStats: {},
+            stepMinimals:{},
             playInstance: '',
             isPlaying: false,
             lockRange: false,
             stepRange: 2,
             filterOffset: 0,
             solverType: "IBEA",
-            treeType: "depth_base_1",
+            treeType: "breadth_base_1",
             dimension: 2,
             stoppingCriterion: "StoppingByEvaluations",
             solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
@@ -220,7 +221,7 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
-            this.getStats();
+            this.getStats(endStep);
         },
         startAutoPlay() {
             clearInterval(this.playInstance);
@@ -254,14 +255,21 @@ export default {
                 for (let i = 0; i < this.totalSteps; i++) {
                     this.solverData[this.logData[i].step] = this.logData[i];
                 }
+                this.stepMinimals = computeUtils.computeStepMinimal(this.solverData,this.allIDs);
                 this.filteredSolverData = this.solverData;
-                this.getStats();
+                let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
+                console.log(this.stepMinimals);
+                this.getStats(endStep);
             }).catch(error => {
                 this.$message.error("Solver data failed @ " + error.toString());
             });
         },
-        getStats() {
-            this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
+        getStats(endStep) {
+            // this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
+            console.log(endStep);
+            console.log(this.stepMinimals);
+            console.log(this.sliderStep);
+            this.locatedMinima = computeUtils.getLocatedMinima(this.stepMinimals,endStep,this.allIDs)
             this.nodeMinima = computeUtils.computeElapsedMinimal(this.filteredSolverData, this.allIDs);
             this.nodeStats = computeUtils.computeNodeCounts(this.filteredSolverData, this.allIDs);
         },
@@ -273,14 +281,13 @@ export default {
             let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
             this.filterOffset = startStep;
             this.filteredSolverData = this.solverData.slice(startStep, endStep);
-            console.log(this.filteredSolverData);
             this.elapsedData = this.solverData.slice(0, endStep);
 
             if (this.lockRange) {
                 // TODO: Tail slider not updated!!
                 this.updateTailSlider();
             }
-            this.getStats();
+            this.getStats(endStep);
         },
     },
 }
