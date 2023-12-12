@@ -26,6 +26,7 @@ class MlflowTracker:
         self.step = 0
         self.headers = None
         self.step_metrics = []
+        self.exp_name = None
 
     def __enter__(self):
         try:
@@ -49,6 +50,8 @@ class MlflowTracker:
             os.makedirs(artifact_dir, exist_ok=True)
             mlflow.log_artifact(artifact_dir)
             mlflow.log_params(self.experiment_config._asdict())
+
+            self.exp_name = experiment_name
 
             return self
         except Exception as e:
@@ -98,7 +101,9 @@ class MlflowTracker:
         termination_criterion = self.experiment_config.termination_criterion[
             "criterion_name"
         ]
+        exp_name = f"{self.exp_name}_" if self.exp_name else ""
         file_name = (
+            f"{exp_name}_"
             f"{algorithm}_"
             f"{tree_file.split('/')[1]}_"
             f"{dimension}_"
