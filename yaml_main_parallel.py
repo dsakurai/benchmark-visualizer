@@ -313,6 +313,8 @@ def yaml_main(opts):
         pbar.update()
 
     for exp_config in exps_config:
+        if opts.exp_name:
+            exp_config.experiment_name = opts.exp_name
         pool.apply_async(
             run_experiment,
             args=(
@@ -330,7 +332,14 @@ def yaml_main(opts):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-f", "--file", type=str, help="Specify the input json file", required=True
+        "-f",
+        "--file",
+        type=str,
+        help="Specify the input YAML experiment file",
+        required=True,
+    )
+    parser.add_argument(
+        "--exp_name", type=str, help="Set experiment name, not required"
     )
     parser.add_argument("--disable_tracking", action="store_false")
     yaml_main(parser.parse_args())

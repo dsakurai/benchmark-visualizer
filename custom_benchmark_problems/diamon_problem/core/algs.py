@@ -103,7 +103,7 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
             if node.step_back_coordinates[1] < pre_nodes[0].minima_coordinates[1]:
                 intersections.append(node.step_back_coordinates)
             else:
-                slope = slope_(node.minima_coordinates,node.step_back_coordinates)
+                slope = slope_(node.minima_coordinates, node.step_back_coordinates)
                 intercept_ = intercept(slope, node.minima_coordinates)
                 x = (pre_nodes[0].minima_coordinates[1] - intercept_) / slope
                 intersections.append([x, pre_nodes[0].minima_coordinates[1]])
@@ -115,26 +115,28 @@ def compute_global_pareto_front(sequence_info: list, dimension: int):
                 sub_sections = get_non_dominated_points(sub_sections)
                 intersections.extend(sub_sections)
             current_nodes.pop(0)
-    intersections.append([0,0])
+    intersections.append([0, 0])
     print("intersections", intersections)
-    print(sorted(intersections, key=lambda x:x[0]))
-    print("fronts",extract_fronts(intersections))
+    print(sorted(intersections, key=lambda x: x[0]))
+    print("fronts", extract_fronts(intersections))
     return intersections
 
 
-def extract_fronts(intersections:list[list[float]]):
-    intersections = sorted(intersections, key=lambda x:x[0])
+def extract_fronts(intersections: list[list[float]]):
+    intersections = sorted(intersections, key=lambda x: x[0])
     fronts = []
     for index, intersection in enumerate(intersections):
         if index == len(intersections) - 1:
             break
         p1 = intersection
-        p2 = intersections[index+1]
+        p2 = intersections[index + 1]
         if p1[0] != p2[0]:
-            slope = slope_(p1,p2)
+            slope = slope_(p1, p2)
             if slope > -1:
-                fronts.append([p1,p2])
+                fronts.append([p1, p2])
     return fronts
+
+
 def compute_intersection(node_1: ParetoInfo, node_2: ParetoInfo) -> list[float]:
     slope_1 = slope_(node_1.minima_coordinates, node_1.step_back_coordinates)
     slope_2 = slope_(node_2.minima_coordinates, node_2.step_back_coordinates)
