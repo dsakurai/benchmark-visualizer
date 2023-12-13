@@ -314,7 +314,7 @@ def yaml_main(opts):
 
     for exp_config in exps_config:
         if opts.exp_name:
-            exp_config.experiment_name = opts.exp_name
+            exp_config = exp_config._replace(experiment_name=opts.exp_name)
         pool.apply_async(
             run_experiment,
             args=(

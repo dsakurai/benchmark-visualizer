@@ -85,13 +85,13 @@ if __name__ == "__main__":
     # trees = ["experiment_trees/sample.json"]
     trees = []
     # depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
-    breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 4)]
+    breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
     trees.extend(breadth_trees)
     # trees.extend(depth_trees)
     solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD", "OMOPSO"]
-    dimensions = list(range(2, 6))
+    dimensions = list(range(2, 7))
     termination_criterions = [
-        {"criterion_name": "StoppingByTime", "termination_parameter": 200},
+        # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
         {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
     ]
     counter = 0
