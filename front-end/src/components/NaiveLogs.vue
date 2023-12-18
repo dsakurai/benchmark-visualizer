@@ -74,6 +74,14 @@
                             @change="getNaiveLogData"
                         />
                     </el-col>
+                    <el-col :span="6">
+                        <span>Experiment Index: </span>
+                        <el-select-v2
+                            v-model="experimentIndex"
+                            :options="experimentIndexOptions"
+                            @change="getNaiveLogData"
+                        />
+                    </el-col>
                 </el-row>
             </el-card>
             <el-row>
@@ -147,6 +155,8 @@ export default {
                 label: "MOEAD"
             }, {value: "OMOPSO", label: "OMOPSO"}
             ],
+            experimentIndex:'',
+            experimentIndexOptions:[],
             treeOptions: [
                 {value: "sample", label: "Sample"},
                 {value: "depth_base_1", label: "Depth 1"},
@@ -194,10 +204,24 @@ export default {
     components: {
         ReebSpace,
     },
+    beforeCreate() {
+        // this.loadExperimentIndexes();
+    },
     created() {
-        this.getNaiveLogData();
+        this.loadExperimentIndexes();
+        // this.getNaiveLogData();
     },
     methods: {
+        loadExperimentIndexes(){
+            axios.get(`/api/available_exp_indexes`).then(response => {
+                let experimentIndexOptions = response.data.experiment_indexes;
+                for (let experimentIndex of experimentIndexOptions){
+                    this.experimentIndexOptions.push({value:experimentIndex,label:experimentIndex});
+                }
+                this.experimentIndex = this.experimentIndexOptions[0].value;
+                this.getNaiveLogData();
+            })
+        },
         updateTailSlider() {
             let range = this.stepRange * this.stepSize;
             if (this.sliderStep[0] + range < 100) {
@@ -242,7 +266,8 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
-            axios.get(`/api/demo_data?solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
+            console.log(this.experimentIndex);
+            axios.get(`/api/demo_data?exp_index=${this.experimentIndex}&solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
