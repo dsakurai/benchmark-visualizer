@@ -148,7 +148,7 @@ export default {
             filterOffset: 0,
             solverType: "IBEA",
             treeType: "breadth_base_1",
-            dimension: 2,
+            dimension: 3,
             stoppingCriterion: "StoppingByEvaluations",
             solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
                 value: "MOEAD",
@@ -266,7 +266,6 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
-            console.log(this.experimentIndex);
             axios.get(`/api/demo_data?exp_index=${this.experimentIndex}&solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
@@ -283,7 +282,6 @@ export default {
                 this.stepMinimals = computeUtils.computeStepMinimal(this.solverData,this.allIDs);
                 this.filteredSolverData = this.solverData;
                 let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
-                console.log(this.stepMinimals);
                 this.getStats(endStep);
             }).catch(error => {
                 this.$message.error("Solver data failed @ " + error.toString());
@@ -291,9 +289,6 @@ export default {
         },
         getStats(endStep) {
             // this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
-            console.log(endStep);
-            console.log(this.stepMinimals);
-            console.log(this.sliderStep);
             this.locatedMinima = computeUtils.getLocatedMinima(this.stepMinimals,endStep,this.allIDs)
             this.nodeMinima = computeUtils.computeElapsedMinimal(this.filteredSolverData, this.allIDs);
             this.nodeStats = computeUtils.computeNodeCounts(this.filteredSolverData, this.allIDs);
