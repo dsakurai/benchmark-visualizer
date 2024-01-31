@@ -107,9 +107,8 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(exp_index:str, solver: str, tree: str, dimension: int, termination: str):
+def match_experiment_file(exp_index: str, solver: str, tree: str, dimension: int, termination: str):
     file_name_pattern = f"{exp_index}__{solver}_{tree}_{dimension}_{termination}"
-    print(file_name_pattern)
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
         # "data/pop100_50000iter/pop100_50000iter/"
