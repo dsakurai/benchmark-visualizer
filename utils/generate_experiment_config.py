@@ -82,14 +82,14 @@ def compose_solver_settings(solver_name) -> dict:
 
 if __name__ == "__main__":
     exp_base_name = "test_exp"
-    # trees = ["experiment_trees/sample.json"]
-    trees = []
+    trees = ["experiment_trees/diverse_tree.json"]
+    # trees = []
     # depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
-    breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
-    trees.extend(breadth_trees)
+    # breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
+    # trees.extend(breadth_trees)
     # trees.extend(depth_trees)
     solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD", "OMOPSO"]
-    dimensions = list(range(2, 7))
+    dimensions = list(range(2, 5))
     termination_criterions = [
         # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
         {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
@@ -111,5 +111,5 @@ if __name__ == "__main__":
                         }
                     )
                     counter += 1
-    with open("../exp_config.yaml", "w") as file:
+    with open("../exp_config_diverse.yaml", "w") as file:
         documents = yaml.safe_dump(exp_settings, file)

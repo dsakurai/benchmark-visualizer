@@ -110,6 +110,7 @@ export default {
             this.drawAxis()
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
+            console.log(sheets)
             for (let [node_id,sheet] of sheets.entries()) {
                 this.svg.append("path")
                     .attr("id", node_id)

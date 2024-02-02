@@ -112,13 +112,15 @@ def match_experiment_file(solver: str, tree: str, dimension: int, termination: s
     print(file_name_pattern)
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        "data/pop100_50000iter/pop100_50000iter/"
+        # "data/pop100_50000iter/pop100_50000iter/"
+        "data/diverse_exp/"
     )
     files = [
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
     ]
     for file in files:
-        if file.startswith(file_name_pattern):
+        if file.split("__")[1].startswith(file_name_pattern):
+            print(data_base_path + file)
             return data_base_path + file
 
 
@@ -131,7 +133,7 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
         sequence_dict[node["id"]]["label"] = (
-            f"ID: {node['id']},  "
+            f"• ID: {node['id']},  "
             f"Symbol: {node['symbol']},"
             f"Best possible: {node['minima']}"
         )
@@ -149,7 +151,7 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
         "tree": [
             {
                 "id": 0,
-                f"label": f"Root,  ID: 0, Best possible: -1.0",
+                f"label": f"• Root,  ID: 0, Best possible: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),

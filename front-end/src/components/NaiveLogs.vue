@@ -139,7 +139,7 @@ export default {
             stepRange: 2,
             filterOffset: 0,
             solverType: "IBEA",
-            treeType: "breadth_base_1",
+            treeType: "diverse_tree",
             dimension: 2,
             stoppingCriterion: "StoppingByEvaluations",
             solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
@@ -149,6 +149,7 @@ export default {
             ],
             treeOptions: [
                 {value: "sample", label: "Sample"},
+                {value: "diverse_tree", label: "Diverse"},
                 {value: "depth_base_1", label: "Depth 1"},
                 {value: "depth_base_2", label: "Depth 2"},
                 {value: "depth_base_3", label: "Depth 3"},
