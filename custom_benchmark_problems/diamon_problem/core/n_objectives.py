@@ -10,7 +10,7 @@ class NBMP:
         self.rotate = rotate
         # Define rotate matrix information here
         theta = np.radians(degrees)
-        c, s = np.cos(theta), np.sin(theta)
+        self.c, self.s = np.cos(theta), np.sin(theta)
 
 
     def evaluate(self, solution_variables: np.ndarray) -> EvaluationResult:
@@ -18,6 +18,15 @@ class NBMP:
         pass
 
     def generate_rotation_matrix(self, dimension_index:int):
+        if dimension_index <= 1:
+            raise ValueError(f"Dimension {dimension_index} is not acceptable")
         base_matrix = np.identity(self.n_objectives)
+        print(base_matrix)
+        print(base_matrix[])
 
     def parse_variables(self, solution_variables: np.ndarray,dimension: int) -> np.ndarray:
+        pass
+
+if __name__ == "__main__":
+    n_bmp = NBMP(sequence_info=[],dim_space=1, n_objectives=3,)
+    n_bmp.generate_rotation_matrix(2)
