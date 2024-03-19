@@ -35,7 +35,9 @@ class MlflowTracker:
             if self.experiment_config.experiment_name:
                 experiment_name = self.experiment_config.experiment_name
             else:
-                Logger().debug.info("No experiment name set, attempting acquiring from ENV")
+                Logger().debug.info(
+                    "No experiment name set, attempting acquiring from ENV"
+                )
                 experiment_name = os.getenv("MLFLOW_EXPERIMENT_NAME")
 
             if experiment_name:
