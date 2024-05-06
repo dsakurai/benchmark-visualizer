@@ -23,6 +23,8 @@ function sheetCoordinatesToScale(sheetsData, xScale, yScale, logScale) {
     for (let [nodeId, sheetData] of sheetsData.entries()) {
         let points = [];
         sheetData.forEach(point => {
+            // This is to avoid inf problem in log scale
+            // Since we don't use log scale display, this doesn't matter
             if (logScale && point.y === 0) {
                 point.y = -0.1;
             }
@@ -128,7 +130,7 @@ function getParetoFronts(sheetsData){
     for (let [,sheetData] of sheetsData.entries()) {
         let points = sheetData;
         fronts.push([{x: points[2].x, y: points[2].y} , {x: points[3].x,y:points[3].y}])
-        if (points[3].x > points[0].x){
+        if (parseFloat(points[3].x.toFixed(10)) > parseFloat(points[0].x.toFixed(10))){
             fronts.push([{x: points[0].x, y: points[0].y} , {x: points[3].x,y:points[3].y}])
         }
     }

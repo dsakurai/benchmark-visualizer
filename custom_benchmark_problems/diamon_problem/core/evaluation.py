@@ -7,6 +7,10 @@ NodeInfo = namedtuple("NodeInfo", ["symbol", "minima", "name"])
 EvaluationResult = namedtuple(
     "EvaluationResult", ["t", "y", "node_id", "diagonal_length", "unrotated_value"]
 )
+ParetoInfo = namedtuple(
+    "ParetoInfo",
+    ["symbol", "minima", "name", "minima_coordinates", "step_back_coordinates"],
+)
 
 
 class BMP:

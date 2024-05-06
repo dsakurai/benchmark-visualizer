@@ -1,25 +1,15 @@
+from typing import List
+
 import numpy as np
+from collections import OrderedDict
 
-
-def s_lengths(sequence_info: list) -> list:
-    # TODO: Naive implementation
-    length_list = []
-    for element in sequence_info:
-        if len(element["attrs"]["symbol"]) not in length_list:
-            length_list.append(len(element["attrs"]["symbol"]))
-    return length_list
-
-
-def get_tau(t: float) -> int:
-    return int(t - 1) if int(t) == t else int(t)
-
-
-def get_s_at_length(sequence_info: list, length: int) -> list:
-    s_list = []
-    for element in sequence_info:
-        if len(element["attrs"]["symbol"]) == length:
-            s_list.append(element)
-    return s_list
+from custom_benchmark_problems.diamon_problem.core.evaluation import (
+    NodeInfo,
+    ParetoInfo,
+)
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from custom_benchmark_problems.diamon_problem.core import evaluation
+from config import project_base
 
 
 def compute_links(tree_data: dict) -> list:
@@ -82,61 +72,228 @@ def check_sublist(new_list: list, org_list: list) -> bool:
     return True
 
 
-def compute_coordinates(symbol_sequence: list, dim_space: int) -> np.ndarray:
-    """Compute the coordinates for the given symbol sequence.
-
-    Parameters
-    ----------
-    symbol_sequence : list
-        List of ints representing the symbol sequence
-
-    Returns
-    -------
-    np.ndarray
-        The coordinates of the given symbol sequence, each element representing value in corresponding dimension
-    """
-    coordinates = np.zeros(dim_space, dtype="float64")
-    # The origin in the x coordinates is an empty sequence.
-    # The index in Python start from 0.
-    # In the paper we start it from 1...
-    for index, symbol in enumerate(symbol_sequence):
-        index += 1  # The math index starts from 1
-        if abs(symbol) > dim_space:
-            raise ValueError(
-                f"Dimension cannot be greater than axis. Got dimension: {dim_space}, axis: {symbol}"
-            )
-        if symbol != 0:
-            movement_length = np.sign(symbol) * 2.0 / (4.0**index)
-            x = abs(symbol) - 1  # the 1st axis is x0 internally
-            coordinates[x] += movement_length
-    return coordinates
-
-
 def compute_intercept():
     # TODO: Confirm if this can be computed with per-dimension.
     # The diamond should be in the domain, what happen to the diamond at higher dim?
     pass
 
 
-def compute_distance(
-    symbol_sequence: list[int],
-    solution_coordinates: np.ndarray,
-    dim_space: int,
-    diagonal_length: float,
-):
-    center_coordinates = compute_coordinates(
-        symbol_sequence=symbol_sequence, dim_space=dim_space
-    )
-    print(center_coordinates)
-    print(solution_coordinates - center_coordinates)
+def compute_global_pareto_front(sequence_info: list, dimension: int):
+    """Compute the global Pareto front for a given tree
+
+    Returns
+    -------
+
+    """
+    sorted_tree = sort_tree(sequence_info, dimension)
+    s_lengths = list(reversed(sorted(sorted_tree.keys())))
+    # Corner cases
+    final_node = sorted_tree[s_lengths[0]][0]
+    intersections = [[len(final_node.symbol) + 2, final_node.minima]]
+
+    for index, s_length in enumerate(s_lengths):
+        if index + 1 == len(s_lengths):
+            break
+        current_nodes = sorted_tree[s_length]
+        pre_nodes = sorted_tree[s_lengths[index + 1]]
+        # Add corner points of previous node
+        intersections.append(pre_nodes[0].minima_coordinates)
+        for node in current_nodes:
+            intersections.append(node.minima_coordinates)
+            if node.step_back_coordinates[1] < pre_nodes[0].minima_coordinates[1]:
+                intersections.append(node.step_back_coordinates)
+            else:
+                slope = slope_(node.minima_coordinates, node.step_back_coordinates)
+                intercept_ = intercept(slope, node.minima_coordinates)
+                x = (pre_nodes[0].minima_coordinates[1] - intercept_) / slope
+                intersections.append([x, pre_nodes[0].minima_coordinates[1]])
+            if len(current_nodes) > 1:
+                sub_sections = []
+                for sub_node in current_nodes[1:]:
+                    intersection = compute_intersection(node, sub_node)
+                    sub_sections.append(intersection)
+                sub_sections = get_non_dominated_points(sub_sections)
+                intersections.extend(sub_sections)
+            current_nodes.pop(0)
+    intersections.append([0, 0])
+    print("intersections", intersections)
+    print(sorted(intersections, key=lambda x: x[0]))
+    print("fronts", extract_fronts(intersections))
+    return intersections
+
+
+def extract_fronts(intersections: list[list[float]]):
+    intersections = sorted(intersections, key=lambda x: x[0])
+    fronts = []
+    for index, intersection in enumerate(intersections):
+        if index == len(intersections) - 1:
+            break
+        p1 = intersection
+        p2 = intersections[index + 1]
+        if p1[0] != p2[0]:
+            slope = slope_(p1, p2)
+            if slope > -1:
+                fronts.append([p1, p2])
+    return fronts
+
+
+def compute_intersection(node_1: ParetoInfo, node_2: ParetoInfo) -> list[float]:
+    slope_1 = slope_(node_1.minima_coordinates, node_1.step_back_coordinates)
+    slope_2 = slope_(node_2.minima_coordinates, node_2.step_back_coordinates)
+    intercept_1 = intercept(slope_1, node_1.minima_coordinates)
+    intercept_2 = intercept(slope_2, node_2.minima_coordinates)
+    x = (intercept_2 - intercept_1) / (slope_1 - slope_2)
+    y = slope_1 * x + intercept_1
+    return [x, y]
+
+
+def slope_(p1: list[float], p2: list[float]) -> float:
+    assert (
+        len(p1) == 2 and len(p2) == 2
+    ), "Inconsistent coordinates length (should be 2)"
+    assert p1[0] != p2[0], "Infinite slope" + str(p1) + str(p2)
+    return (p1[1] - p2[1]) / (p1[0] - p2[0])
+
+
+def intercept(slope: float, p: list[float]) -> float:
+    assert len(p) == 2, "Invalid point length"
+    return p[1] - slope * p[0]
+
+
+def sort_tree(sequence_info: list, dimension: int) -> dict:
+    """Sort tree based on [node_minimum, symbol_length]
+
+    Returns
+    -------
+
+    """
+    s_dict = {}
+    bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=dimension)
+    for node in sequence_info:
+        node_id = node["name"]
+        symbols = node["attrs"]["symbol"]
+        node_minimal = node["minima"]
+        minimal_time = len(symbols) + 1
+        central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
+        len_s = len(symbols)
+        step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
+
+        if len_s in s_dict:
+            s_dict[len_s].append(
+                ParetoInfo(
+                    symbols,
+                    node_minimal,
+                    node_id,
+                    [minimal_time, node_minimal],
+                    [step_back.unrotated_value[0], step_back.unrotated_value[1]],
+                )
+            )
+        else:
+            s_dict[len_s] = [
+                ParetoInfo(
+                    symbols,
+                    node_minimal,
+                    node_id,
+                    [minimal_time, node_minimal],
+                    [step_back.unrotated_value[0], step_back.unrotated_value[1]],
+                )
+            ]
+    for s_length in s_dict.keys():
+        s_dict[s_length] = sorted(s_dict[s_length], key=lambda x: x.minima)
+    return s_dict
+
+
+def dominance_test(vector1: [float], vector2: [float]) -> int:
+    """Implementation of dominance test.
+    Original code: https://github.com/jMetal/jMetalPy/blob/c6007cad8aa0e12ddd6f8d2f749e3d2cfb6b1367/jmetal/util/comparator.py#L154
+
+    Parameters
+    ----------
+    vector1
+    vector2
+
+    Returns
+    -------
+
+    """
+    result = 0
+    for i in range(len(vector1)):
+        if vector1[i] > vector2[i]:
+            if result == -1:
+                return 0
+            result = 1
+        elif vector2[i] > vector1[i]:
+            if result == 1:
+                return 0
+            result = -1
+
+    return result
+
+
+def get_non_dominated_points(points: List[list]):
+    archive = NonDominatedPointsArchive()
+    for point in points:
+        archive.add(point)
+
+    return archive.non_dominated_points
+
+
+class NonDominatedPointsArchive:
+    def __init__(self):
+        self.comparator = dominance_test
+        self.non_dominated_points = []
+
+    def add(self, point: list) -> bool:
+        is_dominated = False
+        is_contained = False
+
+        if len(self.non_dominated_points) == 0:
+            self.non_dominated_points.append(point)
+            return True
+        else:
+            number_of_deleted_solutions = 0
+
+            # New copy of list and enumerate
+            for index, current_point in enumerate(list(self.non_dominated_points)):
+                is_dominated_flag = self.comparator(point, current_point)
+                if is_dominated_flag == -1:
+                    del self.non_dominated_points[index - number_of_deleted_solutions]
+                    number_of_deleted_solutions += 1
+                elif is_dominated_flag == 1:
+                    is_dominated = True
+                    break
+                elif is_dominated_flag == 0:
+                    if current_point == point:
+                        is_contained = True
+                        break
+
+        if not is_dominated and not is_contained:
+            self.non_dominated_points.append(point)
+            return True
+
+        return False
 
 
 if __name__ == "__main__":
-    test_sequence = [1, 2, 1]
-    test_solution_coordinates = np.array([1.5, 1.5])
-    compute_distance(
-        symbol_sequence=test_sequence,
-        solution_coordinates=test_solution_coordinates,
-        dim_space=2,
-        diagonal_length=5,
-    )
+    # test_sequence = [1, 2, 1]
+    # test_solution_coordinates = np.array([1.5, 1.5])
+    # compute_distance(
+    #     symbol_sequence=test_sequence,
+    #     solution_coordinates=test_solution_coordinates,
+    #     dim_space=2,
+    #     diagonal_length=5,
+    # )
+    tree_path = project_base / "experiment_trees" / "sample.json"
+    test_tree = Tree(dim_space=3)
+    test_tree.from_json(tree_path)
+    test_sequence_info = test_tree.to_sequence()
+    compute_global_pareto_front(test_sequence_info, 3)
+    points_list = [
+        [1, -1],
+        [1.5, -0.5],
+        [2.5, -0.75],
+        [2, -1.5],
+        [3, -2],
+        [4, -4],
+        [2.5, -3],
+    ]

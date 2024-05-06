@@ -26,12 +26,17 @@ class MlflowTracker:
         self.step = 0
         self.headers = None
         self.step_metrics = []
+        self.exp_name = None
 
     def __enter__(self):
         try:
             client = MlflowClient()
             mlflow.set_tracking_uri(mlflow_tracking_uri)
-            experiment_name = os.getenv("MLFLOW_EXPERIMENT_NAME")
+            if self.experiment_config.experiment_name:
+                experiment_name = self.experiment_config.experiment_name
+            else:
+                Logger().debug.info("No experiment name set, attempting acquiring from ENV")
+                experiment_name = os.getenv("MLFLOW_EXPERIMENT_NAME")
 
             if experiment_name:
                 mlflow.set_experiment(experiment_name)
@@ -45,6 +50,8 @@ class MlflowTracker:
             os.makedirs(artifact_dir, exist_ok=True)
             mlflow.log_artifact(artifact_dir)
             mlflow.log_params(self.experiment_config._asdict())
+
+            self.exp_name = experiment_name
 
             return self
         except Exception as e:
@@ -94,7 +101,9 @@ class MlflowTracker:
         termination_criterion = self.experiment_config.termination_criterion[
             "criterion_name"
         ]
+        exp_name = f"{self.exp_name}_" if self.exp_name else ""
         file_name = (
+            f"{exp_name}_"
             f"{algorithm}_"
             f"{tree_file.split('/')[1]}_"
             f"{dimension}_"
