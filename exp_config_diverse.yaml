@@ -1,0 +1,73 @@
+- algorithm: GDE3
+  algorithm_parameters:
+    cr: 0.5
+    f: 0.5
+    population_size: 100
+  dimension: 5
+  experiment_name: test_exp_v0
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 100000
+  tree_file: experiment_trees/depth_base_1.json
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 5
+  experiment_name: test_exp_v1
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 100000
+  tree_file: experiment_trees/depth_base_1.json
+- algorithm: IBEA
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    kappa: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 5
+  experiment_name: test_exp_v2
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 100000
+  tree_file: experiment_trees/depth_base_1.json
+- algorithm: MOEAD
+  algorithm_parameters:
+    aggregative_function:
+      aggregative_function: Tschebycheff
+      dimension: n_variables
+    crossover:
+      CR: 1.0
+      F: 0.5
+      K: 0.5
+      crossover: DifferentialEvolutionCrossover
+    max_number_of_replaced_solutions: 2
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    neighbor_size: 20
+    neighbourhood_selection_probability: 0.9
+    population_size: 100
+    weight_files_path: resources/MOEAD_weights
+  dimension: 5
+  experiment_name: test_exp_v3
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 100000
+  tree_file: experiment_trees/depth_base_1.json
