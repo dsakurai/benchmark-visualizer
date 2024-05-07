@@ -10,6 +10,9 @@
             <el-row>
                 <el-switch v-model="displayFronts" active-text="Fronts" inactive-text="Normal" @change="rotateGraph"></el-switch>
             </el-row>
+            <el-row>
+
+            </el-row>
 <!--            <el-row>-->
 <!--                <el-switch v-model="logScale" active-text="Log" inactive-text="Linear" @change="rotateGraph"/>-->
 <!--            </el-row>-->
@@ -29,9 +32,12 @@ export default {
         solverData: Array,
         treeName: String,
         dimension: Number,
+        allIds: Array,
     },
     watch: {
         solverData: function (oldVal, newVal) {
+            console.log(this.colorShapeMap);
+
             this.plotSolverData(newVal);
         },
         treeName: function () {
@@ -65,26 +71,70 @@ export default {
             displayFronts: false,
             xScale : '',
             yScale : '',
+            dataPointShapes:["circle","hollow-circle", "hollow-rect", "rect"],
+            colorCodes: [
+                "#DC143C",  // Crimson
+                "#FF7F50",  // Coral
+                "#4169E1",  // Royal Blue
+                "#228B22",  // Forest Green
+                "#DAA520",  // Goldenrod
+                "#DDA0DD",  // Plum
+                "#708090",  // Slate Gray
+                "#FF8C00",  // Dark Orange
+                "#40E0D0",  // Turquoise
+                "#CD853F"   // Peru
+            ],
+            colorShapeMap: {},
         }
     },
     created(){
         [this.innerWidth, this.innerHeight] = GraphUtils.marginConvention(this.figureInfo,this.margin);
+        this.createColorMap();
+
     },
     mounted() {
         this.getReebInfo();
+
     },
     methods: {
+        createColorMap(){
+            let combinations = [];
+            for (let i = 0; i < this.dataPointShapes.length; i++) {
+                for (let j = 0; j < this.colorCodes.length; j++) {
+                    combinations.push([this.colorCodes[j], this.dataPointShapes[(i+j) % 4]]);
+                }
+            }
+            this.allIds.forEach((id,index) => {
+                this.colorShapeMap[id] = combinations[index];
+            })
+        },
         plotSolverData(solverData) {
             let coordinatesData = GraphUtils.dataToCoordinates(solverData, this.xScale,this.yScale, this.rotate);
             this.svg.selectAll('circle').remove();
-            coordinatesData.forEach(d => {
-                this.svg
-                    .append("circle")
-                    .attr("cx", d.x)
-                    .attr("cy", d.y)
-                    .attr("r", 3)
-                    .attr("transform", `translate(${this.margin.left},${this.margin.top})`);
-            })
+            this.svg.selectAll('rect').remove();
+            for (const [eval_node_id, coordinateData] of Object.entries(coordinatesData)){
+                let [colorCode, shape] = this.colorShapeMap[eval_node_id];
+                let shapeFill = colorCode;
+                let strokeWidth = 0;
+                if (shape.charAt(6) === "-"){
+                    shape = shape.substring(7);
+                    shapeFill = "none";
+                    strokeWidth = 2;
+                }
+                // this.svg.selectAll(shape).remove();
+                coordinateData.forEach(d => {
+                    this.svg
+                        .append(shape)
+                        .attr("cx", d.x)
+                        .attr("cy", d.y)
+                        .attr("r", 3)
+                        .attr("fill", shapeFill)
+                        .attr("stroke", colorCode)
+                        .attr("stroke-width", strokeWidth)
+                        .attr("transform", `translate(${this.margin.left},${this.margin.top})`);
+                })
+            }
+
         },
         getReebInfo() {
             axios.get(`/api/reeb_space?tree_name=${this.treeName}&dimension=${this.dimension}`).then(response => {
@@ -110,16 +160,9 @@ export default {
             this.drawAxis()
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
-            console.log(sheets)
-            for (let [node_id,sheet] of sheets.entries()) {
-                this.svg.append("path")
-                    .attr("id", node_id)
-                    .attr("d", sheet)
-                    .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
-                    .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
-                    .style("stroke", "black")
-                    .style("opacity", 0.5);
-            }
+
+            this.renderSheets(sheets);
+
             if (this.rotate && this.displayFronts) {
                 this.drawParetoFronts(sheetsScale);
             }
@@ -149,13 +192,20 @@ export default {
             let sheetsCoordinates = GraphUtils.computeSheetsCoordinates(this.treeInfo,this.nodeInfo, this.rotate);
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
+            this.renderSheets(sheets);
+        },
+        renderSheets(sheets){
             for (let [node_id,sheet] of sheets.entries()) {
+                let strokeColor = this.colorShapeMap[node_id][0];
                 this.svg.append("path")
                     .attr("id", node_id)
                     .attr("d", sheet)
                     .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
-                    .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
-                    .style("stroke", "black")
+                    .style("fill","none")
+                    // .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
+                    .style("stroke", strokeColor)
+                    // .style("stroke", '#' + Math.floor(Math.random() * 16777215).toString(16))
+                    .style("stroke-width", 2.5)
                     .style("opacity", 0.5);
             }
         },

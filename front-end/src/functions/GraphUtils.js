@@ -150,9 +150,13 @@ function marginConvention(figureInfo, margin) {
 }
 
 function dataToCoordinates(solverData, xScale, yScale, rotate) {
-    let coordinates = [];
+    let coordinates = {};
 
     solverData.forEach(dataPoint => {
+        let eval_node_id = dataPoint.eval_node_id;
+        if(!coordinates[eval_node_id]){
+            coordinates[eval_node_id] = [];
+        }
         let x, y;
         if (rotate) {
             x = xScale(dataPoint.y1);
@@ -162,7 +166,7 @@ function dataToCoordinates(solverData, xScale, yScale, rotate) {
             y = yScale(dataPoint.y_org);
 
         }
-        coordinates.push({"x": x, "y": y});
+        coordinates[eval_node_id].push({"x": x, "y": y});
     })
     return coordinates;
 }
