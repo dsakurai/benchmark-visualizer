@@ -94,7 +94,7 @@ export default {
     },
     mounted() {
         this.getReebInfo();
-
+        
     },
     methods: {
         createColorMap(){
