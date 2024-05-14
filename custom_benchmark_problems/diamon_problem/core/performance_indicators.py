@@ -15,7 +15,7 @@ def get_local_pareto_set(dimension: int, tree_name: str):
     bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=dimension)
     pareto_dict = {}
 
-    def apply_compting(data: np.array):
+    def apply_computing(data: np.array):
         row_data = bmp.evaluate(data)
         return np.array(
             [
@@ -48,7 +48,7 @@ def get_local_pareto_set(dimension: int, tree_name: str):
             central_coordinates, (100, len(central_coordinates))
         )
         pareto_set = np.insert(central_coordinates, 0, t, axis=1)
-        pareto_front = np.apply_along_axis(apply_compting, axis=1, arr=pareto_set)
+        pareto_front = np.apply_along_axis(apply_computing, axis=1, arr=pareto_set)
         pareto_dict[node_id] = {"pareto_set": pareto_set, "pareto_front": pareto_front}
 
         all_sets.append(pareto_set)
@@ -65,6 +65,10 @@ def get_local_pareto_set(dimension: int, tree_name: str):
 
 class PerformanceIndicators:
     def __init__(self):
+        pass
+
+
+    def compute_perpendicular_coordinates(self):
         pass
 
     def IGD(self):
