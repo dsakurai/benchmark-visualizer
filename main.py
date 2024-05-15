@@ -11,6 +11,7 @@ from config import sample_file_path, solver_info
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from custom_benchmark_problems.diamon_problem.core.performance_indicators import PerformanceIndicators
 from utils import file_utils
 
 app = FastAPI()
@@ -50,6 +51,13 @@ def get_all_solvers():
 @app.post("/api/construct_problem")
 def construct_problem(graph: dict):
     return graph
+
+
+@app.get("api/performance_indicators")
+def performance_indicators():
+    performance_indicators = PerformanceIndicators()
+
+    pass
 
 
 @app.get("/api/reeb_space")
