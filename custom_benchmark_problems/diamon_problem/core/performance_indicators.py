@@ -1,11 +1,15 @@
 import os
+from pathlib import Path
 from typing import Union
 
 import numpy as np
+import pandas as pd
 
+from config import base_path
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from utils import file_utils
 
 
 def get_local_pareto_set(dimension: int, tree_name: str):
@@ -68,7 +72,7 @@ class PerformanceIndicators:
         pass
 
 
-    def compute_perpendicular_coordinates(self):
+    def compute_perpendicular_coordinates(self, ):
         pass
 
     def IGD(self):
@@ -82,4 +86,13 @@ class PerformanceIndicators:
 
     def GDx(self):
         pass
+
+
+if __name__ == "__main__":
+    pi = PerformanceIndicators()
+    test_data_path = Path("data/exp_csvs/GDE3_breadth_base_1_2_StoppingByEvaluations_2023-03-22T10-51-26.821709.csv")
+    demo_log = file_utils.load_evaluation_log(base_path / test_data_path,include_variables=True)
+    demo_log = pd.DataFrame(demo_log)
+    print(demo_log)
+    pi.compute_perpendicular_coordinates()
 

@@ -55,6 +55,18 @@ def construct_problem(graph: dict):
 
 @app.get("api/performance_indicators")
 def performance_indicators():
+    """ Research question:
+    1. Scattered plot is hard to show the actual performance of the solver
+
+    Contribution:
+    1. Provide performance indicator directly in the Reeb space to show the actual performance of the solver
+    2. Design a way to compute GD with precise
+    3. Open source
+
+    Returns
+    -------
+
+    """
     performance_indicators = PerformanceIndicators()
 
     pass
