@@ -23,8 +23,17 @@ def load_evaluation_log(file_path: str, include_variables: bool = False) -> list
         return eval_log.to_dict(orient="records")
     else:
         return eval_log[
-        ["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
-    ].to_dict(orient="records")
+            [
+                "t",
+                "y1",
+                "y2",
+                "eval_node_id",
+                "diagonal_length",
+                "step",
+                "t_org",
+                "y_org",
+            ]
+        ].to_dict(orient="records")
 
 
 if __name__ == "__main__":

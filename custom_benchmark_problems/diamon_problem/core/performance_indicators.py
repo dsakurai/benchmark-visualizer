@@ -71,8 +71,9 @@ class PerformanceIndicators:
     def __init__(self):
         pass
 
-
-    def compute_perpendicular_coordinates(self, ):
+    def compute_perpendicular_coordinates(
+        self, basin_info,  solution_variables:np.ndarray, evaluation_results: np.ndarray
+    ):
         pass
 
     def IGD(self):
@@ -90,9 +91,14 @@ class PerformanceIndicators:
 
 if __name__ == "__main__":
     pi = PerformanceIndicators()
-    test_data_path = Path("data/exp_csvs/GDE3_breadth_base_1_2_StoppingByEvaluations_2023-03-22T10-51-26.821709.csv")
-    demo_log = file_utils.load_evaluation_log(base_path / test_data_path,include_variables=True)
+    test_data_path = Path(
+        "data/exp_csvs/GDE3_breadth_base_1_2_StoppingByEvaluations_2023-03-22T10-51-26.821709.csv"
+    )
+    demo_log = file_utils.load_evaluation_log(
+        base_path / test_data_path, include_variables=True
+    )
     demo_log = pd.DataFrame(demo_log)
     print(demo_log)
+    tree = Tree(dim_space=dimension)
+    tree.from_json(f"experiment_trees/{tree_name}.json")
     pi.compute_perpendicular_coordinates()
-

@@ -11,7 +11,9 @@ from config import sample_file_path, solver_info
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
-from custom_benchmark_problems.diamon_problem.core.performance_indicators import PerformanceIndicators
+from custom_benchmark_problems.diamon_problem.core.performance_indicators import (
+    PerformanceIndicators,
+)
 from utils import file_utils
 
 app = FastAPI()
@@ -55,7 +57,7 @@ def construct_problem(graph: dict):
 
 @app.get("api/performance_indicators")
 def performance_indicators():
-    """ Research question:
+    """Research question:
     1. Scattered plot is hard to show the actual performance of the solver
 
     Contribution:
