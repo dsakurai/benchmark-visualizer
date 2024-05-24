@@ -1,3 +1,4 @@
+import math
 import os
 from pathlib import Path
 from typing import Union
@@ -72,9 +73,95 @@ class PerformanceIndicators:
         pass
 
     def compute_perpendicular_coordinates(
-        self, basin_info,  solution_variables:np.ndarray, evaluation_results: np.ndarray
+        self, sequence_info, solver_log: pd.DataFrame, dimension: int
     ):
-        pass
+
+        x_s = ["t", "x1", "x2", "eval_node_id"]
+        y_s = ["y1", "y2", "eval_node_id"]
+        y_orgs = ["t_org", "y_org", "eval_node_id"]
+
+        x_s = solver_log[x_s].values
+        y_s = solver_log[y_s].values
+        y_orgs = solver_log[y_orgs].values
+
+        bmp = evaluation.BMP(sequence_info=sequence_info, dim_space=dimension)
+        node_info = {}
+        node_coef = {}
+        max_t = 0
+        maximal = -1
+        minimal = -1
+        node_count = 0
+        for node in sequence_info:
+            node_id = node["name"]
+            symbols = node["attrs"]["symbol"]
+            node_minimal = node["minima"]
+            minimal_time = len(symbols) + 1
+            if minimal_time > max_t:
+                max_t = minimal_time
+            if maximal < node_minimal:
+                maximal = node_minimal
+            if minimal > node_minimal:
+                minimal = node_minimal
+            central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
+            step_back = bmp.evaluate(
+                np.insert(central_coordinates, 0, minimal_time - 1)
+            )
+
+            # a = y2 - y1
+            # b = x1 - x2
+            # c = (x2 * y1) - (y2 * x1)
+
+            x_1 = step_back.unrotated_value[0]
+            y_1 = step_back.unrotated_value[1]
+            x_2 = minimal_time
+            y_2 = -1 if symbols == [] else node_minimal
+
+            node_info[node_id] = {
+                "node_id": node_id,
+                "symbols": symbols,
+                "minimal": -1 if symbols == [] else node_minimal,
+                "minimal_time": minimal_time,
+                "central_coordinates": central_coordinates.tolist(),
+                "step_back": {
+                    "t": step_back.t,
+                    "y": step_back.y,
+                    "unrotated_t": step_back.unrotated_value[0],
+                    "unrotated_y": step_back.unrotated_value[1],
+                },
+            }
+            a = y_2 - y_1
+            b = x_1 - x_2
+            c = (x_2 * y_1) - (y_2 * x_1)
+            div = math.sqrt(a**2 + b**2)
+            node_coef[node_id] = {
+                "node_minimal": y_2,
+                "a": a,
+                "b": b,
+                "c": c,
+                "div": div,
+            }
+            node_count += 1
+
+        solver_log[["node_minimal", "a", "b", "c", "div"]] = (
+            solver_log["eval_node_id"].map(node_coef).apply(pd.Series)
+        )
+
+        print("solver log", solver_log)
+
+        solver_log["d_1"] = (
+            abs(
+                solver_log["a"] * solver_log["t_org"]
+                + solver_log["b"] * solver_log["y_org"]
+                + solver_log["c"]
+            )
+            / solver_log["div"]
+        )
+
+        solver_log["d_2"] = abs(solver_log["y_org"] - solver_log["node_minimal"])
+
+        print("node_inf", node_info)
+        print("solver log", solver_log)
+        print(solver_log.columns)
 
     def IGD(self):
         pass
@@ -89,16 +176,25 @@ class PerformanceIndicators:
         pass
 
 
-if __name__ == "__main__":
+def main():
     pi = PerformanceIndicators()
     test_data_path = Path(
-        "data/exp_csvs/GDE3_breadth_base_1_2_StoppingByEvaluations_2023-03-22T10-51-26.821709.csv"
+        "data/pop100_50000iter/exp_csvs/GDE3_breadth_base_1_2_StoppingByEvaluations_2023-03-22T10-51-26.821709.csv"
     )
     demo_log = file_utils.load_evaluation_log(
         base_path / test_data_path, include_variables=True
     )
     demo_log = pd.DataFrame(demo_log)
-    print(demo_log)
+
+    tree_name = "breadth_base_1"
+    dimension = 2
+
     tree = Tree(dim_space=dimension)
-    tree.from_json(f"experiment_trees/{tree_name}.json")
-    pi.compute_perpendicular_coordinates()
+    tree.from_json(base_path / f"experiment_trees/{tree_name}.json")
+    pi.compute_perpendicular_coordinates(
+        sequence_info=tree.to_sequence(), solver_log=demo_log, dimension=dimension
+    )
+
+
+if __name__ == "__main__":
+    main()
