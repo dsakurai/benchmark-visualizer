@@ -82,8 +82,8 @@ def compose_solver_settings(solver_name) -> dict:
 
 if __name__ == "__main__":
     exp_settings = []
-    for i in range(10):
-        exp_base_name = f"find_figure_{i+1:02d}"
+    for i in range(100):
+        exp_base_name = f"find_figure_{i+1:03d}"
         print(exp_base_name)
         # trees = ["experiment_trees/sample.json"]
         trees = []
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         dimensions = list(range(5, 6))
         termination_criterions = [
             # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
-            {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
+            {"criterion_name": "StoppingByEvaluations", "termination_parameter": 50000},
         ]
         counter = 0
         for tree in trees:
