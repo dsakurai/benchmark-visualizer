@@ -88,8 +88,8 @@ if __name__ == "__main__":
     # breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
     # trees.extend(breadth_trees)
     # trees.extend(depth_trees)
-    trees=["experiment_trees/depth_base_1.json"]
-    solvers = ["GDE3", "NSGAII","IBEA","MOEAD"]
+    trees = ["experiment_trees/depth_base_1.json"]
+    solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD"]
     dimensions = [5]
     termination_criterions = [
         # {"criterion_name": "StoppingByTime", "termination_parameter": 200},

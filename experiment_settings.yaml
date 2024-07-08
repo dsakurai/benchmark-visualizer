@@ -15,7 +15,7 @@
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
-  tree_file: experiment_trees/depth.json
+  tree_file: experiment_trees/depth_base_1.json
 
 - algorithm: NSGAII
   algorithm_parameters:
@@ -34,7 +34,7 @@
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
-  tree_file: experiment_trees/depth.json
+  tree_file: experiment_trees/depth_base_1.json
 
 - algorithm: NSGAII
   algorithm_parameters:
@@ -53,4 +53,4 @@
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
-  tree_file: experiment_trees/depth.json
+  tree_file: experiment_trees/depth_base_1.json
