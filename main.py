@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Union
 
 import numpy as np
@@ -107,13 +108,16 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
+def match_experiment_file(
+    solver: str, tree: str, dimension: int, termination: str
+) -> str:
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     print(file_name_pattern)
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        "data/pop100_50000iter/exp_csvs/"
+        # "data/pop100_50000iter/exp_csvs/"
         # "data/diverse_exp/"
+        "data/test_exp_v8/"
     )
     files = [
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
@@ -125,6 +129,8 @@ def match_experiment_file(solver: str, tree: str, dimension: int, termination: s
         if file.split("_")[1].startswith(file_name_pattern):
             print("Data path: ", data_base_path + file)
             return data_base_path + file
+    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
+    return Path(data_base_path) / file
 
 
 @app.get("/api/demo_data")

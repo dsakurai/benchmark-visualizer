@@ -25,8 +25,8 @@ from tqdm import tqdm
 from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from utils.data_structures import ExperimentSettings
-from utils.parallel_utils import print_err
-from utils.tracking import MlflowTracker
+from utils.log import Logger
+from utils.tracking import MlflowTracker, batch_create_experiments
 
 
 class Algorithms(Enum):
@@ -281,29 +281,18 @@ def run_experiment(exp_config: ExperimentSettings, opts):
         )
         algorithm.run()
 
-        # Get solutions
-        solutions = algorithm.get_result()
-
-        # Print the results
-        for solution in solutions:
-            x_1 = solution.variables[0]
-            x_2 = solution.variables[1]
-            y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
-            y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
-            if y - solution.objectives[0] > 0:
-                pass
-                # print(solution)
-
-        # print("**********************")
-
-        fronts = get_non_dominated_solutions(solutions)
-        for front in fronts:
-            pass
-            # print(front)
-
 
 def yaml_main(opts):
     exps_config = load_experiment_settings(file_path=Path(opts.file))
+
+    exp_name_set = set()
+    for exp_config in exps_config:
+        if opts.exp_name:
+            exp_config = exp_config._replace(experiment_name=opts.exp_name)
+        exp_name_set.add(exp_config.experiment_name)
+
+    batch_create_experiments(exp_names=exp_name_set)
+
     cpus = multiprocessing.cpu_count()
     pool = Pool(processes=cpus)
     pbar = tqdm(total=len(exps_config))
@@ -312,9 +301,12 @@ def yaml_main(opts):
     def pbar_update(*args):
         pbar.update()
 
+    def print_err(value):
+        logger = Logger()
+        logger.debug.error(value)
+        pbar.update()
+
     for exp_config in exps_config:
-        if opts.exp_name:
-            exp_config = exp_config._replace(experiment_name=opts.exp_name)
         pool.apply_async(
             run_experiment,
             args=(
