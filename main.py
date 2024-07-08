@@ -119,12 +119,12 @@ def match_experiment_file(solver: str, tree: str, dimension: int, termination: s
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
     ]
     for file in files:
-        if file.split(".csv")[0].startswith(file_name_pattern):
-            print(data_base_path + file)
+        if file.startswith(file_name_pattern):
+            print("Data path: ", data_base_path + file)
             return data_base_path + file
-        # if file.split("__")[1].startswith(file_name_pattern):
-        #     print(data_base_path + file)
-        #     return data_base_path + file
+        if file.split("_")[1].startswith(file_name_pattern):
+            print("Data path: ", data_base_path + file)
+            return data_base_path + file
 
 
 @app.get("/api/demo_data")

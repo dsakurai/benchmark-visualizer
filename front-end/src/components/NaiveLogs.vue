@@ -138,9 +138,9 @@ export default {
             lockRange: false,
             stepRange: 2,
             filterOffset: 0,
-            solverType: "IBEA",
-            treeType: "diverse_tree",
-            dimension: 2,
+            solverType: "GDE3",
+            treeType: "breadth_base_1",
+            dimension: 5,
             stoppingCriterion: "StoppingByEvaluations",
             solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
                 value: "MOEAD",
