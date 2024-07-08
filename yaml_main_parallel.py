@@ -26,7 +26,7 @@ from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from utils.data_structures import ExperimentSettings
 from utils.log import Logger
-from utils.tracking import MlflowTracker
+from utils.tracking import MlflowTracker, batch_create_experiments
 
 
 class Algorithms(Enum):
@@ -284,6 +284,15 @@ def run_experiment(exp_config: ExperimentSettings, opts):
 
 def yaml_main(opts):
     exps_config = load_experiment_settings(file_path=Path(opts.file))
+
+    exp_name_set = set()
+    for exp_config in exps_config:
+        if opts.exp_name:
+            exp_config = exp_config._replace(experiment_name=opts.exp_name)
+        exp_name_set.add(exp_config.experiment_name)
+
+    batch_create_experiments(exp_names=exp_name_set)
+
     cpus = multiprocessing.cpu_count()
     pool = Pool(processes=cpus)
     pbar = tqdm(total=len(exps_config))
@@ -296,13 +305,6 @@ def yaml_main(opts):
         logger = Logger()
         logger.debug.error(value)
         pbar.update()
-
-    exp_name_set = set()
-    for exp_config in exps_config:
-        if opts.exp_name:
-            exp_config = exp_config._replace(experiment_name=opts.exp_name)
-        exp_name_set.add(exp_config.experiment_name)
-
 
     for exp_config in exps_config:
         pool.apply_async(

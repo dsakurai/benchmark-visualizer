@@ -15,13 +15,26 @@ from mlflow.tracking import MlflowClient
 from config import mlflow_tracking_uri, data_dir
 from utils.data_structures import ExperimentSettings
 from utils.log import Logger
+from mlflow.exceptions import MlflowException
 
 ArgParserFunc = typing.Callable[
     [typing.Optional[argparse.ArgumentParser]], argparse.Namespace
 ]
 
-def batch_create_experiments(exp_names: set):
 
+def batch_create_experiments(exp_names: set) -> dict:
+    exps = {}
+    mlflow.set_tracking_uri(mlflow_tracking_uri)
+    for exp_name in exp_names:
+        try:
+            exp_id = mlflow.create_experiment(exp_name)
+            Logger().debug.info(f"Created experiment {exp_name}")
+
+        except MlflowException as e:
+            exp_id = mlflow.get_experiment_by_name("exp_name")
+            Logger().debug.info(f"Experiment {exp_name} exists, skipping ...")
+        exps[exp_name] = exp_id
+    return exps
 
 
 class MlflowTracker:
@@ -53,7 +66,7 @@ class MlflowTracker:
                     "(Set MLFLOW_EXPERIMENT_NAME in environment variable to change this behavior)"
                 )
             mlflow.start_run(run_name=self.run_name)
-            artifact_dir = data_dir / "MLproject"
+            artifact_dir = data_dir / "mlflow_artifacts" / "MLproject"
             os.makedirs(artifact_dir, exist_ok=True)
             mlflow.log_artifact(artifact_dir)
             mlflow.log_params(self.experiment_config._asdict())
@@ -108,21 +121,23 @@ class MlflowTracker:
         termination_criterion = self.experiment_config.termination_criterion[
             "criterion_name"
         ]
-        exp_name = f"{self.exp_name}_" if self.exp_name else ""
+
+        exp_name = f"{self.exp_name}" if self.exp_name else "default"
+        exp_base_path = data_dir / exp_name
+
         dir_name = (
-            f"{exp_name}_"
             f"{algorithm}_"
             f"{tree_file.split('/')[1]}_"
             f"{dimension}_"
             f"{termination_criterion}_"
             f"{datetime.datetime.now().isoformat().replace(':', '-')}"
         )
-        dir_path = data_dir / dir_name
+        dir_path = exp_base_path / dir_name
         meta_dir = dir_path / "meta"
         meta_dir.mkdir(exist_ok=True, parents=True)
 
         tree_src = self.experiment_config.tree_file
-        shutil.copy(tree_src, meta_dir)
+        shutil.copy(tree_src, meta_dir / "experiment_tree.json")
 
         exp_settings = self.experiment_config.to_dict()
         with open(meta_dir / "meta.json", "w", encoding="utf-8") as json_file:

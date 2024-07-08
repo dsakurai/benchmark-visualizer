@@ -107,7 +107,9 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
+def match_experiment_file(
+    solver: str, tree: str, dimension: int, termination: str
+) -> str:
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     print(file_name_pattern)
     data_base_path = (
@@ -125,6 +127,8 @@ def match_experiment_file(solver: str, tree: str, dimension: int, termination: s
         if file.split("_")[1].startswith(file_name_pattern):
             print("Data path: ", data_base_path + file)
             return data_base_path + file
+    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
+    return data_base_path + file
 
 
 @app.get("/api/demo_data")
