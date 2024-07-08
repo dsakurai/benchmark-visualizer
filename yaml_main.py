@@ -261,47 +261,24 @@ def load_experiment_settings(file_path: Path) -> typing.List[ExperimentSettings]
 def yaml_main(opts):
     exps_config = load_experiment_settings(file_path=Path(opts.file))
     for exp_config in tqdm(exps_config, desc="Experiment Progress"):
-        try:
-            with MlflowTracker(
-                run_name=exp_config.experiment_name, experiment_config=exp_config
-            ) as tracker:
-                tree = Tree(dim_space=exp_config.dimension)
-                tree.from_json(exp_config.tree_file)
-                problem = Diamond(
-                    dim_space=exp_config.dimension,
-                    sequence_info=tree.to_sequence(),
-                    enable_tracking=opts.disable_tracking,
-                    tracker=tracker,
-                )
-                algorithm = globals()[Algorithms(exp_config.algorithm).name](
-                    problem=problem,
-                    exp_config=exp_config,
-                    parameters=exp_config.algorithm_parameters,
-                    termination_criterion=exp_config.termination_criterion,
-                )
-                algorithm.run()
-
-                # Get solutions
-                solutions = algorithm.get_result()
-
-                # Print the results
-                for solution in solutions:
-                    x_1 = solution.variables[0]
-                    x_2 = solution.variables[1]
-                    y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
-                    y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
-                    if y - solution.objectives[0] > 0:
-                        pass
-                        # print(solution)
-
-                # print("**********************")
-
-                fronts = get_non_dominated_solutions(solutions)
-                for front in fronts:
-                    pass
-                    # print(front)
-        except Exception as e:
-            print(e)
+        with MlflowTracker(
+            run_name=exp_config.experiment_name, experiment_config=exp_config
+        ) as tracker:
+            tree = Tree(dim_space=exp_config.dimension)
+            tree.from_json(exp_config.tree_file)
+            problem = Diamond(
+                dim_space=exp_config.dimension,
+                sequence_info=tree.to_sequence(),
+                enable_tracking=opts.disable_tracking,
+                tracker=tracker,
+            )
+            algorithm = globals()[Algorithms(exp_config.algorithm).name](
+                problem=problem,
+                exp_config=exp_config,
+                parameters=exp_config.algorithm_parameters,
+                termination_criterion=exp_config.termination_criterion,
+            )
+            algorithm.run()
 
 
 if __name__ == "__main__":
