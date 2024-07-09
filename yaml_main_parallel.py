@@ -22,7 +22,7 @@ from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByTime, StoppingByEvaluations
 from tqdm import tqdm
 
-from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
+from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond, NDiamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from utils.data_structures import ExperimentSettings
 from utils.log import Logger
@@ -267,12 +267,23 @@ def run_experiment(exp_config: ExperimentSettings, opts):
     ) as tracker:
         tree = Tree(dim_space=exp_config.dimension)
         tree.from_json(exp_config.tree_file)
-        problem = Diamond(
-            dim_space=exp_config.dimension,
-            sequence_info=tree.to_sequence(),
-            enable_tracking=opts.disable_tracking,
-            tracker=tracker,
-        )
+        if opts.n_objectives:
+            if exp_config.n_objectives == 0:
+                raise ValueError("Number of objectives not specified for n-objective benchmark problem")
+            problem = NDiamond(
+                dim_space=exp_config.dimension,
+                n_objectives=exp_config.n_objectives,
+                sequence_info=tree.to_sequence(),
+                enable_tracking=opts.disable_tracking,
+                tracker=tracker,
+            )
+        else:
+            problem = Diamond(
+                dim_space=exp_config.dimension,
+                sequence_info=tree.to_sequence(),
+                enable_tracking=opts.disable_tracking,
+                tracker=tracker,
+            )
         algorithm = globals()[Algorithms(exp_config.algorithm).name](
             problem=problem,
             exp_config=exp_config,
@@ -293,32 +304,36 @@ def yaml_main(opts):
 
     batch_create_experiments(exp_names=exp_name_set)
 
-    cpus = multiprocessing.cpu_count()
-    pool = Pool(processes=cpus)
-    pbar = tqdm(total=len(exps_config))
-    pbar.set_description("Experiment Progress")
+    if opts.serial:
+        for exp_config in tqdm(exps_config,desc="Experiment progress"):
+            run_experiment(exp_config=exp_config,opts=opts)
+    else:
+        cpus = multiprocessing.cpu_count()
+        pool = Pool(processes=cpus)
+        pbar = tqdm(total=len(exps_config))
+        pbar.set_description("Experiment Progress")
 
-    def pbar_update(*args):
-        pbar.update()
+        def pbar_update(*args):
+            pbar.update()
 
-    def print_err(value):
-        logger = Logger()
-        logger.debug.error(value)
-        pbar.update()
+        def print_err(value):
+            logger = Logger()
+            logger.debug.error(value)
+            pbar.update()
 
-    for exp_config in exps_config:
-        pool.apply_async(
-            run_experiment,
-            args=(
-                exp_config,
-                opts,
-            ),
-            error_callback=print_err,
-            callback=pbar_update,
-        )
-    pool.close()
-    pool.join()
-    pbar.close()
+        for exp_config in exps_config:
+            pool.apply_async(
+                run_experiment,
+                args=(
+                    exp_config,
+                    opts,
+                ),
+                error_callback=print_err,
+                callback=pbar_update,
+            )
+        pool.close()
+        pool.join()
+        pbar.close()
 
 
 if __name__ == "__main__":
@@ -333,5 +348,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--exp_name", type=str, help="Set experiment name, not required"
     )
+    parser.add_argument("--n_objectives", action="store_true")
+    parser.add_argument("--serial", action="store_true")
     parser.add_argument("--disable_tracking", action="store_false")
     yaml_main(parser.parse_args())

@@ -12,11 +12,11 @@ from utils.tracking import MlflowTracker
 
 class Diamond(FloatProblem):
     def __init__(
-            self,
-            dim_space: int,
-            sequence_info: list[dict],
-            enable_tracking: bool = False,
-            tracker: Optional[MlflowTracker] = None,
+        self,
+        dim_space: int,
+        sequence_info: list[dict],
+        enable_tracking: bool = False,
+        tracker: Optional[MlflowTracker] = None,
     ):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
@@ -47,9 +47,9 @@ class Diamond(FloatProblem):
             self.tracker.log_step(
                 variables=solution.variables,
                 objectives=solution.objectives,
-                eval_node_id=eval_results[2],
-                diagonal_length=eval_results[3],
-                org_objectives=eval_results[4],
+                eval_node_id=eval_results.node_id,
+                diagonal_length=eval_results.diagonal_length,
+                org_objectives=eval_results.unrotated_value,
             )
         return solution
 
@@ -59,14 +59,14 @@ class Diamond(FloatProblem):
 
 class NDiamond(FloatProblem):
     def __init__(
-            self,
-            dim_space: int,
-            n_objectives: int,
-            sequence_info: list[dict],
-            enable_tracking: bool = False,
-            tracker: Optional[MlflowTracker] = None,
+        self,
+        dim_space: int,
+        n_objectives: int,
+        sequence_info: list[dict],
+        enable_tracking: bool = False,
+        tracker: Optional[MlflowTracker] = None,
     ):
-        """ Initialize problem class
+        """Initialize problem class
 
         Parameters
         ----------
@@ -78,7 +78,9 @@ class NDiamond(FloatProblem):
         """
         super(NDiamond, self).__init__()
 
-        self.problem_constructor_validator(dime_space=dim_space, n_objectives=n_objectives)
+        self.problem_constructor_validator(
+            dime_space=dim_space, n_objectives=n_objectives
+        )
 
         # N of variables = dim_space of X + Number of t - 1, N of t = n_objectives - 1
         self.number_of_variables = dim_space + n_objectives - 1
@@ -86,8 +88,9 @@ class NDiamond(FloatProblem):
         self.number_of_constraints = 0
 
         # Problem instance for N-objectives BMP
-        self.problem = n_objectives_problem.NBMP(sequence_info=sequence_info, dim_space=dim_space,
-                                                 n_objectives=n_objectives)
+        self.problem = n_objectives_problem.NBMP(
+            sequence_info=sequence_info, dim_space=dim_space, n_objectives=n_objectives
+        )
 
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = [f"f_{x + 1}" for x in range(n_objectives)]
@@ -126,15 +129,14 @@ class NDiamond(FloatProblem):
         eval_results = self.problem.n_evaluate(
             solution_variables=np.array(solution.variables, dtype="float64")
         )
-        solution.objectives[0] = eval_results[0]
-        solution.objectives[1] = eval_results[1]
+        solution.objectives = eval_results.objective_values.tolist()
         if self.enable_tracking:
             self.tracker.log_step(
                 variables=solution.variables,
                 objectives=solution.objectives,
-                eval_node_id=eval_results[2],
-                diagonal_length=eval_results[3],
-                org_objectives=eval_results[4],
+                eval_node_id=eval_results.node_id,
+                diagonal_length=eval_results.diagonal_length,
+                org_objectives=eval_results.unrotated_value,
             )
         return solution
 

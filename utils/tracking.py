@@ -104,8 +104,15 @@ class MlflowTracker:
     def create_headers(
         self, variables: list, objectives: list, constrains: list = None
     ) -> None:
-        variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
-        variable_header.insert(0, "t")
+        if len(objectives) == 2:
+            variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
+            variable_header.insert(0, "t")
+        else:
+            # Case for N objectives
+            # Type for variables: [t_1, t_2, ... t_(n-1), x_1, x_2, ..., x_n]
+            # Number of t: n_objectives - 1
+            variable_header = [f"t{x + 1}" for x in range(len(objectives) - 1)]
+            variable_header += [f"x{x + 1}" for x in range(len(variables))]
         objective_header = [f"y{x + 1}" for x in range(len(objectives))]
         self.headers = (
             variable_header

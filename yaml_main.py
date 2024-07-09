@@ -20,7 +20,7 @@ from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByTime, StoppingByEvaluations
 from tqdm import tqdm
 
-from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
+from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond, NDiamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from utils.data_structures import ExperimentSettings
 from utils.tracking import MlflowTracker
