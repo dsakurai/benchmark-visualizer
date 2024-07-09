@@ -269,7 +269,9 @@ def run_experiment(exp_config: ExperimentSettings, opts):
         tree.from_json(exp_config.tree_file)
         if opts.n_objectives:
             if exp_config.n_objectives == 0:
-                raise ValueError("Number of objectives not specified for n-objective benchmark problem")
+                raise ValueError(
+                    "Number of objectives not specified for n-objective benchmark problem"
+                )
             problem = NDiamond(
                 dim_space=exp_config.dimension,
                 n_objectives=exp_config.n_objectives,
@@ -284,6 +286,7 @@ def run_experiment(exp_config: ExperimentSettings, opts):
                 enable_tracking=opts.disable_tracking,
                 tracker=tracker,
             )
+
         algorithm = globals()[Algorithms(exp_config.algorithm).name](
             problem=problem,
             exp_config=exp_config,
@@ -305,8 +308,8 @@ def yaml_main(opts):
     batch_create_experiments(exp_names=exp_name_set)
 
     if opts.serial:
-        for exp_config in tqdm(exps_config,desc="Experiment progress"):
-            run_experiment(exp_config=exp_config,opts=opts)
+        for exp_config in tqdm(exps_config, desc="Experiment progress"):
+            run_experiment(exp_config=exp_config, opts=opts)
     else:
         cpus = multiprocessing.cpu_count()
         pool = Pool(processes=cpus)

@@ -98,13 +98,13 @@ class NDiamond(FloatProblem):
         # Set lower bound, variable format: [t_1, t_2, ... t_(n-1), x_1, x_2, ..., x_n]
         # Set lower bound of t first ([t_1, t_2, ... t_(n-1)])
         # Probably would make gradient-based alg work @ t_1, algs like OMOPSO would return 0 in gradient
-        self.lower_bound = [1e-2] + [-1] * (n_objectives - 1)
+        self.lower_bound = [1e-2] + [-1] * (n_objectives - 2)
         # Now add lower bound for x
         self.lower_bound += dim_space * [-1.0]
 
         # Set upper bound, variable format: [t_1, t_2, ... t_(n-1), x_1, x_2, ..., x_n]
         # Set upper bound of t first ([t_1, t_2, ... t_(n-1)])
-        self.upper_bound = [self.problem.t_upper_bound()] + [1] * (n_objectives - 1)
+        self.upper_bound = [self.problem.t_upper_bound()] + [1] * (n_objectives - 2)
         # Now add upper bound for x
         self.upper_bound += dim_space * [1.0]
 

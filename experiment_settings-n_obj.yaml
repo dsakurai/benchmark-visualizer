@@ -11,7 +11,7 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  n_objectives: 3
+  n_objectives: 2
   experiment_name: N_obj_test
   termination_criterion:
     criterion_name: StoppingByEvaluations
@@ -31,7 +31,7 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  n_objectives: 3
+  n_objectives: 2
   experiment_name: N_obj_test
   termination_criterion:
     criterion_name: StoppingByEvaluations
@@ -51,7 +51,7 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  n_objectives: 3
+  n_objectives: 2
   experiment_name: N_obj_test
   termination_criterion:
     criterion_name: StoppingByEvaluations
