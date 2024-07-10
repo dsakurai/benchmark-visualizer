@@ -63,6 +63,7 @@ def reeb_space_info(dimension: int, tree_name: str):
     maximal = -1
     minimal = -1
     node_count = 0
+    all_ids = [0]
     for node in sequence_info:
         node_id = node["name"]
         symbols = node["attrs"]["symbol"]
@@ -92,9 +93,11 @@ def reeb_space_info(dimension: int, tree_name: str):
             }
         )
         node_count += 1
+        all_ids.append(node_id)
     node_info = sorted(node_info, key=lambda k: (k["minimal_time"], k["minimal"]))
     return JSONResponse(
         {
+            "reeb_ids": all_ids,
             "nodeInfo": node_info,
             "treeInfo": {
                 "nodeCount": node_count,
