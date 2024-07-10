@@ -36,7 +36,6 @@ export default {
     },
     watch: {
         solverData: function (oldVal, newVal) {
-            console.log(this.colorShapeMap);
 
             this.plotSolverData(newVal);
         },
@@ -69,6 +68,7 @@ export default {
             rotate: false,
             logScale: false,
             displayFronts: false,
+            reebIds:[],
             xScale : '',
             yScale : '',
             dataPointShapes:["circle","hollow-circle", "hollow-rect", "rect"],
@@ -84,17 +84,16 @@ export default {
                 "#40E0D0",  // Turquoise
                 "#CD853F"   // Peru
             ],
-            colorShapeMap: {},
+            colorShapeMap: {
+
+            },
         }
     },
     created(){
         [this.innerWidth, this.innerHeight] = GraphUtils.marginConvention(this.figureInfo,this.margin);
-        this.createColorMap();
-
     },
     mounted() {
         this.getReebInfo();
-        
     },
     methods: {
         createColorMap(){
@@ -104,7 +103,7 @@ export default {
                     combinations.push([this.colorCodes[j], this.dataPointShapes[(i+j) % 4]]);
                 }
             }
-            this.allIds.forEach((id,index) => {
+            this.reebIds.forEach((id,index) => {
                 this.colorShapeMap[id] = combinations[index];
             })
         },
@@ -140,12 +139,14 @@ export default {
             axios.get(`/api/reeb_space?tree_name=${this.treeName}&dimension=${this.dimension}`).then(response => {
                 d3.selectAll("svg").remove();
                 this.reebData = response.data;
+                this.reebIds = response.data.reeb_ids;
                 let reebData = DataUtils.parseReebData(response.data);
                 this.$message.success("Reeb space data loaded");
                 this.treeInfo = reebData.treeInfo;
                 this.nodeInfo = reebData.nodeInfo;
                 this.svg = d3.select("#reebSpace").append("svg").attr("width", this.figureInfo.width).attr("height", this.figureInfo.height);
                 [this.xScale, this.yScale] = GraphUtils.composeScales(this.treeInfo, {"width":this.innerWidth,"height": this.innerHeight},this.logScale);
+                this.createColorMap();
                 this.drawAxis();
                 this.drawSheets();
             }).catch(error => {
@@ -160,7 +161,6 @@ export default {
             this.drawAxis()
             let sheetsScale = GraphUtils.sheetCoordinatesToScale(sheetsCoordinates,this.xScale, this.yScale, this.logScale);
             let sheets = GraphUtils.composeSheets(sheetsScale);
-
             this.renderSheets(sheets);
 
             if (this.rotate && this.displayFronts) {
@@ -214,7 +214,4 @@ export default {
 </script>
 
 <style scoped>
-#reebSpaceContainer {
-    margin-left: 0;
-}
 </style>
