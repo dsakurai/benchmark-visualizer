@@ -29,10 +29,16 @@ class NBMP(BMP):
         )
         # self.bmp = BMP(sequence_info=sequence_info, dim_space=dim_space, rotate=False)
         self.n_objectives = n_objectives
-        # self.rotate = rotate
+        self.rotate = rotate
+        if rotate:
+            self.rot_matrix = self.create_rotation_matrix()
+
         # # Define rotate matrix information here
         # theta = np.radians(degrees)
         # self.c, self.s = np.cos(theta), np.sin(theta)
+
+    def create_rotation_matrix(self) -> np.ndarray:
+        pass
 
     def n_evaluate(self, solution_variables: np.ndarray) -> NEvaluationResult:
         bmp_solution_variables, t_s = self.parse_variables(
