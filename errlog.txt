@@ -1,23 +1,13 @@
 Traceback (most recent call last):
-  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 294, in run_experiment
-    algorithm.run()
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/core/algorithm.py", line 84, in run
-    self.step()
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/core/algorithm.py", line 148, in step
-    self.solutions = self.replacement(self.solutions, offspring_population)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/algorithm/multiobjective/nsgaii.py", line 94, in replacement
-    solutions = r.replace(population, offspring_population)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/util/replacement.py", line 26, in replace
-    self.ranking.compute_ranking(join_population)
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/util/ranking.py", line 60, in compute_ranking
-    dominance_test_result = self.comparator.compare(solutions[p], solutions[q])
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/util/comparator.py", line 162, in compare
-    result = self.dominance_test(solution1.objectives, solution2.objectives)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/util/comparator.py", line 188, in dominance_test
-    @staticmethod
-    
-KeyboardInterrupt
+  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 275, in run_experiment
+    problem = NDiamond(
+              ^^^^^^^^^
+  File "/home/umi/PycharmProjects/benchmark-visualizer/custom_benchmark_problems/diamon_problem/apis/jmetal.py", line 91, in __init__
+    self.problem = n_objectives_problem.NBMP(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/umi/PycharmProjects/benchmark-visualizer/custom_benchmark_problems/diamon_problem/core/n_objectives_problem.py", line 47, in __init__
+    self.t_rotation_matrix = self.create_t_rotation_matrix()
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/umi/PycharmProjects/benchmark-visualizer/custom_benchmark_problems/diamon_problem/core/n_objectives_problem.py", line 64, in create_t_rotation_matrix
+    base_matrix @= self._rotation_matrix(
+TypeError: In-place matrix multiplication is not (yet) supported. Use 'a = a @ b' instead of 'a @= b'.

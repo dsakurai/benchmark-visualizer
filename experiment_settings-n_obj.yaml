@@ -11,12 +11,12 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  n_objectives: 2
+  n_objectives: 3
   experiment_name: N_obj_test
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
-  tree_file: experiment_trees/depth_base_1.json
+  tree_file: n_obj_experiment_trees/breadth.json
 
 - algorithm: NSGAII
   algorithm_parameters:
@@ -31,12 +31,12 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  n_objectives: 2
+  n_objectives: 3
   experiment_name: N_obj_test
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
-  tree_file: experiment_trees/depth_base_1.json
+  tree_file: n_obj_experiment_trees/depth.json
 
 - algorithm: NSGAII
   algorithm_parameters:
@@ -51,9 +51,9 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  n_objectives: 2
+  n_objectives: 3
   experiment_name: N_obj_test
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
-  tree_file: experiment_trees/depth_base_1.json
+  tree_file: n_obj_experiment_trees/diverse_tree.json

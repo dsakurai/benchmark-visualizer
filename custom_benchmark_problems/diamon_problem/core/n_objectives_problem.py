@@ -19,8 +19,8 @@ class NBMP(BMP):
         sequence_info: list[dict],
         dim_space: int,
         n_objectives: int,
-        rotate: bool = False,
-        t_rotate: bool = False,
+        rotate: bool = True,
+        t_rotate: bool = True,
         degrees: float = -45,
         clockwise: bool = True,
     ):
@@ -57,10 +57,11 @@ class NBMP(BMP):
         dim_list = []
         for i in range(n_ts):
             for j in range(i + 1, n_ts):
-                dim_list.append((i + 1, n_ts))
+                dim_list.append((i, j))
         base_matrix = np.eye(n_ts)
+        print(dim_list)
         for dim_pair in dim_list:
-            base_matrix @= self.rotation_matrix(
+            base_matrix = base_matrix @ self._rotation_matrix(
                 n=n_ts, dim_pair=dim_pair, theta=self.degrees
             )
         return base_matrix
@@ -70,12 +71,12 @@ class NBMP(BMP):
             raise ValueError(
                 "At least 2 objectives are required for rotation operation"
             )
-        return self.rotation_matrix(
+        return self._rotation_matrix(
             n=self.n_objectives, dim_pair=(0, 1), theta=self.degrees
         )
 
     @staticmethod
-    def rotation_matrix(n: int, dim_pair: tuple[int, int], theta: float) -> np.ndarray:
+    def _rotation_matrix(n: int, dim_pair: tuple[int, int], theta: float) -> np.ndarray:
         """Creates an n-dimensional rotation matrix that rotates in the i-th and j-th dimensions by theta degrees.
 
         Parameters
@@ -95,12 +96,14 @@ class NBMP(BMP):
         # Initialize identity matrix
         rot_matrix = np.eye(n)
 
+        print(rot_matrix)
+        print(dim_pair)
+
         # Set the elements for the 2D rotation in the i-th and j-th plane
         rot_matrix[dim_pair[0], dim_pair[0]] = np.cos(theta_radians)
         rot_matrix[dim_pair[1], dim_pair[0]] = np.cos(theta_radians)
         rot_matrix[dim_pair[0], dim_pair[1]] = -np.sin(theta_radians)
         rot_matrix[dim_pair[1], dim_pair[1]] = np.sin(theta_radians)
-
         return rot_matrix
 
     def n_evaluate(self, solution_variables: np.ndarray) -> NEvaluationResult:
@@ -138,12 +141,12 @@ class NBMP(BMP):
         # Takes t_2 to t_(n-1) for the remaining computation
         t_s = solution_variables[: (self.n_objectives - 1)]
         if self.t_rotate:
-            t_s @= self.t_rotation_matrix
+            t_s = t_s @ self.t_rotation_matrix
         return bmp_variables, t_s
 
     def parse_solutions(self, objective_values: np.ndarray) -> np.ndarray:
         if self.rotate:
-            objective_values @= self.rot_matrix
+            objective_values = objective_values @ self.rot_matrix
         return objective_values
 
 
