@@ -59,7 +59,6 @@ class NBMP(BMP):
             for j in range(i + 1, n_ts):
                 dim_list.append((i, j))
         base_matrix = np.eye(n_ts)
-        print(dim_list)
         for dim_pair in dim_list:
             base_matrix = base_matrix @ self._rotation_matrix(
                 n=n_ts, dim_pair=dim_pair, theta=self.degrees
@@ -95,9 +94,6 @@ class NBMP(BMP):
 
         # Initialize identity matrix
         rot_matrix = np.eye(n)
-
-        print(rot_matrix)
-        print(dim_pair)
 
         # Set the elements for the 2D rotation in the i-th and j-th plane
         rot_matrix[dim_pair[0], dim_pair[0]] = np.cos(theta_radians)

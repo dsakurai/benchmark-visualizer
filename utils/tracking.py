@@ -112,7 +112,9 @@ class MlflowTracker:
             # Type for variables: [t_1, t_2, ... t_(n-1), x_1, x_2, ..., x_n]
             # Number of t: n_objectives - 1
             variable_header = [f"t{x + 1}" for x in range(len(objectives) - 1)]
-            variable_header += [f"x{x + 1}" for x in range(len(variables))]
+            variable_header += [
+                f"x{x + 1}" for x in range(len(variables) - len(objectives) + 1)
+            ]
         objective_header = [f"y{x + 1}" for x in range(len(objectives))]
         self.headers = (
             variable_header
@@ -151,7 +153,6 @@ class MlflowTracker:
             json.dump(exp_settings, json_file, indent=4)
 
         file_name = dir_name + ".csv"
-
         step_metrics_df.to_csv(dir_path / file_name)
         mlflow.log_artifact(local_path=dir_path / file_name)
 
