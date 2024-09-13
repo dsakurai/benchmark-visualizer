@@ -1,13 +1,15 @@
 Traceback (most recent call last):
-  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 275, in run_experiment
-    problem = NDiamond(
-              ^^^^^^^^^
-  File "/home/umi/PycharmProjects/benchmark-visualizer/custom_benchmark_problems/diamon_problem/apis/jmetal.py", line 91, in __init__
-    self.problem = n_objectives_problem.NBMP(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/umi/PycharmProjects/benchmark-visualizer/custom_benchmark_problems/diamon_problem/core/n_objectives_problem.py", line 47, in __init__
-    self.t_rotation_matrix = self.create_t_rotation_matrix()
-                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/umi/PycharmProjects/benchmark-visualizer/custom_benchmark_problems/diamon_problem/core/n_objectives_problem.py", line 64, in create_t_rotation_matrix
-    base_matrix @= self._rotation_matrix(
-TypeError: In-place matrix multiplication is not (yet) supported. Use 'a = a @ b' instead of 'a @= b'.
+  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 290, in run_experiment
+    algorithm = globals()[Algorithms(exp_config.algorithm).name](
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 186, in moead
+    return MOEAD(
+           ^^^^^^
+  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/algorithm/multiobjective/moead.py", line 59, in __init__
+    self.neighbourhood = WeightVectorNeighborhood(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/util/neighborhood.py", line 54, in __init__
+    self.__initialize_uniform_weight(weight_vector_size, number_of_weight_vectors)
+  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/util/neighborhood.py", line 81, in __initialize_uniform_weight
+    raise FileNotFoundError('Failed to initialize weights: {} not found'.format(file_path))
+FileNotFoundError: Failed to initialize weights: resources/MOEAD_weights/W4D_100.dat not found
