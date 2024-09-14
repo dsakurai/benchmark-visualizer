@@ -17,6 +17,9 @@ class ReferenceFronts:
     def sampling_domain_axis(self):
         pass
 
+    def get_n_obj_local_pareto_set(self):
+        pass
+
     def get_local_pareto_set(
         self, dimension: int, tree_name: str, resolution: int = 100
     ):
