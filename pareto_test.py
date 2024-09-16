@@ -51,11 +51,11 @@ def compute_indicators(
     for node_id in pareto_dict.keys():
         # Generational Distanceの計算
         set = generation_points_node_x[generation_points_node_x[:, 3] == node_id, :][
-            :, 0:3
-        ]
+              :, 0:3
+              ]
         front = generation_points_node_y[generation_points_node_y[:, 2] == node_id, :][
-            :, 0:2
-        ]
+                :, 0:2
+                ]
 
         if front.size > 0:
             gd_value = indicator(
@@ -70,7 +70,7 @@ def compute_indicators(
         else:
             # print(f"{indicator_str} for node[{node_id}]: NaN")
             node_indicators[node_id] = {"gd": None, "gdx": None}
-    return {"global": global_indicators, "node": node_indicators}
+            return {"global": global_indicators, "node": node_indicators}
 
 
 # def match_experiment_file(data_base_path:str, solver: str, tree: str, dimension: int, termination: str):
