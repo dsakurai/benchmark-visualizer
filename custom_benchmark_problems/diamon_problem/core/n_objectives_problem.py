@@ -48,6 +48,14 @@ class NBMP(BMP):
         if rotate:
             self.rot_matrix = self.create_rotation_matrix()
 
+    @property
+    def t_i_upper_bound(self) -> float:
+        return 1.0
+
+    @property
+    def t_i_lower_bound(self) -> float:
+        return -1.0
+
     def create_t_rotation_matrix(self):
         n_ts = self.n_objectives - 1
         if n_ts <= 1:

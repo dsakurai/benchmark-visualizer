@@ -6,18 +6,7 @@ from jmetal.core.quality_indicator import GenerationalDistance
 from jmetal.core.quality_indicator import InvertedGenerationalDistance
 import os
 
-import matplotlib.pyplot as plt
 
-
-# plt.rcParams.update({
-#     "text.usetex": True,
-#     "font.family": "serif",
-#     "font.serif": ["Palatino"],
-# })
-
-
-# 仮定: pareto_dictには複数のParetoフロントが含まれている
-# pareto_fronts = [pareto_dict[key]["pareto_front"] for key in pareto_dict.keys()]
 
 
 def gd(reference, actual):
