@@ -83,6 +83,22 @@ def parse_exp_dir_with_meta(
     return None
 
 
+def parse_meta(exp_dir: str) -> dict:
+    exp_info = parse_exp_log_dir(exp_dir=exp_dir)
+    meta = exp_info["meta"]
+    dimension = meta["dimension"]
+    n_objectives = meta["n_objectives"]
+    population_size = meta["algorithm_parameters"]["population_size"]
+    return {
+        "population_size": population_size,
+        "dimension": dimension,
+        "n_objectives": n_objectives,
+        "tree": meta["tree"],
+        "solver": meta["algorithm_parameters"],
+        "exp_dir":exp_dir
+    }
+
+
 def parse_exp_log_dir(exp_dir: str) -> dict:
     exp_path = Path(exp_dir)
     if not (exp_path.exists() and exp_path.is_dir()):
