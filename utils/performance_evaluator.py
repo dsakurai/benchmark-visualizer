@@ -3,20 +3,35 @@ import matplotlib.pyplot as plt
 import numpy as np
 from jmetal.core.quality_indicator import GenerationalDistance
 from jmetal.core.quality_indicator import InvertedGenerationalDistance
+from jmetal.core.quality_indicator import HyperVolume
 import os
+
+from utils.file_utils import parse_exp_log_dir, load_n_evaluation_log
+
 
 class PerformanceEvaluator:
     def __init__(self):
         pass
+
     @staticmethod
     def gd(reference, actual):
         return GenerationalDistance(reference).compute(actual)
+
     @staticmethod
     def igd(reference, actual):
         return InvertedGenerationalDistance(reference).compute(actual)
 
-    def match_experiment_file(self,
-            data_base_path: str, solver: str, tree: str, dimension: int, termination: str
+    @staticmethod
+    def hv(reference, actual):
+        return HyperVolume(reference).compute(actual)
+
+    @staticmethod
+    def match_experiment_file(
+        data_base_path: str,
+        solver: str,
+        tree: str,
+        dimension: int,
+        termination: str,
     ):
         file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
         files = [
@@ -33,15 +48,16 @@ class PerformanceEvaluator:
             f"No file found for pattern: {file_name_pattern} in {data_base_path}"
         )
 
-    def compute_indicators(self,
-            reference_set,
-            reference_front,
-            generation_set,
-            generation_front,
-            pareto_dict: dict,
-            generation_points_node_x,
-            generation_points_node_y,
-            indicator_type,
+    def compute_indicators(
+        self,
+        reference_set,
+        reference_front,
+        generation_set,
+        generation_front,
+        pareto_dict: dict,
+        generation_points_node_x,
+        generation_points_node_y,
+        indicator_type,
     ):
         if indicator_type == "GD":
             indicator = self.gd
@@ -49,10 +65,12 @@ class PerformanceEvaluator:
         elif indicator_type == "IGD":
             indicator = self.igd
             indicator_str = "IGD"
+        elif indicator_type == "HV":
+            indicator = self.hv
+            indicator_str = "HyperVolume"
         else:
             raise NotImplementedError("Unrecognized Quality Indicator")
 
-        # Generational Distanceの計算
         gd_value = indicator(reference=reference_front, actual=generation_front)
         gdx_value = indicator(reference=reference_set, actual=generation_set)
 
@@ -61,12 +79,12 @@ class PerformanceEvaluator:
         node_indicators = {}
         for node_id in pareto_dict.keys():
             # Generational Distanceの計算
-            pareto_set = generation_points_node_x[generation_points_node_x[:, 3] == node_id, :][
-                  :, 0:3
-                  ]
-            front = generation_points_node_y[generation_points_node_y[:, 2] == node_id, :][
-                    :, 0:2
-                    ]
+            pareto_set = generation_points_node_x[
+                generation_points_node_x[:, 3] == node_id, :
+            ][:, 0:3]
+            front = generation_points_node_y[
+                generation_points_node_y[:, 2] == node_id, :
+            ][:, 0:2]
 
             if front.size > 0:
                 gd_value = indicator(
@@ -82,3 +100,20 @@ class PerformanceEvaluator:
                 # print(f"{indicator_str} for node[{node_id}]: NaN")
                 node_indicators[node_id] = {"gd": None, "gdx": None}
                 return {"global": global_indicators, "node": node_indicators}
+
+
+def main():
+    pe = PerformanceEvaluator()
+    exp_dir = "../data/N-obj-test_v13"
+    exp_info = parse_exp_log_dir(exp_dir=exp_dir)
+    meta = exp_info["meta"]
+    dimension = meta["dimension"]
+    n_objectives = meta["n_objectives"]
+    log_df = load_n_evaluation_log(file_path=exp_info["result"])
+    print(dimension)
+    print(n_objectives)
+    print(log_df)
+
+
+if __name__ == '__main__':
+    main()

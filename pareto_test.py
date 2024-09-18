@@ -7,8 +7,6 @@ from jmetal.core.quality_indicator import InvertedGenerationalDistance
 import os
 
 
-
-
 def gd(reference, actual):
     return GenerationalDistance(reference).compute(actual)
 
@@ -51,11 +49,11 @@ def compute_indicators(
     for node_id in pareto_dict.keys():
         # Generational Distanceの計算
         set = generation_points_node_x[generation_points_node_x[:, 3] == node_id, :][
-              :, 0:3
-              ]
+            :, 0:3
+        ]
         front = generation_points_node_y[generation_points_node_y[:, 2] == node_id, :][
-                :, 0:2
-                ]
+            :, 0:2
+        ]
 
         if front.size > 0:
             gd_value = indicator(

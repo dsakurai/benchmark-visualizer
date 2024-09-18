@@ -26,6 +26,15 @@ def load_evaluation_log(file_path: str) -> list:
         ["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
     ].to_dict(orient="records")
 
+def load_n_evaluation_log(file_path: str) -> list:
+    Logger().debug.info(f"Loading data from disk, file size {get_file_size(file_path)}")
+    if not Path(file_path).exists():
+        raise ValueError("Experiment log file not found")
+    eval_log = pd.read_csv(file_path, index_col=0)
+    Logger().debug.info("Load complete, processing ...... ")
+    return eval_log.to_dict(orient="records")
+
+
 
 def get_file_size(file_path):
     try:
@@ -70,6 +79,33 @@ def parse_exp_dir_with_meta(
     return None
 
 
+def parse_exp_log_dir(exp_dir: str) -> dict:
+    exp_path = Path(exp_dir)
+    if not (exp_path.exists() and exp_path.is_dir()):
+        raise ValueError("Invalid experiment experiment path")
+    subdirectories = [d for d in exp_path.iterdir() if d.is_dir()]
+    if subdirectories:
+        exp_data_dir = subdirectories[0]
+    else:
+        raise ValueError(f"No experiment data found @ {exp_path}")
+    meta_dir = exp_data_dir / "meta"
+    metadata = meta_dir / "meta.json"
+    experiment_tree_file = meta_dir / "experiment_tree.json"
+    exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
+    with open(metadata, 'r') as meta_file:
+        meta_data = json.load(meta_file)
+
+    with open(experiment_tree_file, 'r') as tree_file:
+        tree_data = json.load(tree_file)
+    return {
+        "meta": meta_data,
+        "tree": tree_data,
+        "result": exp_result_file,
+    }
+
+
 if __name__ == "__main__":
-    print(parse_exp_dir_with_meta("../data/test_exp_v8", "NSGAII"))
+    # print(parse_exp_dir_with_meta("../data/test_exp_v8", "NSGAII"))
     # print(load_evaluation_log("../test_runx_2023-01-16T10-30-27.298413.csv"))
+    res = parse_exp_log_dir("../data/N-obj-test_v0")
+    print(res)
