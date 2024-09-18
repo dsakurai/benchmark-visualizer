@@ -102,22 +102,29 @@ if __name__ == "__main__":
     ]
     counter = 0
     exp_settings = []
+    rotate_t = [True]
     for tree in trees:
         for solver in solvers:
             for dimension in dimensions:
                 for n_objective in n_objectives:
                     for termination_criterion in termination_criterions:
-                        exp_settings.append(
-                            {
-                                "experiment_name": exp_base_name + f"_v{counter}",
-                                "tree_file": tree,
-                                "dimension": dimension,
-                                "algorithm": solver,
-                                "n_objectives": n_objective,
-                                "algorithm_parameters": compose_solver_settings(solver),
-                                "termination_criterion": dict(termination_criterion),
-                            }
-                        )
-                        counter += 1
+                        for if_rotate_t in rotate_t:
+                            exp_settings.append(
+                                {
+                                    "experiment_name": exp_base_name + f"_v{counter}",
+                                    "tree_file": tree,
+                                    "dimension": dimension,
+                                    "algorithm": solver,
+                                    "n_objectives": n_objective,
+                                    "algorithm_parameters": compose_solver_settings(
+                                        solver
+                                    ),
+                                    "termination_criterion": dict(
+                                        termination_criterion
+                                    ),
+                                    "rotate_t": if_rotate_t,
+                                }
+                            )
+                            counter += 1
     with open(f"../exp_config_{exp_base_name}.yaml", "w") as file:
         documents = yaml.safe_dump(exp_settings, file)

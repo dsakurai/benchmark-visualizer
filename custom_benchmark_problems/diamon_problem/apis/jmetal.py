@@ -64,6 +64,7 @@ class NDiamond(FloatProblem):
         n_objectives: int,
         sequence_info: list[dict],
         enable_tracking: bool = False,
+        rotate_t: bool = True,
         tracker: Optional[MlflowTracker] = None,
     ):
         """Initialize problem class
@@ -89,7 +90,10 @@ class NDiamond(FloatProblem):
 
         # Problem instance for N-objectives BMP
         self.problem = n_objectives_problem.NBMP(
-            sequence_info=sequence_info, dim_space=dim_space, n_objectives=n_objectives
+            sequence_info=sequence_info,
+            dim_space=dim_space,
+            n_objectives=n_objectives,
+            t_rotate=rotate_t,
         )
 
         self.obj_directions = [self.MINIMIZE]

@@ -105,9 +105,9 @@ class NBMP(BMP):
 
         # Set the elements for the 2D rotation in the i-th and j-th plane
         rot_matrix[dim_pair[0], dim_pair[0]] = np.cos(theta_radians)
-        rot_matrix[dim_pair[1], dim_pair[0]] = np.cos(theta_radians)
-        rot_matrix[dim_pair[0], dim_pair[1]] = -np.sin(theta_radians)
-        rot_matrix[dim_pair[1], dim_pair[1]] = np.sin(theta_radians)
+        rot_matrix[dim_pair[1], dim_pair[1]] = np.cos(theta_radians)
+        rot_matrix[dim_pair[0], dim_pair[1]] = np.sin(theta_radians)
+        rot_matrix[dim_pair[1], dim_pair[0]] = -np.sin(theta_radians)
         return rot_matrix
 
     def n_evaluate(self, solution_variables: np.ndarray) -> NEvaluationResult:

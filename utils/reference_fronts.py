@@ -21,6 +21,7 @@ class ReferenceFronts:
         dimension: int,
         n_objectives: int,
         tree_file_path: str,
+        decision_space_rotation: bool = False,
         resolution: int = 100,
     ):
         if not Path(tree_file_path).exists():
@@ -32,6 +33,7 @@ class ReferenceFronts:
         n_bmp = n_objectives_problem.NBMP(
             sequence_info=sequence_info, dim_space=dimension, n_objectives=n_objectives
         )
+        rot_matrix = n_bmp.t_rotation_matrix
         pareto_dict = {}
 
         def apply_computing(data: np.array):
@@ -48,7 +50,7 @@ class ReferenceFronts:
             minimal_time = len(symbols) + 1
 
             # Compute unrotated value
-            step_back = n_bmp.n_evaluate(
+            step_back = n_bmp.evaluate(
                 np.insert(central_coordinates, 0, minimal_time - 1)
             )
             unrotated_y = step_back.unrotated_value[1]
@@ -69,6 +71,7 @@ class ReferenceFronts:
             # Create meshgrid for all arrays and then reshape to get all combinations
             mesh = np.meshgrid(*mesh_source)
             combinations = np.vstack([x.ravel() for x in mesh]).T
+            # combinations = combinations @ rot_matrix
 
             central_coordinates = np.broadcast_to(
                 central_coordinates, (len(combinations), len(central_coordinates))
@@ -87,7 +90,11 @@ class ReferenceFronts:
 
         all_sets = np.concatenate(all_sets, axis=0)
         all_fronts = np.concatenate(all_fronts, axis=0)
-        return pareto_dict, all_sets, all_fronts
+        return {
+            "pareto_dict": pareto_dict,
+            "all_sets": all_sets,
+            "all_fronts": all_fronts,
+        }
 
     def get_local_pareto_set(
         self, dimension: int, tree_name: str, resolution: int = 100
@@ -143,7 +150,11 @@ class ReferenceFronts:
 
         all_sets = np.concatenate(all_sets, axis=0)
         all_fronts = np.concatenate(all_fronts, axis=0)
-        return pareto_dict, all_sets, all_fronts
+        return {
+            "pareto_dict": pareto_dict,
+            "all_sets": all_sets,
+            "all_fronts": all_fronts,
+        }
 
 
 if __name__ == "__main__":
@@ -154,6 +165,6 @@ if __name__ == "__main__":
         dimension=2,
         tree_file_path="../n_obj_experiment_trees/breadth.json",
         resolution=10,
-        n_objectives=3,
+        n_objectives=4,
     )
     print(n_res)

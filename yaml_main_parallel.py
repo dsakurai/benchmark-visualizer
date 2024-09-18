@@ -278,6 +278,7 @@ def run_experiment(exp_config: ExperimentSettings, opts):
                 sequence_info=tree.to_sequence(),
                 enable_tracking=opts.disable_tracking,
                 tracker=tracker,
+                rotate_t=exp_config.rotate_t,
             )
         else:
             problem = Diamond(

@@ -26,14 +26,18 @@ def load_evaluation_log(file_path: str) -> list:
         ["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
     ].to_dict(orient="records")
 
-def load_n_evaluation_log(file_path: str) -> list:
+
+def load_n_evaluation_log(
+    file_path: str, return_df: bool = False
+) -> list | pd.DataFrame:
     Logger().debug.info(f"Loading data from disk, file size {get_file_size(file_path)}")
     if not Path(file_path).exists():
         raise ValueError("Experiment log file not found")
     eval_log = pd.read_csv(file_path, index_col=0)
     Logger().debug.info("Load complete, processing ...... ")
+    if return_df:
+        return eval_log
     return eval_log.to_dict(orient="records")
-
 
 
 def get_file_size(file_path):
@@ -92,14 +96,12 @@ def parse_exp_log_dir(exp_dir: str) -> dict:
     metadata = meta_dir / "meta.json"
     experiment_tree_file = meta_dir / "experiment_tree.json"
     exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
-    with open(metadata, 'r') as meta_file:
+    with open(metadata, "r") as meta_file:
         meta_data = json.load(meta_file)
 
-    with open(experiment_tree_file, 'r') as tree_file:
-        tree_data = json.load(tree_file)
     return {
         "meta": meta_data,
-        "tree": tree_data,
+        "tree": experiment_tree_file,
         "result": exp_result_file,
     }
 
