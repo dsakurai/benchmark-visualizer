@@ -96,7 +96,10 @@ class PerformanceEvaluator:
             resolution=10,
             n_objectives=n_objectives,
         )
-        population_size = meta["algorithm_parameters"]["population_size"]
+        try:
+            population_size = meta["algorithm_parameters"]["population_size"]
+        except KeyError:
+            population_size = meta["algorithm_parameters"]["swarm_size"]
         design_variables = log_df[design_variable_header]
         objective_values = log_df[objective_value_header]
         return {
@@ -106,8 +109,8 @@ class PerformanceEvaluator:
             "population_size": population_size,
             "dimension": dimension,
             "n_objectives": n_objectives,
-            "tree": meta["tree"],
-            "solver": meta["algorithm_parameters"],
+            "tree": meta["tree_file"].split("/")[-1],
+            "solver": meta["algorithm"],
         }
 
 
@@ -118,15 +121,6 @@ def main():
     start_step = 0
     end_step = start_step
 
-    print(
-        pe.compute_indicator(
-            reference_set=res["all_sets"],
-            reference_front=res["all_fronts"],
-            actual_set=design_variables,
-            actual_front=objective_values,
-            indicator_type="HV",
-        )
-    )
 
 
 if __name__ == "__main__":

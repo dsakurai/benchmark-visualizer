@@ -88,13 +88,16 @@ def parse_meta(exp_dir: str) -> dict:
     meta = exp_info["meta"]
     dimension = meta["dimension"]
     n_objectives = meta["n_objectives"]
-    population_size = meta["algorithm_parameters"]["population_size"]
+    try:
+        population_size = meta["algorithm_parameters"]["population_size"]
+    except KeyError:
+        population_size = meta["algorithm_parameters"]["swarm_size"]
     return {
         "population_size": population_size,
         "dimension": dimension,
         "n_objectives": n_objectives,
-        "tree": meta["tree"],
-        "solver": meta["algorithm_parameters"],
+        "tree": meta["tree_file"].split("/")[-1],
+        "solver": meta["algorithm"],
         "exp_dir":exp_dir
     }
 
