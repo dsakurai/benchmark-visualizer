@@ -83,46 +83,51 @@ def parse_exp_dir_with_meta(
     return None
 
 
-def parse_meta(exp_dir: str) -> dict:
-    exp_info = parse_exp_log_dir(exp_dir=exp_dir)
-    meta = exp_info["meta"]
-    dimension = meta["dimension"]
-    n_objectives = meta["n_objectives"]
-    try:
-        population_size = meta["algorithm_parameters"]["population_size"]
-    except KeyError:
-        population_size = meta["algorithm_parameters"]["swarm_size"]
-    return {
-        "population_size": population_size,
-        "dimension": dimension,
-        "n_objectives": n_objectives,
-        "tree": meta["tree_file"].split("/")[-1],
-        "solver": meta["algorithm"],
-        "exp_dir":exp_dir
-    }
+def parse_meta(exp_dir: str) -> list[dict]:
+    exps_info = parse_exp_log_dir(exp_dir=exp_dir)
+    exps_meta_info = []
+    for exp_info in exps_info:
+        meta = exp_info["meta"]
+        dimension = meta["dimension"]
+        n_objectives = meta["n_objectives"]
+        try:
+            population_size = meta["algorithm_parameters"]["population_size"]
+        except KeyError:
+            population_size = meta["algorithm_parameters"]["swarm_size"]
+        exps_meta_info.append({
+            "population_size": population_size,
+            "dimension": dimension,
+            "n_objectives": n_objectives,
+            "tree": meta["tree_file"].split("/")[-1],
+            "solver": meta["algorithm"],
+            "exp_result_file":exp_info["result"]
+        })
+    return exps_meta_info
 
 
-def parse_exp_log_dir(exp_dir: str) -> dict:
+def parse_exp_log_dir(exp_dir: str) -> list[dict]:
     exp_path = Path(exp_dir)
     if not (exp_path.exists() and exp_path.is_dir()):
         raise ValueError("Invalid experiment experiment path")
     subdirectories = [d for d in exp_path.iterdir() if d.is_dir()]
     if subdirectories:
-        exp_data_dir = subdirectories[0]
+        exp_parse_data = []
+        for exp_data_dir in subdirectories:
+            meta_dir = exp_data_dir / "meta"
+            metadata = meta_dir / "meta.json"
+            experiment_tree_file = meta_dir / "experiment_tree.json"
+            exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
+            with open(metadata, "r") as meta_file:
+                meta_data = json.load(meta_file)
+            exp_parse_data.append({
+                "meta": meta_data,
+                "tree": experiment_tree_file,
+                "result": exp_result_file,
+            })
+        return exp_parse_data
     else:
         raise ValueError(f"No experiment data found @ {exp_path}")
-    meta_dir = exp_data_dir / "meta"
-    metadata = meta_dir / "meta.json"
-    experiment_tree_file = meta_dir / "experiment_tree.json"
-    exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
-    with open(metadata, "r") as meta_file:
-        meta_data = json.load(meta_file)
 
-    return {
-        "meta": meta_data,
-        "tree": experiment_tree_file,
-        "result": exp_result_file,
-    }
 
 
 if __name__ == "__main__":
