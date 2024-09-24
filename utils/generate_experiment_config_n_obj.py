@@ -81,7 +81,7 @@ def compose_solver_settings(solver_name) -> dict:
 
 
 if __name__ == "__main__":
-    exp_base_name = "N-obj-test"
+    exp_base_name = "N-obj-test-additional"
     # trees = ["experiment_trees/diverse_tree.json"]
     # trees = []
     # depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
@@ -91,20 +91,23 @@ if __name__ == "__main__":
     trees = [
         "n_obj_experiment_trees/breadth.json",
         "n_obj_experiment_trees/depth.json",
-        "n_obj_experiment_trees/diverse_tree.json",
     ]
     solvers = ["MOEAD", "GDE3", "NSGAII", "IBEA", "OMOPSO"]
     dimensions = [2, 3, 4, 5]
-    n_objectives = [3, 4, 5]
+    n_objectives = [2, 3, 4, 5]
     termination_criterions = [
         # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
         {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
     ]
-    counter = 0
+    counter = 180
     exp_settings = []
     rotate_t = [True]
     for tree in trees:
         for solver in solvers:
+            if solver == "MOEAD":
+                pass
+            else:
+                n_objectives = [2]
             for dimension in dimensions:
                 for n_objective in n_objectives:
                     for termination_criterion in termination_criterions:

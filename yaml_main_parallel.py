@@ -272,14 +272,22 @@ def run_experiment(exp_config: ExperimentSettings, opts):
                 raise ValueError(
                     "Number of objectives not specified for n-objective benchmark problem"
                 )
-            problem = NDiamond(
+            if exp_config.n_objectives == 2:
+                problem = Diamond(
                 dim_space=exp_config.dimension,
-                n_objectives=exp_config.n_objectives,
                 sequence_info=tree.to_sequence(),
                 enable_tracking=opts.disable_tracking,
                 tracker=tracker,
-                rotate_t=exp_config.rotate_t,
-            )
+                )
+            else:
+                problem = NDiamond(
+                    dim_space=exp_config.dimension,
+                    n_objectives=exp_config.n_objectives,
+                    sequence_info=tree.to_sequence(),
+                    enable_tracking=opts.disable_tracking,
+                    tracker=tracker,
+                    rotate_t=exp_config.rotate_t,
+                )
         else:
             problem = Diamond(
                 dim_space=exp_config.dimension,

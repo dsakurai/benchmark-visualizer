@@ -44,7 +44,7 @@ for dimension in dimensions:
     for n_objectives in n_objectives_list:
         print(f"Processing dimension {dimension}, n_objectives {n_objectives}")
         solvers = ["MOEAD","NSGAII","GDE3","OMOPSO","IBEA"]
-        tree = "depth.json"
+        tree = "breadth.json"
         naming_prefix = f"dim{dimension}_objs{n_objectives}_tree_{tree.split('.')[0]}"
 
         stat_res = []
