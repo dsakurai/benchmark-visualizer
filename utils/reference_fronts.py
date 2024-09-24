@@ -21,6 +21,7 @@ class ReferenceFronts:
         dimension: int,
         n_objectives: int,
         tree_file_path: str,
+        t_rotate: bool = False,
         decision_space_rotation: bool = False,
         resolution: int = 100,
     ):
@@ -31,9 +32,9 @@ class ReferenceFronts:
         tree.from_json(tree_file_path)
         sequence_info = tree.to_sequence()
         n_bmp = n_objectives_problem.NBMP(
-            sequence_info=sequence_info, dim_space=dimension, n_objectives=n_objectives
+            sequence_info=sequence_info, dim_space=dimension, n_objectives=n_objectives,t_rotate=t_rotate
         )
-        rot_matrix = n_bmp.t_rotation_matrix
+        # rot_matrix = n_bmp.t_rotation_matrix
         pareto_dict = {}
 
         def apply_computing(data: np.array):
