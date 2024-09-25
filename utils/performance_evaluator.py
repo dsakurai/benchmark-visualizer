@@ -1,10 +1,8 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from jmetal.core.quality_indicator import GenerationalDistance
-from jmetal.core.quality_indicator import InvertedGenerationalDistance
-from jmetal.core.quality_indicator import HyperVolume
 import os
+
+from jmetal.core.quality_indicator import GenerationalDistance
+from jmetal.core.quality_indicator import HyperVolume
+from jmetal.core.quality_indicator import InvertedGenerationalDistance
 
 from utils.file_utils import parse_exp_log_dir, load_n_evaluation_log
 from utils.reference_fronts import ReferenceFronts
@@ -120,7 +118,6 @@ def main():
 
     start_step = 0
     end_step = start_step
-
 
 
 if __name__ == "__main__":

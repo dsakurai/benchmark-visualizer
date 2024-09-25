@@ -1,13 +1,10 @@
-import os
 from pathlib import Path
-from typing import Union
 
 import numpy as np
 
-from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
-from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from custom_benchmark_problems.diamon_problem.core import n_objectives_problem
+from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 
 
 class ReferenceFronts:
@@ -32,7 +29,10 @@ class ReferenceFronts:
         tree.from_json(tree_file_path)
         sequence_info = tree.to_sequence()
         n_bmp = n_objectives_problem.NBMP(
-            sequence_info=sequence_info, dim_space=dimension, n_objectives=n_objectives,t_rotate=t_rotate
+            sequence_info=sequence_info,
+            dim_space=dimension,
+            n_objectives=n_objectives,
+            t_rotate=t_rotate,
         )
         # rot_matrix = n_bmp.t_rotation_matrix
         pareto_dict = {}

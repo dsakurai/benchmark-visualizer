@@ -1,13 +1,4 @@
 Traceback (most recent call last):
-  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 297, in run_experiment
-    algorithm.run()
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/core/algorithm.py", line 84, in run
-    self.step()
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/core/algorithm.py", line 221, in step
-    self.perturbation(self.solutions)
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/algorithm/multiobjective/omopso.py", line 160, in perturbation
-    self.non_uniform_mutation.execute(swarm[i])
-  File "/home/umi/miniconda3/envs/benchmark-visualizer/lib/python3.11/site-packages/jmetal/operator/mutation.py", line 207, in execute
-    if tmp < solution.lower_bound[i]:
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: '<' not supported between instances of 'complex' and 'int'
+  File "/home/umi/PycharmProjects/benchmark-visualizer/yaml_main_parallel.py", line 278, in run_experiment
+    raise ValueError(
+ValueError: Number of objectives not specified for n-objective benchmark problem

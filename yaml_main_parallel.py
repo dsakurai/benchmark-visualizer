@@ -170,7 +170,13 @@ def moead(**kwargs):
         F=crossover_parameters["F"],
         K=crossover_parameters["K"],
     )
-    aggregative_function = Tschebycheff(dimension=kwargs["exp_config"].dimension + 1)
+
+    agg_dimension = (
+        kwargs["exp_config"].dimension + kwargs["exp_config"].n_objectives - 1
+        if kwargs["exp_config"].n_objectives
+        else kwargs["exp_config"].dimension + 1
+    )
+    aggregative_function = Tschebycheff(dimension=agg_dimension)
     stopping_criterion = kwargs["termination_criterion"]
     if stopping_criterion["criterion_name"] == "StoppingByTime":
         termination_criterion = StoppingByTime(
@@ -274,10 +280,10 @@ def run_experiment(exp_config: ExperimentSettings, opts):
                 )
             if exp_config.n_objectives == 2:
                 problem = Diamond(
-                dim_space=exp_config.dimension,
-                sequence_info=tree.to_sequence(),
-                enable_tracking=opts.disable_tracking,
-                tracker=tracker,
+                    dim_space=exp_config.dimension,
+                    sequence_info=tree.to_sequence(),
+                    enable_tracking=opts.disable_tracking,
+                    tracker=tracker,
                 )
             else:
                 problem = NDiamond(

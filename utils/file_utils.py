@@ -1,8 +1,10 @@
 import json
-import math, os
+import math
+import os
 from pathlib import Path
 
 import pandas as pd
+
 from utils.log import Logger
 
 
@@ -94,14 +96,16 @@ def parse_meta(exp_dir: str) -> list[dict]:
             population_size = meta["algorithm_parameters"]["population_size"]
         except KeyError:
             population_size = meta["algorithm_parameters"]["swarm_size"]
-        exps_meta_info.append({
-            "population_size": population_size,
-            "dimension": dimension,
-            "n_objectives": n_objectives,
-            "tree": meta["tree_file"].split("/")[-1],
-            "solver": meta["algorithm"],
-            "exp_result_file":exp_info["result"]
-        })
+        exps_meta_info.append(
+            {
+                "population_size": population_size,
+                "dimension": dimension,
+                "n_objectives": n_objectives,
+                "tree": meta["tree_file"].split("/")[-1],
+                "solver": meta["algorithm"],
+                "exp_result_file": exp_info["result"],
+            }
+        )
     return exps_meta_info
 
 
@@ -119,15 +123,16 @@ def parse_exp_log_dir(exp_dir: str) -> list[dict]:
             exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
             with open(metadata, "r") as meta_file:
                 meta_data = json.load(meta_file)
-            exp_parse_data.append({
-                "meta": meta_data,
-                "tree": experiment_tree_file,
-                "result": exp_result_file,
-            })
+            exp_parse_data.append(
+                {
+                    "meta": meta_data,
+                    "tree": experiment_tree_file,
+                    "result": exp_result_file,
+                }
+            )
         return exp_parse_data
     else:
         raise ValueError(f"No experiment data found @ {exp_path}")
-
 
 
 if __name__ == "__main__":

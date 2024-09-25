@@ -8,14 +8,13 @@ import traceback
 import typing
 
 import mlflow
-import numpy as np
 import pandas as pd
+from mlflow.exceptions import MlflowException
 from mlflow.tracking import MlflowClient
 
 from config import mlflow_tracking_uri, data_dir
 from utils.data_structures import ExperimentSettings
 from utils.log import Logger
-from mlflow.exceptions import MlflowException
 
 ArgParserFunc = typing.Callable[
     [typing.Optional[argparse.ArgumentParser]], argparse.Namespace

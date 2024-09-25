@@ -81,7 +81,7 @@ def compose_solver_settings(solver_name) -> dict:
 
 
 if __name__ == "__main__":
-    exp_base_name = "N-obj-test-additional"
+    exp_base_name = "N-obj-test-MOEAD"
     # trees = ["experiment_trees/diverse_tree.json"]
     # trees = []
     # depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
@@ -93,6 +93,7 @@ if __name__ == "__main__":
         "n_obj_experiment_trees/depth.json",
     ]
     solvers = ["MOEAD", "GDE3", "NSGAII", "IBEA", "OMOPSO"]
+    solvers = ["MOEAD"]
     dimensions = [2, 3, 4, 5]
     n_objectives = [2, 3, 4, 5]
     termination_criterions = [
