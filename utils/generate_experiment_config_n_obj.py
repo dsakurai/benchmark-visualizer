@@ -95,7 +95,9 @@ if __name__ == "__main__":
     solvers = ["MOEAD", "GDE3", "NSGAII", "IBEA", "OMOPSO"]
     solvers = ["MOEAD"]
     dimensions = [2, 3, 4, 5]
+    dimensions.reverse()
     n_objectives = [2, 3, 4, 5]
+    n_objectives.reverse()
     termination_criterions = [
         # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
         {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
