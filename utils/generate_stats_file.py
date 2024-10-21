@@ -22,7 +22,6 @@ subdirs = [
 ]
 
 subdirs = []
-print("Indexing experiment files ...")
 for root, sub_dirs, files in os.walk("../data"):
     for sub_dir in sub_dirs:
         cwd = os.path.join(root,sub_dir)
@@ -40,29 +39,22 @@ for subdir in subdirs:
 
 exp_df = pd.DataFrame(meta_list)
 
-dimensions = [2, 3, 4, 5]
-n_objectives_list = [2, 3, 4, 5]
-trees = ["breadth.json", "depth.json","diverse_tree.json"]
-trees = ["breadth.json", "depth.json"]
-solvers = ["MOEAD", "NSGAII", "GDE3", "IBEA"]
-# solvers = ["IBEA"]
 
-generations = [x * 100 for x in range(1,10)]
-generations += [x * 10 for x in range(1,10)]
-generations += [x for x in range(1,101)]
-generations = set(generations)
-
-total_tasks = len(dimensions) * len(n_objectives_list) * len(trees) * len(generations)
 def parse_result_file(exp_file_path: str):
     result_df = pd.read_csv(exp_file_path)
     return result_df
 
-def run_data(dimension,n_objectives, tree, generation_index):
-    # print(f"Processing dimension {dimension}, n_objectives {n_objectives}")
+
+dimensions = [2, 3, 4, 5]
+n_objectives_list = [2, 3, 4, 5]
+trees = ["breadth.json", "depth.json"]
+solvers = ["MOEAD", "NSGAII", "GDE3", "OMOPSO", "IBEA"]
+total_tasks = len(dimensions) * len(n_objectives_list) * len(trees)
+def run_data(dimension,n_objectives, tree):
+    print(f"Processing dimension {dimension}, n_objectives {n_objectives}")
     naming_prefix = (
         f"dim{dimension}_objs{n_objectives}_tree_{tree.split('.')[0]}"
     )
-    
     stat_res = []
     for solver in solvers:
         filtered_df = exp_df[
@@ -71,12 +63,10 @@ def run_data(dimension,n_objectives, tree, generation_index):
             & (exp_df["solver"] == solver)
             & (exp_df["tree"] == tree)
         ]
-        for i, row in filtered_df.iterrows(): 
+        for i, row in filtered_df.iterrows():
             eval_info = parse_result_file(row["exp_result_file"])
             try:
-                start_eval = generation_index * 100
-                stop_eval = start_eval + 100 
-                vc = eval_info["eval_node_id"][start_eval:stop_eval].value_counts()
+                vc = eval_info["eval_node_id"][99900:].value_counts()
                 stat_res.append(
                     {
                         "solver": solver,
@@ -91,9 +81,15 @@ def run_data(dimension,n_objectives, tree, generation_index):
             except Exception as e:
                 continue
     stat_res = pd.DataFrame(stat_res)
-    stat_res.to_csv(naming_prefix + f"_gen_{generation_index}" + ".csv")
+    stat_res.to_csv(naming_prefix + ".csv")
+
+cpus = multiprocessing.cpu_count()
+pool = Pool(processes=cpus)
+pbar = tqdm(total=total_tasks)
+pbar.set_description("Parsing Progress")
 
 def pbar_update(*args):
+    print(*args)
     pbar.update()
 
 def print_err(value):
@@ -101,28 +97,19 @@ def print_err(value):
     pbar.update()
 
 
-
-cpus = multiprocessing.cpu_count()
-pool = Pool(processes=cpus)
-pbar = tqdm(total=total_tasks)
-pbar.set_description("Parsing Progress")
-
-
 for dimension in dimensions:
     for n_objectives in n_objectives_list:
-        for generation in generations:
-            for tree in trees:
-                    pool.apply_async(
-                        run_data,
-                        args=(
-                            dimension,
-                            n_objectives,
-                            tree,
-                            generation,
-                        ),
-                        error_callback=print_err,
-                        callback=pbar_update,
-                    )
+        for tree in trees:
+            pool.apply_async(
+                run_data,
+                args=(
+                    dimension,
+                    n_objectives,
+                    tree,
+                ),
+                error_callback=print_err,
+                callback=pbar_update,
+            )
 pool.close()
 pool.join()
 pbar.close()
