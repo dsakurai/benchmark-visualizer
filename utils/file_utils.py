@@ -30,7 +30,7 @@ def load_evaluation_log(file_path: str) -> list:
 
 
 def load_n_evaluation_log(
-    file_path: str, return_df: bool = False
+        file_path: str, return_df: bool = False
 ) -> list | pd.DataFrame:
     Logger().debug.info(f"Loading data from disk, file size {get_file_size(file_path)}")
     if not Path(file_path).exists():
@@ -66,7 +66,7 @@ def convert_size(size_bytes):
 
 
 def parse_exp_dir_with_meta(
-    data_path, file_name_pattern: str
+        data_path, file_name_pattern: str
 ) -> tuple[Path, Path, Path] | None:
     entries = os.listdir(data_path)
     subdirectories = [

@@ -1,5 +1,4 @@
 import argparse
-import math
 import multiprocessing
 import typing
 from enum import Enum
@@ -18,7 +17,6 @@ from jmetal.operator import (
 from jmetal.operator.mutation import NonUniformMutation
 from jmetal.util.aggregative_function import Tschebycheff
 from jmetal.util.archive import CrowdingDistanceArchive
-from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByTime, StoppingByEvaluations
 from tqdm import tqdm
 
@@ -269,7 +267,7 @@ def load_experiment_settings(file_path: Path) -> typing.List[ExperimentSettings]
 
 def run_experiment(exp_config: ExperimentSettings, opts):
     with MlflowTracker(
-        run_name=exp_config.experiment_name, experiment_config=exp_config
+            run_name=exp_config.experiment_name, experiment_config=exp_config
     ) as tracker:
         tree = Tree(dim_space=exp_config.dimension)
         tree.from_json(exp_config.tree_file)

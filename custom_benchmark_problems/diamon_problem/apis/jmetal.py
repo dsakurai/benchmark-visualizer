@@ -12,11 +12,11 @@ from utils.tracking import MlflowTracker
 
 class Diamond(FloatProblem):
     def __init__(
-        self,
-        dim_space: int,
-        sequence_info: list[dict],
-        enable_tracking: bool = False,
-        tracker: Optional[MlflowTracker] = None,
+            self,
+            dim_space: int,
+            sequence_info: list[dict],
+            enable_tracking: bool = False,
+            tracker: Optional[MlflowTracker] = None,
     ):
         super(Diamond, self).__init__()
         self.number_of_variables = dim_space + 1
@@ -59,13 +59,13 @@ class Diamond(FloatProblem):
 
 class NDiamond(FloatProblem):
     def __init__(
-        self,
-        dim_space: int,
-        n_objectives: int,
-        sequence_info: list[dict],
-        enable_tracking: bool = False,
-        rotate_t: bool = True,
-        tracker: Optional[MlflowTracker] = None,
+            self,
+            dim_space: int,
+            n_objectives: int,
+            sequence_info: list[dict],
+            enable_tracking: bool = False,
+            rotate_t: bool = True,
+            tracker: Optional[MlflowTracker] = None,
     ):
         """Initialize problem class
 

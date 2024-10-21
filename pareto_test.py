@@ -1,10 +1,12 @@
-from utils.reference_fronts import get_local_pareto_set
-import pandas as pd
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from jmetal.core.quality_indicator import GenerationalDistance
 from jmetal.core.quality_indicator import InvertedGenerationalDistance
-import os
+
+from utils.reference_fronts import get_local_pareto_set
 
 
 def gd(reference, actual):
@@ -17,14 +19,14 @@ def igd(reference, actual):
 
 # GD
 def compute_indicators(
-    reference_set,
-    reference_front,
-    generation_set,
-    generation_front,
-    pareto_dict: dict,
-    generation_points_node_x,
-    generation_points_node_y,
-    indicator_type,
+        reference_set,
+        reference_front,
+        generation_set,
+        generation_front,
+        pareto_dict: dict,
+        generation_points_node_x,
+        generation_points_node_y,
+        indicator_type,
 ):
     if indicator_type == "GD":
         indicator = gd
@@ -49,11 +51,11 @@ def compute_indicators(
     for node_id in pareto_dict.keys():
         # Generational Distanceの計算
         set = generation_points_node_x[generation_points_node_x[:, 3] == node_id, :][
-            :, 0:3
-        ]
+              :, 0:3
+              ]
         front = generation_points_node_y[generation_points_node_y[:, 2] == node_id, :][
-            :, 0:2
-        ]
+                :, 0:2
+                ]
 
         if front.size > 0:
             gd_value = indicator(
@@ -82,7 +84,7 @@ def compute_indicators(
 
 
 def match_experiment_file(
-    data_base_path: str, solver: str, tree: str, dimension: int, termination: str
+        data_base_path: str, solver: str, tree: str, dimension: int, termination: str
 ):
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     files = [
@@ -156,8 +158,8 @@ def main():
                             # print()
                             starting_point = generation * population_size
                             generation_df = experiment_record.iloc[
-                                starting_point : starting_point + population_size
-                            ]
+                                            starting_point: starting_point + population_size
+                                            ]
                             generation_points_x = generation_df[
                                 variables_header_x
                             ].values
@@ -210,8 +212,8 @@ def main():
                         generation = 199
                         starting_point = generation * population_size
                         generation_df = experiment_record.iloc[
-                            starting_point : starting_point + population_size
-                        ]
+                                        starting_point: starting_point + population_size
+                                        ]
                         generation_points_x = generation_df[variables_header_x].values
                         generation_points_node_x = generation_df[
                             variables_header_node_x
@@ -273,7 +275,7 @@ def main():
                         (gd_values_df["tree_name"] == tree_name)
                         & (gd_values_df["solver"] == solver_name)
                         & (gd_values_df["indicator"] == indicator_type)
-                    ]
+                        ]
                     gd_values_node = gd_values_df_gd["gd_value_node"].apply(
                         lambda x: x[node_id]["gd"] if x[node_id] is not None else np.nan
                     )
@@ -310,7 +312,7 @@ def main():
                         (gdx_values_df["tree_name"] == tree_name)
                         & (gdx_values_df["solver"] == solver_name)
                         & (gdx_values_df["indicator"] == indicator_type)
-                    ]
+                        ]
                     gdx_values_node = gdx_values_df_gd["gdx_value_node"].apply(
                         lambda x: x[node_id]["gdx"]
                         if x[node_id] is not None

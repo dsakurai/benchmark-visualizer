@@ -6,10 +6,7 @@ import sys
 sys.path.append("../")
 
 import os
-import glob
-from utils.reference_fronts import ReferenceFronts
-from utils.file_utils import parse_exp_log_dir, load_n_evaluation_log, parse_meta
-from utils.performance_evaluator import PerformanceEvaluator
+from utils.file_utils import parse_meta
 
 import matplotlib
 
@@ -58,7 +55,7 @@ for dimension in dimensions:
                 & (exp_df["n_objectives"] == n_objectives)
                 & (exp_df["solver"] == solver)
                 & (exp_df["tree"] == tree)
-            ]
+                ]
             for i, row in filtered_df.iterrows():
                 eval_info = parse_result_file(row["exp_result_file"])
                 try:
