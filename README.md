@@ -1,6 +1,6 @@
 # Benchmark problem version 0.1
 
-## NOTE: For arbitrary numbers of objectives problem implementation, please kindly go to  [arbitrary numbers of objective branch](https://github.com/dsakurai/benchmark-visualizer/tree/l-liu/n_objectives).
+## NOTE: For arbitrary numbers of objectives problem implementation, please go to  [arbitrary numbers of objective branch](https://github.com/dsakurai/benchmark-visualizer/tree/l-liu/n_objectives).
 
 ## Install the environment
 1. Create python virtual environments:
