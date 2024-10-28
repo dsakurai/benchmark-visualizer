@@ -1,0 +1,59 @@
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  n_objectives: 3
+  experiment_name: N_obj_test
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: n_obj_experiment_trees/breadth.json
+
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  n_objectives: 3
+  experiment_name: N_obj_test
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: n_obj_experiment_trees/depth.json
+
+- algorithm: NSGAII
+  algorithm_parameters:
+    crossover:
+      crossover: SBXCrossover
+      distribution_index: 20
+      probability: 1.0
+    mutation:
+      distribution_index: 20
+      mutation: PolynomialMutation
+      probability: n_variables
+    offspring_population_size: 100
+    population_size: 100
+  dimension: 2
+  n_objectives: 3
+  experiment_name: N_obj_test
+  termination_criterion:
+    criterion_name: StoppingByEvaluations
+    termination_parameter: 25000
+  tree_file: n_obj_experiment_trees/diverse_tree.json
