@@ -197,11 +197,13 @@ export default {
         renderSheets(sheets){
             for (let [node_id,sheet] of sheets.entries()) {
                 let strokeColor = this.colorShapeMap[node_id][0];
+                console.log(strokeColor);
+                let fillColor = GraphUtils.increaseBrightness(strokeColor,20);
                 this.svg.append("path")
                     .attr("id", node_id)
                     .attr("d", sheet)
                     .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
-                    .style("fill","none")
+                    .style("fill",fillColor)
                     // .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
                     .style("stroke", strokeColor)
                     // .style("stroke", '#' + Math.floor(Math.random() * 16777215).toString(16))
