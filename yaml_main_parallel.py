@@ -1,5 +1,4 @@
 import argparse
-import math
 import multiprocessing
 import typing
 from enum import Enum
@@ -18,11 +17,10 @@ from jmetal.operator import (
 from jmetal.operator.mutation import NonUniformMutation
 from jmetal.util.aggregative_function import Tschebycheff
 from jmetal.util.archive import CrowdingDistanceArchive
-from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByTime, StoppingByEvaluations
 from tqdm import tqdm
 
-from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
+from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond, NDiamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
 from utils.data_structures import ExperimentSettings
 from utils.log import Logger
@@ -170,7 +168,13 @@ def moead(**kwargs):
         F=crossover_parameters["F"],
         K=crossover_parameters["K"],
     )
-    aggregative_function = Tschebycheff(dimension=kwargs["exp_config"].dimension + 1)
+
+    agg_dimension = (
+        kwargs["exp_config"].dimension + kwargs["exp_config"].n_objectives - 1
+        if kwargs["exp_config"].n_objectives
+        else kwargs["exp_config"].dimension + 1
+    )
+    aggregative_function = Tschebycheff(dimension=agg_dimension)
     stopping_criterion = kwargs["termination_criterion"]
     if stopping_criterion["criterion_name"] == "StoppingByTime":
         termination_criterion = StoppingByTime(
@@ -263,16 +267,39 @@ def load_experiment_settings(file_path: Path) -> typing.List[ExperimentSettings]
 
 def run_experiment(exp_config: ExperimentSettings, opts):
     with MlflowTracker(
-        run_name=exp_config.experiment_name, experiment_config=exp_config
+            run_name=exp_config.experiment_name, experiment_config=exp_config
     ) as tracker:
         tree = Tree(dim_space=exp_config.dimension)
         tree.from_json(exp_config.tree_file)
-        problem = Diamond(
-            dim_space=exp_config.dimension,
-            sequence_info=tree.to_sequence(),
-            enable_tracking=opts.disable_tracking,
-            tracker=tracker,
-        )
+        if opts.n_objectives:
+            if exp_config.n_objectives == 0:
+                raise ValueError(
+                    "Number of objectives not specified for n-objective benchmark problem"
+                )
+            if exp_config.n_objectives == 2:
+                problem = Diamond(
+                    dim_space=exp_config.dimension,
+                    sequence_info=tree.to_sequence(),
+                    enable_tracking=opts.disable_tracking,
+                    tracker=tracker,
+                )
+            else:
+                problem = NDiamond(
+                    dim_space=exp_config.dimension,
+                    n_objectives=exp_config.n_objectives,
+                    sequence_info=tree.to_sequence(),
+                    enable_tracking=opts.disable_tracking,
+                    tracker=tracker,
+                    rotate_t=exp_config.rotate_t,
+                )
+        else:
+            problem = Diamond(
+                dim_space=exp_config.dimension,
+                sequence_info=tree.to_sequence(),
+                enable_tracking=opts.disable_tracking,
+                tracker=tracker,
+            )
+
         algorithm = globals()[Algorithms(exp_config.algorithm).name](
             problem=problem,
             exp_config=exp_config,
@@ -293,32 +320,36 @@ def yaml_main(opts):
 
     batch_create_experiments(exp_names=exp_name_set)
 
-    cpus = multiprocessing.cpu_count()
-    pool = Pool(processes=cpus)
-    pbar = tqdm(total=len(exps_config))
-    pbar.set_description("Experiment Progress")
+    if opts.serial:
+        for exp_config in tqdm(exps_config, desc="Experiment progress"):
+            run_experiment(exp_config=exp_config, opts=opts)
+    else:
+        cpus = multiprocessing.cpu_count()
+        pool = Pool(processes=cpus)
+        pbar = tqdm(total=len(exps_config))
+        pbar.set_description("Experiment Progress")
 
-    def pbar_update(*args):
-        pbar.update()
+        def pbar_update(*args):
+            pbar.update()
 
-    def print_err(value):
-        logger = Logger()
-        logger.debug.error(value)
-        pbar.update()
+        def print_err(value):
+            logger = Logger()
+            logger.debug.error(value)
+            pbar.update()
 
-    for exp_config in exps_config:
-        pool.apply_async(
-            run_experiment,
-            args=(
-                exp_config,
-                opts,
-            ),
-            error_callback=print_err,
-            callback=pbar_update,
-        )
-    pool.close()
-    pool.join()
-    pbar.close()
+        for exp_config in exps_config:
+            pool.apply_async(
+                run_experiment,
+                args=(
+                    exp_config,
+                    opts,
+                ),
+                error_callback=print_err,
+                callback=pbar_update,
+            )
+        pool.close()
+        pool.join()
+        pbar.close()
 
 
 if __name__ == "__main__":
@@ -333,5 +364,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--exp_name", type=str, help="Set experiment name, not required"
     )
+    parser.add_argument("--n_objectives", action="store_true")
+    parser.add_argument("--serial", action="store_true")
     parser.add_argument("--disable_tracking", action="store_false")
     yaml_main(parser.parse_args())

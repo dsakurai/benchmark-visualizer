@@ -1,8 +1,10 @@
 import json
-import math, os
+import math
+import os
 from pathlib import Path
 
 import pandas as pd
+
 from utils.log import Logger
 
 
@@ -25,6 +27,19 @@ def load_evaluation_log(file_path: str) -> list:
     return eval_log[
         ["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
     ].to_dict(orient="records")
+
+
+def load_n_evaluation_log(
+        file_path: str, return_df: bool = False
+) -> list | pd.DataFrame:
+    Logger().debug.info(f"Loading data from disk, file size {get_file_size(file_path)}")
+    if not Path(file_path).exists():
+        raise ValueError("Experiment log file not found")
+    eval_log = pd.read_csv(file_path, index_col=0)
+    Logger().debug.info("Load complete, processing ...... ")
+    if return_df:
+        return eval_log
+    return eval_log.to_dict(orient="records")
 
 
 def get_file_size(file_path):
@@ -51,7 +66,7 @@ def convert_size(size_bytes):
 
 
 def parse_exp_dir_with_meta(
-    data_path, file_name_pattern: str
+        data_path, file_name_pattern: str
 ) -> tuple[Path, Path, Path] | None:
     entries = os.listdir(data_path)
     subdirectories = [
@@ -70,6 +85,58 @@ def parse_exp_dir_with_meta(
     return None
 
 
+def parse_meta(exp_dir: str) -> list[dict]:
+    exps_info = parse_exp_log_dir(exp_dir=exp_dir)
+    exps_meta_info = []
+    for exp_info in exps_info:
+        meta = exp_info["meta"]
+        dimension = meta["dimension"]
+        n_objectives = meta["n_objectives"]
+        try:
+            population_size = meta["algorithm_parameters"]["population_size"]
+        except KeyError:
+            population_size = meta["algorithm_parameters"]["swarm_size"]
+        exps_meta_info.append(
+            {
+                "population_size": population_size,
+                "dimension": dimension,
+                "n_objectives": n_objectives,
+                "tree": meta["tree_file"].split("/")[-1],
+                "solver": meta["algorithm"],
+                "exp_result_file": exp_info["result"],
+            }
+        )
+    return exps_meta_info
+
+
+def parse_exp_log_dir(exp_dir: str) -> list[dict]:
+    exp_path = Path(exp_dir)
+    if not (exp_path.exists() and exp_path.is_dir()):
+        raise ValueError("Invalid experiment experiment path")
+    subdirectories = [d for d in exp_path.iterdir() if d.is_dir()]
+    if subdirectories:
+        exp_parse_data = []
+        for exp_data_dir in subdirectories:
+            meta_dir = exp_data_dir / "meta"
+            metadata = meta_dir / "meta.json"
+            experiment_tree_file = meta_dir / "experiment_tree.json"
+            exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
+            with open(metadata, "r") as meta_file:
+                meta_data = json.load(meta_file)
+            exp_parse_data.append(
+                {
+                    "meta": meta_data,
+                    "tree": experiment_tree_file,
+                    "result": exp_result_file,
+                }
+            )
+        return exp_parse_data
+    else:
+        raise ValueError(f"No experiment data found @ {exp_path}")
+
+
 if __name__ == "__main__":
-    print(parse_exp_dir_with_meta("../data/test_exp_v8", "NSGAII"))
+    # print(parse_exp_dir_with_meta("../data/test_exp_v8", "NSGAII"))
     # print(load_evaluation_log("../test_runx_2023-01-16T10-30-27.298413.csv"))
+    res = parse_exp_log_dir("../data/N-obj-test_v0")
+    print(res)

@@ -10,7 +10,6 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 
 from custom_benchmark_problems.diamon_problem.apis.jmetal import Diamond
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
-import time
 
 
 def cli_main(opts):
@@ -25,7 +24,7 @@ def cli_main(opts):
         "run_name": "First Run",
         "tags": {"test_version": "0.0.1"},
         "description": "Tracking parameters are not required, but is a Nice-to-have."
-        " You could fill some of these parameters for identification",
+                       " You could fill some of these parameters for identification",
     }
 
     # Problem construction, again, tracking_parameters are not required
@@ -80,7 +79,7 @@ def cli_main(opts):
     for solution in solutions:
         x_1 = solution.variables[0]
         x_2 = solution.variables[1]
-        y = abs(1 - math.sqrt(x_1**2 + x_2**2) / math.pi)
+        y = abs(1 - math.sqrt(x_1 ** 2 + x_2 ** 2) / math.pi)
         y = -abs(math.sin(x_1) * math.cos(x_2) * math.exp(y))
         if y - solution.objectives[0] > 0:
             print(solution)

@@ -8,14 +8,13 @@ import traceback
 import typing
 
 import mlflow
-import numpy as np
 import pandas as pd
+from mlflow.exceptions import MlflowException
 from mlflow.tracking import MlflowClient
 
 from config import mlflow_tracking_uri, data_dir
 from utils.data_structures import ExperimentSettings
 from utils.log import Logger
-from mlflow.exceptions import MlflowException
 
 ArgParserFunc = typing.Callable[
     [typing.Optional[argparse.ArgumentParser]], argparse.Namespace
@@ -79,13 +78,13 @@ class MlflowTracker:
             raise
 
     def log_step(
-        self,
-        variables: list,
-        objectives: list,
-        eval_node_id: int,
-        diagonal_length: float,
-        org_objectives: list,
-        constrains: list = None,
+            self,
+            variables: list,
+            objectives: list,
+            eval_node_id: int,
+            diagonal_length: float,
+            org_objectives: list,
+            constrains: list = None,
     ):
         if constrains:
             raise NotImplementedError("Constrains logging is not available yet")
@@ -102,15 +101,24 @@ class MlflowTracker:
         self.step += 1
 
     def create_headers(
-        self, variables: list, objectives: list, constrains: list = None
+            self, variables: list, objectives: list, constrains: list = None
     ) -> None:
-        variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
-        variable_header.insert(0, "t")
+        if len(objectives) == 2:
+            variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
+            variable_header.insert(0, "t")
+        else:
+            # Case for N objectives
+            # Type for variables: [t_1, t_2, ... t_(n-1), x_1, x_2, ..., x_n]
+            # Number of t: n_objectives - 1
+            variable_header = [f"t{x + 1}" for x in range(len(objectives) - 1)]
+            variable_header += [
+                f"x{x + 1}" for x in range(len(variables) - len(objectives) + 1)
+            ]
         objective_header = [f"y{x + 1}" for x in range(len(objectives))]
         self.headers = (
-            variable_header
-            + objective_header
-            + ["eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
+                variable_header
+                + objective_header
+                + ["eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
         )
 
     def send_data(self):
@@ -144,7 +152,6 @@ class MlflowTracker:
             json.dump(exp_settings, json_file, indent=4)
 
         file_name = dir_name + ".csv"
-
         step_metrics_df.to_csv(dir_path / file_name)
         mlflow.log_artifact(local_path=dir_path / file_name)
 
@@ -152,8 +159,8 @@ class MlflowTracker:
         # executed when an error occurred
         if exc_type is not None:
             # Send error logs to Mlflow server
-            traceback.print_exc(file=open("errlog.txt", "w"))
-            mlflow.log_artifact("errlog.txt")
+            traceback.print_exc(file=open("error.log", "w"))
+            mlflow.log_artifact("error.log")
         self.send_data()
         sys.stdout.flush()
         sys.stderr.flush()

@@ -1,9 +1,7 @@
 import os
 import time
 from argparse import ArgumentParser
-from pathlib import Path
 
-import pandas as pd
 from tqdm import tqdm
 
 
@@ -16,14 +14,14 @@ def main(opts):
         contents[
             -1
         ] = f"python lmm-qsar.py --ito --num_iters {args.num_iters} --starting_point {start} --fragment_size {args.fragment_size} --input_file {opts.exp_file_path}"
-        job_file_name = f"ito_exp_qsar_batch_{start}-{start+args.fragment_size}.sh"
+        job_file_name = f"ito_exp_qsar_batch_{start}-{start + args.fragment_size}.sh"
         batch_jobs.append(job_file_name)
         with open(job_file_name, "w") as file:
             file.writelines(contents)
     base_file.close()
 
     for index, job_name in tqdm(
-        enumerate(batch_jobs), total=len(batch_jobs), desc="Batch progress"
+            enumerate(batch_jobs), total=len(batch_jobs), desc="Batch progress"
     ):
         os.system(f"pjsub {job_name}")
         time.sleep(60)

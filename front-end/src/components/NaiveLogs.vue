@@ -101,7 +101,7 @@
                 </el-col>
             </el-row>
             <el-row>
-                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
+                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension" :all-ids="allIDs"></ReebSpace>
             </el-row>
         </el-main>
     </el-container>
@@ -138,7 +138,7 @@ export default {
             lockRange: false,
             stepRange: 2,
             filterOffset: 0,
-            solverType: "GDE3",
+            solverType: "NSGAII",
             treeType: "breadth_base_1",
             dimension: 5,
             stoppingCriterion: "StoppingByEvaluations",
@@ -259,7 +259,6 @@ export default {
                 this.stepMinimals = computeUtils.computeStepMinimal(this.solverData,this.allIDs);
                 this.filteredSolverData = this.solverData;
                 let endStep = Math.round(this.sliderStep[1] * this.populationSize / this.stepSize);
-                console.log(this.stepMinimals);
                 this.getStats(endStep);
             }).catch(error => {
                 this.$message.error("Solver data failed @ " + error.toString());
@@ -267,9 +266,6 @@ export default {
         },
         getStats(endStep) {
             // this.locatedMinima = computeUtils.computeElapsedMinimal(this.elapsedData, this.allIDs);
-            console.log(endStep);
-            console.log(this.stepMinimals);
-            console.log(this.sliderStep);
             this.locatedMinima = computeUtils.getLocatedMinima(this.stepMinimals,endStep,this.allIDs)
             this.nodeMinima = computeUtils.computeElapsedMinimal(this.filteredSolverData, this.allIDs);
             this.nodeStats = computeUtils.computeNodeCounts(this.filteredSolverData, this.allIDs);
