@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Union
 
 import numpy as np
@@ -129,21 +130,29 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
+def match_experiment_file(
+        solver: str, tree: str, dimension: int, termination: str
+) -> str:
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     print(file_name_pattern)
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        # "data/pop100_50000iter/pop100_50000iter/"
-        "data/diverse_exp/"
+        # "data/pop100_50000iter/exp_csvs/"
+        # "data/diverse_exp/"
+        "data/test_exp_v8/"
     )
     files = [
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
     ]
     for file in files:
-        if file.split("__")[1].startswith(file_name_pattern):
-            print(data_base_path + file)
+        if file.startswith(file_name_pattern):
+            print("Data path: ", data_base_path + file)
             return data_base_path + file
+        if file.split("_")[1].startswith(file_name_pattern):
+            print("Data path: ", data_base_path + file)
+            return data_base_path + file
+    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
+    return Path(data_base_path) / file
 
 
 @app.get("/api/demo_data")
@@ -155,7 +164,7 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
         sequence_dict[node["id"]]["label"] = (
-            f"• ID: {node['id']},  "
+            f"ID: {node['id']},  "
             f"Symbol: {node['symbol']},"
             f"Best possible: {node['minima']}"
         )
@@ -173,7 +182,7 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
         "tree": [
             {
                 "id": 0,
-                f"label": f"• Root,  ID: 0, Best possible: -1.0",
+                f"label": f"Root,  ID: 0, Best possible: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),
