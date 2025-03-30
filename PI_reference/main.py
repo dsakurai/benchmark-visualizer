@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from typing import Union
 
 import numpy as np
@@ -12,9 +11,6 @@ from config import sample_file_path, solver_info
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
-from custom_benchmark_problems.diamon_problem.core.performance_indicators import (
-    PerformanceIndicators,
-)
 from utils import file_utils
 
 app = FastAPI()
@@ -54,25 +50,6 @@ def get_all_solvers():
 @app.post("/api/construct_problem")
 def construct_problem(graph: dict):
     return graph
-
-
-@app.get("api/performance_indicators")
-def performance_indicators():
-    """Research question:
-    1. Scattered plot is hard to show the actual performance of the solver
-
-    Contribution:
-    1. Provide performance indicator directly in the Reeb space to show the actual performance of the solver
-    2. Design a way to compute GD with precise
-    3. Open source
-
-    Returns
-    -------
-
-    """
-    performance_indicators = PerformanceIndicators()
-
-    pass
 
 
 @app.get("/api/reeb_space")
@@ -130,29 +107,18 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(
-        solver: str, tree: str, dimension: int, termination: str
-) -> str:
+def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     print(file_name_pattern)
     data_base_path = (
-        # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        # "data/pop100_50000iter/exp_csvs/"
-        # "data/diverse_exp/"
-        "data/test_exp_v8/"
+        "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
     )
     files = [
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
     ]
     for file in files:
         if file.startswith(file_name_pattern):
-            print("Data path: ", data_base_path + file)
             return data_base_path + file
-        if file.split("_")[1].startswith(file_name_pattern):
-            print("Data path: ", data_base_path + file)
-            return data_base_path + file
-    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
-    return Path(data_base_path) / file
 
 
 @app.get("/api/demo_data")
@@ -164,9 +130,9 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
         sequence_dict[node["id"]]["label"] = (
-            f"ID: {node['id']},  "
+            f"Node ID: {node['id']},  "
             f"Symbol: {node['symbol']},"
-            f"Best possible: {node['minima']}"
+            f"Minimum: {node['minima']}"
         )
     link_map = {}
     for link in algs.compute_links(demo_tree):
@@ -182,7 +148,7 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
         "tree": [
             {
                 "id": 0,
-                f"label": f"Root,  ID: 0, Best possible: -1.0",
+                f"label": f"Root,  ID: 0, Minimum: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),
