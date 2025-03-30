@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Union
 
 import numpy as np
@@ -11,6 +12,9 @@ from config import sample_file_path, solver_info
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
+from custom_benchmark_problems.diamon_problem.core.performance_indicators import (
+    PerformanceIndicators,
+)
 from utils import file_utils
 
 app = FastAPI()
@@ -50,6 +54,25 @@ def get_all_solvers():
 @app.post("/api/construct_problem")
 def construct_problem(graph: dict):
     return graph
+
+
+@app.get("api/performance_indicators")
+def performance_indicators():
+    """Research question:
+    1. Scattered plot is hard to show the actual performance of the solver
+
+    Contribution:
+    1. Provide performance indicator directly in the Reeb space to show the actual performance of the solver
+    2. Design a way to compute GD with precise
+    3. Open source
+
+    Returns
+    -------
+
+    """
+    performance_indicators = PerformanceIndicators()
+
+    pass
 
 
 @app.get("/api/reeb_space")
@@ -109,18 +132,25 @@ def reeb_space_info(dimension: int, tree_name: str):
 
 def match_experiment_file(exp_index: str, solver: str, tree: str, dimension: int, termination: str):
     file_name_pattern = f"{exp_index}__{solver}_{tree}_{dimension}_{termination}"
-    print(file_name_pattern)
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
         # "data/pop100_50000iter/pop100_50000iter/"
         "data/exp_20240202/"
+        # "data/pop100_50000iter/exp_csvs/"
+        # "data/diverse_exp/"
     )
     files = [
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
     ]
     for file in files:
         if file.startswith(file_name_pattern):
+            print("Data path: ", data_base_path + file)
             return data_base_path + file
+        if file.split("_")[1].startswith(file_name_pattern):
+            print("Data path: ", data_base_path + file)
+            return data_base_path + file
+    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
+    return Path(data_base_path) / file
 
 
 @app.get("/api/available_exp_indexes")

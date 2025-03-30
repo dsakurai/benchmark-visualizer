@@ -74,14 +74,6 @@
                             @change="getNaiveLogData"
                         />
                     </el-col>
-                    <el-col :span="6">
-                        <span>Experiment Index: </span>
-                        <el-select-v2
-                            v-model="experimentIndex"
-                            :options="experimentIndexOptions"
-                            @change="getNaiveLogData"
-                        />
-                    </el-col>
                 </el-row>
             </el-card>
             <el-row>
@@ -109,7 +101,7 @@
                 </el-col>
             </el-row>
             <el-row>
-                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension"></ReebSpace>
+                <ReebSpace :solver-data="filteredSolverData" :tree-name="treeType" :dimension="dimension" :all-ids="allIDs"></ReebSpace>
             </el-row>
         </el-main>
     </el-container>
@@ -146,8 +138,8 @@ export default {
             lockRange: false,
             stepRange: 2,
             filterOffset: 0,
-            solverType: "GDE3",
-            treeType: "depth_base_1",
+            solverType: "NSGAII",
+            treeType: "breadth_base_1",
             dimension: 5,
             stoppingCriterion: "StoppingByEvaluations",
             solverOptions: [{value: "GDE3", label: "GDE3"}, {value: "IBEA", label: "IBEA"},{value: "NSGAII", label: "NSGA-II"}, {
@@ -155,10 +147,9 @@ export default {
                 label: "MOEAD"
             }, {value: "OMOPSO", label: "OMOPSO"}
             ],
-            experimentIndex:'',
-            experimentIndexOptions:[],
             treeOptions: [
                 {value: "sample", label: "Sample"},
+                {value: "diverse_tree", label: "Diverse"},
                 {value: "depth_base_1", label: "Depth 1"},
                 {value: "depth_base_2", label: "Depth 2"},
                 {value: "depth_base_3", label: "Depth 3"},
@@ -204,24 +195,10 @@ export default {
     components: {
         ReebSpace,
     },
-    beforeCreate() {
-        // this.loadExperimentIndexes();
-    },
     created() {
-        this.loadExperimentIndexes();
-        // this.getNaiveLogData();
+        this.getNaiveLogData();
     },
     methods: {
-        loadExperimentIndexes(){
-            axios.get(`/api/available_exp_indexes`).then(response => {
-                let experimentIndexOptions = response.data.experiment_indexes;
-                for (let experimentIndex of experimentIndexOptions){
-                    this.experimentIndexOptions.push({value:experimentIndex,label:experimentIndex});
-                }
-                this.experimentIndex = this.experimentIndexOptions[0].value;
-                this.getNaiveLogData();
-            })
-        },
         updateTailSlider() {
             let range = this.stepRange * this.stepSize;
             if (this.sliderStep[0] + range < 100) {
@@ -266,7 +243,7 @@ export default {
             return Math.round(val / 100 * this.totalSteps / this.populationSize);
         },
         getNaiveLogData() {
-            axios.get(`/api/demo_data?exp_index=${this.experimentIndex}&solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
+            axios.get(`/api/demo_data?solver=${this.solverType}&tree_name=${this.treeType}&dimension=${this.dimension}&termination=${this.stoppingCriterion}`).then(response => {
                 this.logData = response.data.solver_log;
                 this.allIDs = response.data.all_ids;
                 this.treeData = response.data.tree;
