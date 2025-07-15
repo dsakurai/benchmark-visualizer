@@ -130,16 +130,14 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(
-        solver: str, tree: str, dimension: int, termination: str
-) -> str:
-    file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
-    print(file_name_pattern)
+def match_experiment_file(exp_index: str, solver: str, tree: str, dimension: int, termination: str):
+    file_name_pattern = f"{exp_index}__{solver}_{tree}_{dimension}_{termination}"
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
+        # "data/pop100_50000iter/pop100_50000iter/"
+        "data/exp_20240202/"
         # "data/pop100_50000iter/exp_csvs/"
         # "data/diverse_exp/"
-        "data/test_exp_v8/"
     )
     files = [
         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
@@ -155,9 +153,25 @@ def match_experiment_file(
     return Path(data_base_path) / file
 
 
+@app.get("/api/available_exp_indexes")
+def get_exp_indexes():
+    data_base_path = (
+        # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
+        # "data/pop100_50000iter/pop100_50000iter/"
+        "data/exp_20240202/"
+    )
+    files = [
+        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
+    ]
+    exp_indexes = []
+    for file in files:
+        exp_indexes.append(file.split("__")[0])
+    exp_indexes = list(set(exp_indexes))
+    return JSONResponse({"experiment_indexes": sorted(exp_indexes)})
+
 @app.get("/api/demo_data")
-def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
-    log_path = match_experiment_file(solver, tree_name, dimension, termination)
+def demo_data(exp_index:str, solver: str, tree_name: str, dimension: int, termination: str):
+    log_path = match_experiment_file(exp_index, solver, tree_name, dimension, termination)
     demo_log = file_utils.load_evaluation_log(log_path)
     demo_tree = file_utils.read_json_tree(f"experiment_trees/{tree_name}.json")
     sequence_dict = {}
