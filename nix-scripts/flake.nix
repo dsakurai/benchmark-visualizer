@@ -91,8 +91,8 @@
           [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
           eval "$(pyenv init - bash)"
           #
-          pyenv install --skip-existing 3.12.10
-          pyenv shell                   3.12.10  # Set version for this shell session.
+          pyenv install --skip-existing 3.10
+          pyenv shell                   3.10  # Set version for this shell session.
 
           # Create virtual environment
           poetry config virtualenvs.create false # Disable poetry's own virtual environment management
