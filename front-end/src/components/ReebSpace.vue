@@ -72,21 +72,18 @@ export default {
             xScale : '',
             yScale : '',
             dataPointShapes:["circle","hollow-circle", "hollow-rect", "rect"],
+           // https://colorbrewer2.org/#type=qualitative&scheme=Pastel1&n=8
             colorCodes: [
-                "#DC143C",  // Crimson
-                "#FF7F50",  // Coral
-                "#4169E1",  // Royal Blue
-                "#228B22",  // Forest Green
-                "#DAA520",  // Goldenrod
-                "#DDA0DD",  // Plum
-                "#708090",  // Slate Gray
-                "#FF8C00",  // Dark Orange
-                "#40E0D0",  // Turquoise
-                "#CD853F"   // Peru
+                "#e41a1c",  // Red
+                "#377eb8",  // Blue
+                "#4daf4a",  // Green
+                "#984ea3",  // Purple
+                "#ff7f00",  // Orange
+                "#ffff33",  // Yellow
+                "#a65628",  // Brown
+                "#f781bf",  // Pink
             ],
-            colorShapeMap: {
-
-            },
+            colorShapeMap: {},
         }
     },
     created(){
@@ -94,6 +91,7 @@ export default {
     },
     mounted() {
         this.getReebInfo();
+        console.log(this.reebIds);
     },
     methods: {
         createColorMap(){
@@ -103,6 +101,7 @@ export default {
                     combinations.push([this.colorCodes[j], this.dataPointShapes[(i+j) % 4]]);
                 }
             }
+          console.log(this.reebIds);
             this.reebIds.forEach((id,index) => {
                 this.colorShapeMap[id] = combinations[index];
             })
@@ -140,6 +139,7 @@ export default {
                 d3.selectAll("svg").remove();
                 this.reebData = response.data;
                 this.reebIds = response.data.reeb_ids;
+                console.log(response.data);
                 let reebData = DataUtils.parseReebData(response.data);
                 this.$message.success("Reeb space data loaded");
                 this.treeInfo = reebData.treeInfo;
@@ -197,16 +197,14 @@ export default {
         renderSheets(sheets){
             for (let [node_id,sheet] of sheets.entries()) {
                 let strokeColor = this.colorShapeMap[node_id][0];
-                console.log(strokeColor);
-                let fillColor = GraphUtils.increaseBrightness(strokeColor,20);
+                let fillColor = GraphUtils.increaseBrightness(strokeColor,15);
+                console.log("Fill color for node:",node_id,fillColor);
                 this.svg.append("path")
                     .attr("id", node_id)
                     .attr("d", sheet)
                     .attr("transform", `translate(${this.margin.left},${this.margin.top})`)
                     .style("fill",fillColor)
-                    // .style("fill", '#' + Math.floor(Math.random() * 16777215).toString(16))
                     .style("stroke", strokeColor)
-                    // .style("stroke", '#' + Math.floor(Math.random() * 16777215).toString(16))
                     .style("stroke-width", 2.5)
                     .style("opacity", 0.5);
             }

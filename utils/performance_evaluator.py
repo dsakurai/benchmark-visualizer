@@ -114,7 +114,7 @@ class PerformanceEvaluator:
 
 def main():
     pe = PerformanceEvaluator()
-    exp_dir = "../data/N-obj-test_v13"
+    exp_dir = "../data/fully_managed_experiments_2025-08-05"
 
     start_step = 0
     end_step = start_step

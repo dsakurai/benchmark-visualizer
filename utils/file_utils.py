@@ -109,13 +109,13 @@ def parse_meta(exp_dir: str) -> list[dict]:
     return exps_meta_info
 
 
-def parse_exp_log_dir(exp_dir: str) -> list[dict]:
+def parse_exp_log_dir(exp_dir: str) -> dict:
     exp_path = Path(exp_dir)
     if not (exp_path.exists() and exp_path.is_dir()):
         raise ValueError("Invalid experiment experiment path")
     subdirectories = [d for d in exp_path.iterdir() if d.is_dir()]
     if subdirectories:
-        exp_parse_data = []
+        exp_parse_data = {}
         for exp_data_dir in subdirectories:
             meta_dir = exp_data_dir / "meta"
             metadata = meta_dir / "meta.json"
@@ -123,13 +123,12 @@ def parse_exp_log_dir(exp_dir: str) -> list[dict]:
             exp_result_file = exp_data_dir / (exp_data_dir.name + ".csv")
             with open(metadata, "r") as meta_file:
                 meta_data = json.load(meta_file)
-            exp_parse_data.append(
-                {
+            exp_parse_data[str(exp_data_dir.name)] = {
                     "meta": meta_data,
                     "tree": experiment_tree_file,
-                    "result": exp_result_file,
+                    "result": str(exp_result_file),
                 }
-            )
+
         return exp_parse_data
     else:
         raise ValueError(f"No experiment data found @ {exp_path}")
@@ -138,5 +137,5 @@ def parse_exp_log_dir(exp_dir: str) -> list[dict]:
 if __name__ == "__main__":
     # print(parse_exp_dir_with_meta("../data/test_exp_v8", "NSGAII"))
     # print(load_evaluation_log("../test_runx_2023-01-16T10-30-27.298413.csv"))
-    res = parse_exp_log_dir("../data/N-obj-test_v0")
+    res = parse_exp_log_dir("../data/fully_managed_experiments_2025-08-05")
     print(res)

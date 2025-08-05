@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -86,6 +86,7 @@ def reeb_space_info(dimension: int, tree_name: str):
     maximal = -1
     minimal = -1
     node_count = 0
+    reeb_ids = []
     for node in sequence_info:
         node_id = node["name"]
         symbols = node["attrs"]["symbol"]
@@ -99,6 +100,7 @@ def reeb_space_info(dimension: int, tree_name: str):
             minimal = node_minimal
         central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
         step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
+        reeb_ids.append(node_id)
         node_info.append(
             {
                 "node_id": node_id,
@@ -118,6 +120,7 @@ def reeb_space_info(dimension: int, tree_name: str):
     node_info = sorted(node_info, key=lambda k: (k["minimal_time"], k["minimal"]))
     return JSONResponse(
         {
+            "reeb_ids": reeb_ids,
             "nodeInfo": node_info,
             "treeInfo": {
                 "nodeCount": node_count,
@@ -130,17 +133,17 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(exp_index: str, solver: str, tree: str, dimension: int, termination: str):
-    file_name_pattern = f"{exp_index}__{solver}_{tree}_{dimension}_{termination}"
+def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
+    file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     data_base_path = (
         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        # "data/pop100_50000iter/pop100_50000iter/"
-        "data/exp_20240202/"
+        "data/pop100_50000iter/"
+        # "data/exp_20240202/"
         # "data/pop100_50000iter/exp_csvs/"
         # "data/diverse_exp/"
     )
     files = [
-        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
+        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f) and f.endswith(".csv")
     ]
     for file in files:
         if file.startswith(file_name_pattern):
@@ -170,8 +173,8 @@ def get_exp_indexes():
     return JSONResponse({"experiment_indexes": sorted(exp_indexes)})
 
 @app.get("/api/demo_data")
-def demo_data(exp_index:str, solver: str, tree_name: str, dimension: int, termination: str):
-    log_path = match_experiment_file(exp_index, solver, tree_name, dimension, termination)
+def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
+    log_path = match_experiment_file(solver, tree_name, dimension, termination)
     demo_log = file_utils.load_evaluation_log(log_path)
     demo_tree = file_utils.read_json_tree(f"experiment_trees/{tree_name}.json")
     sequence_dict = {}
