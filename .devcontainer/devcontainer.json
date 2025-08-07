@@ -1,0 +1,37 @@
+{
+    "name": "Benchmark visualizer Dev",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "installOhMyZsh": true
+        }
+    },
+    // Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "ms-python.flake8",
+                "ms-python.mypy-type-checker",
+                "ms-python.black-formatter",
+                "ms-python.isort",
+                "ms-vscode.makefile-tools",
+                "esbenp.prettier-vscode",
+                "njpwerner.autodocstring"
+            ]
+        },
+        "settings": {
+            "editor.formatOnSave": true,
+            "python.formatting.provider": "black",
+            "python.defaultInterpreterPath": "/opt/venv/bin/python",
+            "files.insertFinalNewline": true,
+            "files.eol": "\n"
+        }
+    },
+    "remoteUser": "vscode"
+}
