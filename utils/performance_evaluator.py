@@ -26,11 +26,11 @@ class PerformanceEvaluator:
 
     @staticmethod
     def match_experiment_file(
-            data_base_path: str,
-            solver: str,
-            tree: str,
-            dimension: int,
-            termination: str,
+        data_base_path: str,
+        solver: str,
+        tree: str,
+        dimension: int,
+        termination: str,
     ):
         file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
         files = [
@@ -48,12 +48,12 @@ class PerformanceEvaluator:
         )
 
     def compute_indicator(
-            self,
-            reference_set,
-            reference_front,
-            actual_set,
-            actual_front,
-            indicator_type: str,
+        self,
+        reference_set,
+        reference_front,
+        actual_set,
+        actual_front,
+        indicator_type: str,
     ):
         if indicator_type == "GD":
             indicator = self.gd

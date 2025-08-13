@@ -14,14 +14,14 @@ NEvaluationResult = namedtuple(
 
 class NBMP(BMP):
     def __init__(
-            self,
-            sequence_info: list[dict],
-            dim_space: int,
-            n_objectives: int,
-            rotate: bool = True,
-            t_rotate: bool = True,
-            degrees: float = -45,
-            clockwise: bool = True,
+        self,
+        sequence_info: list[dict],
+        dim_space: int,
+        n_objectives: int,
+        rotate: bool = True,
+        t_rotate: bool = True,
+        degrees: float = -45,
+        clockwise: bool = True,
     ):
         """
 
@@ -134,12 +134,12 @@ class NBMP(BMP):
         return np.sum(np.abs(reg_variables))
 
     def parse_variables(
-            self, solution_variables: np.ndarray
+        self, solution_variables: np.ndarray
     ) -> tuple[np.ndarray, np.ndarray]:
         # Variable format: [t_1, t_2, ... t_(n-1), x_1, x_2, ..., x_n]
         # Takes t_1 and all Xs for original BMP evaluation
         bmp_variables = np.concatenate(
-            (solution_variables[:1], solution_variables[self.n_objectives - 1:])
+            (solution_variables[:1], solution_variables[self.n_objectives - 1 :])
         )
         # Takes t_2 to t_(n-1) for the remaining computation
         t_s = solution_variables[: (self.n_objectives - 1)]

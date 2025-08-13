@@ -21,7 +21,7 @@ def main(opts):
     base_file.close()
 
     for index, job_name in tqdm(
-            enumerate(batch_jobs), total=len(batch_jobs), desc="Batch progress"
+        enumerate(batch_jobs), total=len(batch_jobs), desc="Batch progress"
     ):
         os.system(f"pjsub {job_name}")
         time.sleep(60)

@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
-from typing import Union
+from typing import Dict, List, Set, Any
 
 import numpy as np
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -12,14 +12,12 @@ from config import sample_file_path, solver_info
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
-from custom_benchmark_problems.diamon_problem.core.performance_indicators import (
-    PerformanceIndicators,
-)
 from utils import file_utils
 
 app = FastAPI()
 
 origins = ["http://localhost", "http://localhost:8080", "http://192.168.16.169:8080"]
+data_base_path = "./data/experiments"
 
 app.add_middleware(
     CORSMiddleware,
@@ -33,11 +31,6 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
 
 
 @app.get("/api/get_demo_problem")
@@ -54,25 +47,6 @@ def get_all_solvers():
 @app.post("/api/construct_problem")
 def construct_problem(graph: dict):
     return graph
-
-
-@app.get("api/performance_indicators")
-def performance_indicators():
-    """Research question:
-    1. Scattered plot is hard to show the actual performance of the solver
-
-    Contribution:
-    1. Provide performance indicator directly in the Reeb space to show the actual performance of the solver
-    2. Design a way to compute GD with precise
-    3. Open source
-
-    Returns
-    -------
-
-    """
-    performance_indicators = PerformanceIndicators()
-
-    pass
 
 
 @app.get("/api/reeb_space")
@@ -133,17 +107,55 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
+@app.get("/api/experiment_settings")
+def get_experiment_parameters() -> Dict[str, Any]:
+    """This function get all the available settings in the given data directory
+    """
+    solvers: Set[str] = set()
+    trees: Set[str] = set()
+    dimensions: Set[int] = set()
+    terminations: Set[str] = set()
+
+    for entry in os.scandir(data_base_path):
+        if not entry.is_dir():
+            continue
+        name = entry.name
+        parts = name.split("_")
+        # termination = last token
+        termination = parts[-1]
+
+        # dimension = last numeric token before termination
+        dim_idx = None
+        for i in range(len(parts) - 2, 0, -1):
+            if parts[i].isdigit():
+                dim_idx = i
+                break
+        if dim_idx is None:
+            continue  # skip if no numeric dimension found
+
+        solver = parts[0]
+        tree = "_".join(parts[1:dim_idx])
+        dimension = int(parts[dim_idx])
+
+        solvers.add(solver)
+        trees.add(tree)
+        dimensions.add(dimension)
+        terminations.add(termination)
+
+    return {
+        "solvers": sorted(solvers),
+        "trees": sorted(trees),
+        "dimensions": sorted(dimensions),
+        "termination": sorted(terminations),
+    }
+
+
 def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
     file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
-    data_base_path = (
-        # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        "data/pop100_50000iter/"
-        # "data/exp_20240202/"
-        # "data/pop100_50000iter/exp_csvs/"
-        # "data/diverse_exp/"
-    )
     files = [
-        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f) and f.endswith(".csv")
+        f
+        for f in os.listdir(data_base_path)
+        if os.path.isfile(data_base_path + f) and f.endswith(".csv")
     ]
     for file in files:
         if file.startswith(file_name_pattern):
@@ -155,22 +167,6 @@ def match_experiment_file(solver: str, tree: str, dimension: int, termination: s
     file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
     return Path(data_base_path) / file
 
-
-@app.get("/api/available_exp_indexes")
-def get_exp_indexes():
-    data_base_path = (
-        # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        # "data/pop100_50000iter/pop100_50000iter/"
-        "data/exp_20240202/"
-    )
-    files = [
-        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
-    ]
-    exp_indexes = []
-    for file in files:
-        exp_indexes.append(file.split("__")[0])
-    exp_indexes = list(set(exp_indexes))
-    return JSONResponse({"experiment_indexes": sorted(exp_indexes)})
 
 @app.get("/api/demo_data")
 def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
@@ -199,7 +195,7 @@ def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
         "tree": [
             {
                 "id": 0,
-                f"label": f"Root,  ID: 0, Best possible: -1.0",
+                "label": "Root,  ID: 0, Best possible: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),
@@ -221,3 +217,20 @@ def construct_tree_structure(current_key, links_map: dict, sequence_dict: dict):
         else:
             result.append(sequence_dict[sub_key])
     return result
+
+
+# @app.get("/api/available_exp_indexes")
+# def get_exp_indexes():
+#     data_base_path = (
+#         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
+#         # "data/pop100_50000iter/pop100_50000iter/"
+#         "data/exp_20240202/"
+#     )
+#     files = [
+#         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
+#     ]
+#     exp_indexes = []
+#     for file in files:
+#         exp_indexes.append(file.split("__")[0])
+#     exp_indexes = list(set(exp_indexes))
+#     return JSONResponse({"experiment_indexes": sorted(exp_indexes)})

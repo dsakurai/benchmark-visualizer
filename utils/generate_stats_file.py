@@ -59,7 +59,7 @@ def run_data(dimension, n_objectives, tree):
             & (exp_df["n_objectives"] == n_objectives)
             & (exp_df["solver"] == solver)
             & (exp_df["tree"] == tree)
-            ]
+        ]
         for i, row in filtered_df.iterrows():
             eval_info = parse_result_file(row["exp_result_file"])
             try:

@@ -267,7 +267,7 @@ def load_experiment_settings(file_path: Path) -> typing.List[ExperimentSettings]
 
 def run_experiment(exp_config: ExperimentSettings, opts):
     with MlflowTracker(
-            run_name=exp_config.experiment_name, experiment_config=exp_config
+        run_name=exp_config.experiment_name, experiment_config=exp_config
     ) as tracker:
         tree = Tree(dim_space=exp_config.dimension)
         tree.from_json(exp_config.tree_file)
