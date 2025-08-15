@@ -17,7 +17,7 @@ from utils import file_utils
 app = FastAPI()
 
 origins = ["http://localhost", "http://localhost:8080", "http://192.168.16.169:8080"]
-data_base_path = "./data/experiments"
+data_base_path = os.getenv("EXP_DATA", "./data/sample_experiments")
 
 app.add_middleware(
     CORSMiddleware,
@@ -122,7 +122,7 @@ def get_experiment_parameters() -> Dict[str, Any]:
         name = entry.name
         parts = name.split("_")
         # termination = last token
-        termination = parts[-1]
+        termination = parts[-2]
 
         # dimension = last numeric token before termination
         dim_idx = None
@@ -164,15 +164,26 @@ def match_experiment_file(solver: str, tree: str, dimension: int, termination: s
         if file.split("_")[1].startswith(file_name_pattern):
             print("Data path: ", data_base_path + file)
             return data_base_path + file
-    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
-    return Path(data_base_path) / file
-
+    exp_info = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
+    if exp_info:
+        file, exp_tree, meta_data = exp_info
+        return Path(data_base_path) / file, Path(data_base_path) / exp_tree, Path(data_base_path) / meta_data
+    else:
+        # Logger().debug.error(
+        #     f"Experiment file for {solver}, {tree}, {dimension}, {termination} not found."
+        # )
+        return None, None, None
 
 @app.get("/api/demo_data")
 def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
-    log_path = match_experiment_file(solver, tree_name, dimension, termination)
+    log_path, exp_tree_path, meta_data_path = match_experiment_file(solver, tree_name, dimension, termination)
+    if log_path is None:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Experiment file not found."}
+        )
     demo_log = file_utils.load_evaluation_log(log_path)
-    demo_tree = file_utils.read_json_tree(f"experiment_trees/{tree_name}.json")
+    demo_tree = file_utils.read_json_tree(exp_tree_path)
     sequence_dict = {}
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node

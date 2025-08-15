@@ -1,0 +1,46 @@
+{
+  "name": "Vite Vue frontend Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".." 
+  },
+  "workspaceFolder": "/workspace",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+  ],
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "notify",
+      "protocol": "http",
+      "public": true 
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "eslint.validate": [
+          "javascript",
+          "typescript",
+          "vue"
+        ],
+        "[html]": {
+					"editor.defaultFormatter": "esbenp.prettier-vscode"
+				},
+				"[css]": {
+					"editor.defaultFormatter": "esbenp.prettier-vscode"
+				}
+      }
+    }
+  },
+ "postCreateCommand": "yarn install",
+  "postAttachCommand": "yarn serve --host 0.0.0.0"
+}
