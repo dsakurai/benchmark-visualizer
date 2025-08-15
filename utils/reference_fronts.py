@@ -14,13 +14,13 @@ class ReferenceFronts:
         pass
 
     def get_n_obj_local_pareto_set(
-            self,
-            dimension: int,
-            n_objectives: int,
-            tree_file_path: str,
-            t_rotate: bool = False,
-            decision_space_rotation: bool = False,
-            resolution: int = 100,
+        self,
+        dimension: int,
+        n_objectives: int,
+        tree_file_path: str,
+        t_rotate: bool = False,
+        decision_space_rotation: bool = False,
+        resolution: int = 100,
     ):
         if not Path(tree_file_path).exists():
             raise ValueError(f"The tree file {tree_file_path} does not exist!")
@@ -98,7 +98,7 @@ class ReferenceFronts:
         }
 
     def get_local_pareto_set(
-            self, dimension: int, tree_name: str, resolution: int = 100
+        self, dimension: int, tree_name: str, resolution: int = 100
     ):
         tree = Tree(dim_space=dimension)
         tree.from_json(f"../experiment_trees/{tree_name}.json")

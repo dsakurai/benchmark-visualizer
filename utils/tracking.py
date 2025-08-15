@@ -78,13 +78,13 @@ class MlflowTracker:
             raise
 
     def log_step(
-            self,
-            variables: list,
-            objectives: list,
-            eval_node_id: int,
-            diagonal_length: float,
-            org_objectives: list,
-            constrains: list = None,
+        self,
+        variables: list,
+        objectives: list,
+        eval_node_id: int,
+        diagonal_length: float,
+        org_objectives: list,
+        constrains: list = None,
     ):
         if constrains:
             raise NotImplementedError("Constrains logging is not available yet")
@@ -101,7 +101,7 @@ class MlflowTracker:
         self.step += 1
 
     def create_headers(
-            self, variables: list, objectives: list, constrains: list = None
+        self, variables: list, objectives: list, constrains: list = None
     ) -> None:
         if len(objectives) == 2:
             variable_header = [f"x{x + 1}" for x in range(len(variables) - 1)]
@@ -116,9 +116,9 @@ class MlflowTracker:
             ]
         objective_header = [f"y{x + 1}" for x in range(len(objectives))]
         self.headers = (
-                variable_header
-                + objective_header
-                + ["eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
+            variable_header
+            + objective_header
+            + ["eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
         )
 
     def send_data(self):

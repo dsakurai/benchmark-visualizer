@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Union
+from typing import Dict, List, Set, Any
 
 import numpy as np
 from fastapi import FastAPI
@@ -12,14 +12,12 @@ from config import sample_file_path, solver_info
 from custom_benchmark_problems.diamon_problem.core import algs
 from custom_benchmark_problems.diamon_problem.core import evaluation
 from custom_benchmark_problems.diamon_problem.data_structures.tree import Tree
-from custom_benchmark_problems.diamon_problem.core.performance_indicators import (
-    PerformanceIndicators,
-)
 from utils import file_utils
 
 app = FastAPI()
 
 origins = ["http://localhost", "http://localhost:8080", "http://192.168.16.169:8080"]
+data_base_path = os.getenv("EXP_DATA", "./data/sample_experiments")
 
 app.add_middleware(
     CORSMiddleware,
@@ -33,11 +31,6 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
 
 
 @app.get("/api/get_demo_problem")
@@ -56,25 +49,6 @@ def construct_problem(graph: dict):
     return graph
 
 
-@app.get("api/performance_indicators")
-def performance_indicators():
-    """Research question:
-    1. Scattered plot is hard to show the actual performance of the solver
-
-    Contribution:
-    1. Provide performance indicator directly in the Reeb space to show the actual performance of the solver
-    2. Design a way to compute GD with precise
-    3. Open source
-
-    Returns
-    -------
-
-    """
-    performance_indicators = PerformanceIndicators()
-
-    pass
-
-
 @app.get("/api/reeb_space")
 def reeb_space_info(dimension: int, tree_name: str):
     tree = Tree(dim_space=dimension)
@@ -86,6 +60,7 @@ def reeb_space_info(dimension: int, tree_name: str):
     maximal = -1
     minimal = -1
     node_count = 0
+    reeb_ids = []
     for node in sequence_info:
         node_id = node["name"]
         symbols = node["attrs"]["symbol"]
@@ -99,6 +74,7 @@ def reeb_space_info(dimension: int, tree_name: str):
             minimal = node_minimal
         central_coordinates = bmp.compute_coordinates(symbol_sequence=symbols)
         step_back = bmp.evaluate(np.insert(central_coordinates, 0, minimal_time - 1))
+        reeb_ids.append(node_id)
         node_info.append(
             {
                 "node_id": node_id,
@@ -118,6 +94,7 @@ def reeb_space_info(dimension: int, tree_name: str):
     node_info = sorted(node_info, key=lambda k: (k["minimal_time"], k["minimal"]))
     return JSONResponse(
         {
+            "reeb_ids": reeb_ids,
             "nodeInfo": node_info,
             "treeInfo": {
                 "nodeCount": node_count,
@@ -130,17 +107,55 @@ def reeb_space_info(dimension: int, tree_name: str):
     )
 
 
-def match_experiment_file(exp_index: str, solver: str, tree: str, dimension: int, termination: str):
-    file_name_pattern = f"{exp_index}__{solver}_{tree}_{dimension}_{termination}"
-    data_base_path = (
-        # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        # "data/pop100_50000iter/pop100_50000iter/"
-        "data/exp_20240202/"
-        # "data/pop100_50000iter/exp_csvs/"
-        # "data/diverse_exp/"
-    )
+@app.get("/api/experiment_settings")
+def get_experiment_parameters() -> Dict[str, Any]:
+    """This function get all the available settings in the given data directory
+    """
+    solvers: Set[str] = set()
+    trees: Set[str] = set()
+    dimensions: Set[int] = set()
+    terminations: Set[str] = set()
+
+    for entry in os.scandir(data_base_path):
+        if not entry.is_dir():
+            continue
+        name = entry.name
+        parts = name.split("_")
+        # termination = last token
+        termination = parts[-2]
+
+        # dimension = last numeric token before termination
+        dim_idx = None
+        for i in range(len(parts) - 2, 0, -1):
+            if parts[i].isdigit():
+                dim_idx = i
+                break
+        if dim_idx is None:
+            continue  # skip if no numeric dimension found
+
+        solver = parts[0]
+        tree = "_".join(parts[1:dim_idx])
+        dimension = int(parts[dim_idx])
+
+        solvers.add(solver)
+        trees.add(tree)
+        dimensions.add(dimension)
+        terminations.add(termination)
+
+    return {
+        "solvers": sorted(solvers),
+        "trees": sorted(trees),
+        "dimensions": sorted(dimensions),
+        "termination": sorted(terminations),
+    }
+
+
+def match_experiment_file(solver: str, tree: str, dimension: int, termination: str):
+    file_name_pattern = f"{solver}_{tree}_{dimension}_{termination}"
     files = [
-        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
+        f
+        for f in os.listdir(data_base_path)
+        if os.path.isfile(data_base_path + f) and f.endswith(".csv")
     ]
     for file in files:
         if file.startswith(file_name_pattern):
@@ -149,31 +164,26 @@ def match_experiment_file(exp_index: str, solver: str, tree: str, dimension: int
         if file.split("_")[1].startswith(file_name_pattern):
             print("Data path: ", data_base_path + file)
             return data_base_path + file
-    file, _, _ = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
-    return Path(data_base_path) / file
-
-
-@app.get("/api/available_exp_indexes")
-def get_exp_indexes():
-    data_base_path = (
-        # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
-        # "data/pop100_50000iter/pop100_50000iter/"
-        "data/exp_20240202/"
-    )
-    files = [
-        f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
-    ]
-    exp_indexes = []
-    for file in files:
-        exp_indexes.append(file.split("__")[0])
-    exp_indexes = list(set(exp_indexes))
-    return JSONResponse({"experiment_indexes": sorted(exp_indexes)})
+    exp_info = file_utils.parse_exp_dir_with_meta(data_base_path, file_name_pattern)
+    if exp_info:
+        file, exp_tree, meta_data = exp_info
+        return Path(data_base_path) / file, Path(data_base_path) / exp_tree, Path(data_base_path) / meta_data
+    else:
+        # Logger().debug.error(
+        #     f"Experiment file for {solver}, {tree}, {dimension}, {termination} not found."
+        # )
+        return None, None, None
 
 @app.get("/api/demo_data")
-def demo_data(exp_index:str, solver: str, tree_name: str, dimension: int, termination: str):
-    log_path = match_experiment_file(exp_index, solver, tree_name, dimension, termination)
+def demo_data(solver: str, tree_name: str, dimension: int, termination: str):
+    log_path, exp_tree_path, meta_data_path = match_experiment_file(solver, tree_name, dimension, termination)
+    if log_path is None:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Experiment file not found."}
+        )
     demo_log = file_utils.load_evaluation_log(log_path)
-    demo_tree = file_utils.read_json_tree(f"experiment_trees/{tree_name}.json")
+    demo_tree = file_utils.read_json_tree(exp_tree_path)
     sequence_dict = {}
     for node in demo_tree["nodes"]:
         sequence_dict[node["id"]] = node
@@ -196,7 +206,7 @@ def demo_data(exp_index:str, solver: str, tree_name: str, dimension: int, termin
         "tree": [
             {
                 "id": 0,
-                f"label": f"Root,  ID: 0, Best possible: -1.0",
+                "label": "Root,  ID: 0, Best possible: -1.0",
                 "children": construct_tree_structure(
                     0, link_map, sequence_dict=sequence_dict
                 ),
@@ -218,3 +228,20 @@ def construct_tree_structure(current_key, links_map: dict, sequence_dict: dict):
         else:
             result.append(sequence_dict[sub_key])
     return result
+
+
+# @app.get("/api/available_exp_indexes")
+# def get_exp_indexes():
+#     data_base_path = (
+#         # "/Volumes/l-liu/benchmark-visualizer-exp-data/pop100_50000iter/exp_csvs/"
+#         # "data/pop100_50000iter/pop100_50000iter/"
+#         "data/exp_20240202/"
+#     )
+#     files = [
+#         f for f in os.listdir(data_base_path) if os.path.isfile(data_base_path + f)
+#     ]
+#     exp_indexes = []
+#     for file in files:
+#         exp_indexes.append(file.split("__")[0])
+#     exp_indexes = list(set(exp_indexes))
+#     return JSONResponse({"experiment_indexes": sorted(exp_indexes)})

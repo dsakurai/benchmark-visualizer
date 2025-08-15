@@ -82,7 +82,7 @@ class Tree:
 
     # Interpret node to iGraph vertex, with attributes and edges appended
     def add_node(
-            self, minima: float, link: Link = None, parent: Node = None, **kwargs
+        self, minima: float, link: Link = None, parent: Node = None, **kwargs
     ) -> int:
         if self._tree.vcount() == 0:
             self._tree.add_vertex(name=self.root_id, minima=0, link=None)

@@ -81,29 +81,31 @@ def compose_solver_settings(solver_name) -> dict:
 
 
 if __name__ == "__main__":
-    exp_base_name = "test_exp"
-    # trees = ["experiment_trees/diverse_tree.json"]
+    exp_base_name = "fully_managed_experiments_2025-08-05"
+    trees = ["experiment_trees/diverse_tree.json"]
     # trees = []
-    # depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
-    # breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
-    # trees.extend(breadth_trees)
-    # trees.extend(depth_trees)
-    trees = ["experiment_trees/depth_base_1.json"]
-    solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD"]
-    dimensions = [5]
+    depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
+    breadth_trees = [f"experiment_trees/breadth_base_{i}.json" for i in range(1, 7)]
+    trees.extend(breadth_trees)
+    trees.extend(depth_trees)
+    # trees = ["experiment_trees/depth_base_1.json"]
+    solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD", "OMOPSO"]
+    dimensions = [i for i in range(2, 13)]
     termination_criterions = [
-        # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
-        {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
+        {"criterion_name": "StoppingByEvaluations", "termination_parameter": 50000},
     ]
     counter = 0
     exp_settings = []
+    print(trees)
+    print(solvers)
+    print(dimensions)
     for tree in trees:
         for solver in solvers:
             for dimension in dimensions:
                 for termination_criterion in termination_criterions:
                     exp_settings.append(
                         {
-                            "experiment_name": exp_base_name + f"_v{counter}",
+                            "experiment_name": exp_base_name,
                             "tree_file": tree,
                             "dimension": dimension,
                             "algorithm": solver,
@@ -112,5 +114,6 @@ if __name__ == "__main__":
                         }
                     )
                     counter += 1
-    with open("../exp_config_diverse.yaml", "w") as file:
+    with open("../exp_config_fully_managed.yaml", "w") as file:
         documents = yaml.safe_dump(exp_settings, file)
+    print(f"Generated {counter} experiment settings")

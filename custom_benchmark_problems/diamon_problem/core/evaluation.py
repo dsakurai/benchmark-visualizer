@@ -60,10 +60,10 @@ class BMP:
         )
 
     def h_x(
-            self,
-            x: np.ndarray,
-            x_s: np.ndarray,
-            tau: int,
+        self,
+        x: np.ndarray,
+        x_s: np.ndarray,
+        tau: int,
     ) -> np.ndarray:
         """Compute h(x) with solution variables and candidate coordinates and tau
 
@@ -85,7 +85,7 @@ class BMP:
             x=x,
             x_s=x_s,
         )
-        return signs / (4.0 ** tau)
+        return signs / (4.0**tau)
 
     def compute_coordinates(self, symbol_sequence: list) -> np.ndarray:
         """Compute the coordinates for the given symbol sequence.
@@ -111,7 +111,7 @@ class BMP:
                     f"Dimension cannot be greater than axis. Got dimension: {self.dim_space}, axis: {symbol}"
                 )
             if symbol != 0:
-                movement_length = np.sign(symbol) * 2.0 / (4.0 ** index)
+                movement_length = np.sign(symbol) * 2.0 / (4.0**index)
                 x = abs(symbol) - 1  # the 1st axis is x0 internally
                 coordinates[x] += movement_length
         return coordinates
@@ -135,7 +135,7 @@ class BMP:
         """
         diff = x - x_s
         return np.sign(diff) + (
-                diff == 0
+            diff == 0
         )  # if x - x_s is 0, set the sign to 1 (by default it's 0).
 
     @staticmethod
@@ -263,8 +263,8 @@ class BMP:
                         delta_x = x - x_s
                         h_x_ = self.h_x(x=x, x_s=x_s, tau=tau)
                         nabla_g = (
-                                          self.f_t_x(tau, x_s + h_x_, sequences)[0] - m_s
-                                  ) / h_x_
+                            self.f_t_x(tau, x_s + h_x_, sequences)[0] - m_s
+                        ) / h_x_
                         diagonal_lengths.append(h_x_)
                         g_s_values.append(M_s + np.dot(nabla_g, delta_x.T))
                         node_ids.append(s_tau.name)

@@ -11,7 +11,7 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  experiment_name: test_exp_v8
+  experiment_name: sample_experiments
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
@@ -30,7 +30,7 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  experiment_name: test_exp_v8
+  experiment_name: sample_experiments
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
@@ -49,7 +49,7 @@
     offspring_population_size: 100
     population_size: 100
   dimension: 2
-  experiment_name: test_exp_v8
+  experiment_name: sample_experiments
   termination_criterion:
     criterion_name: StoppingByEvaluations
     termination_parameter: 25000
