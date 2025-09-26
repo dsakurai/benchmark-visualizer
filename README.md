@@ -18,6 +18,49 @@ To complement the 3BC generator, we proposed a novel visualization that projects
 This repository provides the complete code for both the **3BC benchmark generator** and the **web-based visualization tool**.
 
 ---
+## Citation
+
+If you find our work useful, please consider citing our paper as follows:
+
+```
+@inproceedings{10.1145/3638530.3654190,
+author = {Liu, Likun and Ota, Ryosuke and Yamamoto, Takahiro and Hamada, Naoki and Sakurai, Daisuke},
+title = {Visualization of Multiobjective Multimodal Benchmarking Based on Basin Connectivity},
+year = {2024},
+isbn = {9798400704956},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3638530.3654190},
+doi = {10.1145/3638530.3654190},
+booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference Companion},
+pages = {347–350},
+numpages = {4},
+keywords = {multiobjective optimization, visualization, benchmarking},
+location = {Melbourne, VIC, Australia},
+series = {GECCO '24 Companion}
+}
+```
+as well as the original 3BC paper:
+```
+@inproceedings{10.1145/3638530.3654190,
+author = {Liu, Likun and Ota, Ryosuke and Yamamoto, Takahiro and Hamada, Naoki and Sakurai, Daisuke},
+title = {Visualization of Multiobjective Multimodal Benchmarking Based on Basin Connectivity},
+year = {2024},
+isbn = {9798400704956},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3638530.3654190},
+doi = {10.1145/3638530.3654190},
+booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference Companion},
+pages = {347–350},
+numpages = {4},
+keywords = {multiobjective optimization, visualization, benchmarking},
+location = {Melbourne, VIC, Australia},
+series = {GECCO '24 Companion}
+}
+```
+
+----
 
 ## Getting Started
 
@@ -103,50 +146,6 @@ For instance, if the experiment data is in ``data`` directory, run the backend w
 
 2. By default, the backend only runs on localhost, to expose it on the network, use ``--host`` flag (not recommended).
 It is highly recommended to use a reverse proxy application for deployment such as Apache2 or Nginx.
-
-----
-
-## Citation
-
-If you find our work useful, please consider citing our paper as follows:
-
-```
-@inproceedings{10.1145/3638530.3654190,
-author = {Liu, Likun and Ota, Ryosuke and Yamamoto, Takahiro and Hamada, Naoki and Sakurai, Daisuke},
-title = {Visualization of Multiobjective Multimodal Benchmarking Based on Basin Connectivity},
-year = {2024},
-isbn = {9798400704956},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3638530.3654190},
-doi = {10.1145/3638530.3654190},
-booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference Companion},
-pages = {347–350},
-numpages = {4},
-keywords = {multiobjective optimization, visualization, benchmarking},
-location = {Melbourne, VIC, Australia},
-series = {GECCO '24 Companion}
-}
-```
-as well as the original 3BC paper:
-```
-@inproceedings{10.1145/3638530.3654190,
-author = {Liu, Likun and Ota, Ryosuke and Yamamoto, Takahiro and Hamada, Naoki and Sakurai, Daisuke},
-title = {Visualization of Multiobjective Multimodal Benchmarking Based on Basin Connectivity},
-year = {2024},
-isbn = {9798400704956},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3638530.3654190},
-doi = {10.1145/3638530.3654190},
-booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference Companion},
-pages = {347–350},
-numpages = {4},
-keywords = {multiobjective optimization, visualization, benchmarking},
-location = {Melbourne, VIC, Australia},
-series = {GECCO '24 Companion}
-}
-```
 
 ----
 
