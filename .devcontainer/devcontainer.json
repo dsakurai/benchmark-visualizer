@@ -8,6 +8,9 @@
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": true,
             "installOhMyZsh": true
+        },
+        "git": {
+            "os-provided": true
         }
     },
     // Configure tool-specific properties.
