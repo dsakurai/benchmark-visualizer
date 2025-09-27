@@ -1,21 +1,15 @@
 # 3BC: Benchmarking and Visualization Based on Basin Connectivity
 
+The 3BC allows you to manipulate multi-objective multimodal landscapes through the means of basins of attraction, establishing a rigorous benchmarking having explicit local and global Pareto set and fronts.
+
+This repository provides the code for both the **3BC benchmark generator** and the **web-based visualization tool**.
+Our visualization projects the high-dimensional basins in a 2D plot, in which the individuals of benchmarked MOEAs for user-specified generations are visible.
+It helps researchers configure 3BC landscapes and, more importantly, understand the behavior of different MOEAs.
+
 This repository contains the official implementation for the papers:
 
-1.  [**Towards Benchmarking Multi-Objective Optimization Algorithms Based on the Basin Connectivity**](https://dl.acm.org/doi/10.1145/3712255.3734279) (GECCO '25 Companion)
-2.  [**Visualization of Multiobjective Multimodal Benchmarking Based on Basin Connectivity**](https://dl.acm.org/doi/10.1145/3638530.3654190) (GECCO '24 Companion)
-
----
-
-## Overview
-
-Evaluating Multi-Objective Evolutionary Algorithms (MOEAs) on multimodal landscape is challenging. Standard benchmarks often have fitness landscapes that are unknown or fixed, making it difficult to analyze an algorithm's specific exploration and exploitation behaviors.
-
-**Benchmarking Based on Basin Connectivity (3BC)**  allows users to pre-determine the fitness landscape by defining the structure and connectivity of basins of attraction via a basin graph. This provides a controlled environment to rigorously test how MOEAs navigate landscapes with specific challenges, such as multiple local and global optima.
-
-To complement the 3BC generator, we proposed a novel visualization that projects the high-dimensional basins in a 2D plot, in which the individuals of benchmarked MOEAs for user-specified generations are visible. It helps researchers configure 3BC landscapes and, more importantly, understand the behavior of different MOEAs.
-
-This repository provides the complete code for both the **3BC benchmark generator** and the **web-based visualization tool**.
+1.  [**Towards Benchmarking Multi-Objective Optimization Algorithms Based on the Basin Connectivity**](https://dl.acm.org/doi/10.1145/3712255.3734279) (GECCO '25 Companion Proceedings)
+2.  [**Visualization of Multiobjective Multimodal Benchmarking Based on Basin Connectivity**](https://dl.acm.org/doi/10.1145/3638530.3654190) (GECCO '24 Poster)
 
 ---
 ## Citation
@@ -66,27 +60,18 @@ series = {GECCO '24 Companion}
 
 ### Prerequisites
 
+A straightforward way is to use VSCode DevContainers, for which we have pre-configured the prerequisites.
+
+To run the project without it, we recommend the following environment:
 * Python 3.8+
 * Node.js and Yarn (for the visualization tool's frontend)
 
 ## Getting started
 
-### Install the environment
-
-1. Create python virtual environments:
-
-- ```python -m venv venv```
-
-2. Active environments
-
-- On Windows ``.\venv\Scripts\activate ``
-- On Linux/MacOS ``source venv/bin/activate``
-
-3. Install requirements
-
 - ``pip install -r requirements.txt``
+(Already done for the DevContainer)
 
-4. (Optional) You may need to install jupyter notebook in order to use jupyter notebook
+1. (Optional) You may want to install jupyter notebook in order to use jupyter notebook
 
 - ``pip install jupyter``
 
