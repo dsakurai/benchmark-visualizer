@@ -84,13 +84,7 @@ To run the project without it, we recommend the following environment:
 
 ### Run with jupyter notebook
 
-1. With the activated environment, start a jupyter notebook server:
-
-- ``jupyter notebook``
-
-2. In the opened browser window, find the file ``sample_experiment.ipynb`` and open it.
-   ***If the browser did not open automatically, click or copy&paste the link displayed in the console***
-3. Follow the instructions in the notebook.
+We keep a sample experiment in ``sample_experiment.ipynb``.
 
 ## Visualizer
 This visualizer was built with vue.js and FastAPI. You can either run the application with detached front-end and back end,
