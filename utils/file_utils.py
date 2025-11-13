@@ -88,31 +88,34 @@ def parse_exp_dir_with_meta(
 def parse_meta(exp_dir: str) -> list[dict]:
     exps_info = parse_exp_log_dir(exp_dir=exp_dir)
     exps_meta_info = []
-    for exp_info in exps_info:
-        meta = exp_info["meta"]
-        dimension = meta["dimension"]
-        n_objectives = meta["n_objectives"]
+    for exp_info in exps_info.values():
         try:
-            population_size = meta["algorithm_parameters"]["population_size"]
-        except KeyError:
-            population_size = meta["algorithm_parameters"]["swarm_size"]
-        exps_meta_info.append(
-            {
-                "population_size": population_size,
-                "dimension": dimension,
-                "n_objectives": n_objectives,
-                "tree": meta["tree_file"].split("/")[-1],
-                "solver": meta["algorithm"],
-                "exp_result_file": exp_info["result"],
-            }
-        )
+            meta = exp_info["meta"]
+            dimension = meta["dimension"]
+            n_objectives = meta["n_objectives"]
+            try:
+                population_size = meta["algorithm_parameters"]["population_size"]
+            except KeyError:
+                population_size = meta["algorithm_parameters"]["swarm_size"]
+            exps_meta_info.append(
+                {
+                    "population_size": population_size,
+                    "dimension": dimension,
+                    "n_objectives": n_objectives,
+                    "tree": meta["tree_file"].split("/")[-1],
+                    "solver": meta["algorithm"],
+                    "exp_result_file": exp_info["result"],
+                }
+            )
+        except Exception as e:
+            print(f"error dir: {exp_info}")
     return exps_meta_info
 
 
 def parse_exp_log_dir(exp_dir: str) -> dict:
     exp_path = Path(exp_dir)
     if not (exp_path.exists() and exp_path.is_dir()):
-        raise ValueError("Invalid experiment experiment path")
+        raise ValueError(f"Invalid experiment experiment path. \n Path: {exp_path}")
     subdirectories = [d for d in exp_path.iterdir() if d.is_dir()]
     if subdirectories:
         exp_parse_data = {}
@@ -128,7 +131,6 @@ def parse_exp_log_dir(exp_dir: str) -> dict:
                 "tree": experiment_tree_file,
                 "result": str(exp_result_file),
             }
-
         return exp_parse_data
     else:
         raise ValueError(f"No experiment data found @ {exp_path}")
