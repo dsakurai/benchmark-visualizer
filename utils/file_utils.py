@@ -24,14 +24,10 @@ def load_evaluation_log(file_path: str) -> list:
     eval_log = pd.read_csv(file_path, index_col=0)
     eval_log[["eval_node_id", "step"]] = eval_log[["eval_node_id", "step"]].astype(int)
     Logger().debug.info("Load complete, processing ...... ")
-    return eval_log[
-        ["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]
-    ].to_dict(orient="records")
+    return eval_log[["t", "y1", "y2", "eval_node_id", "diagonal_length", "step", "t_org", "y_org"]].to_dict(orient="records")
 
 
-def load_n_evaluation_log(
-    file_path: str, return_df: bool = False
-) -> list | pd.DataFrame:
+def load_n_evaluation_log(file_path: str, return_df: bool = False) -> list | pd.DataFrame:
     Logger().debug.info(f"Loading data from disk, file size {get_file_size(file_path)}")
     if not Path(file_path).exists():
         raise ValueError("Experiment log file not found")
@@ -65,13 +61,9 @@ def convert_size(size_bytes):
     return f"{s} {size_name[i]}"
 
 
-def parse_exp_dir_with_meta(
-    data_path, file_name_pattern: str
-) -> tuple[Path, Path, Path] | None:
+def parse_exp_dir_with_meta(data_path, file_name_pattern: str) -> tuple[Path, Path, Path] | None:
     entries = os.listdir(data_path)
-    subdirectories = [
-        entry for entry in entries if os.path.isdir(os.path.join(data_path, entry))
-    ]
+    subdirectories = [entry for entry in entries if os.path.isdir(os.path.join(data_path, entry))]
     for sub_dir in subdirectories:
         if sub_dir.startswith(file_name_pattern):
             exp_file_path = Path(sub_dir) / (sub_dir + ".csv")
@@ -79,9 +71,7 @@ def parse_exp_dir_with_meta(
             meta_data = Path(sub_dir) / "meta" / "meta.json"
             return exp_file_path, exp_tree, meta_data
 
-    Logger().debug.error(
-        f"File or directory {data_path} for pattern {file_name_pattern} not found."
-    )
+    Logger().debug.error(f"File or directory {data_path} for pattern {file_name_pattern} not found.")
     return None
 
 

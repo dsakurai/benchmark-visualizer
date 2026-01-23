@@ -122,12 +122,8 @@ if __name__ == "__main__":
                                     "dimension": dimension,
                                     "algorithm": solver,
                                     "n_objectives": n_objective,
-                                    "algorithm_parameters": compose_solver_settings(
-                                        solver
-                                    ),
-                                    "termination_criterion": dict(
-                                        termination_criterion
-                                    ),
+                                    "algorithm_parameters": compose_solver_settings(solver),
+                                    "termination_criterion": dict(termination_criterion),
                                     "rotate_t": if_rotate_t,
                                 }
                             )

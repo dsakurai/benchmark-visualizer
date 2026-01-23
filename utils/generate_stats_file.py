@@ -3,16 +3,19 @@ Utility to generate statistics files from experiment results.
 
 Results are in CSV format and contain counts of evaluations at different tree nodes
 """
+
 import sys
 
 sys.path.append("../")
 
-import os
-from utils.file_utils import parse_meta
-from tqdm import tqdm
-import pandas as pd
 import multiprocessing
+import os
 from multiprocessing import Pool
+
+import pandas as pd
+from tqdm import tqdm
+
+from utils.file_utils import parse_meta
 
 
 def get_exps_meta(search_dir, exp_dir_pattern):
@@ -40,8 +43,6 @@ def get_exps_meta(search_dir, exp_dir_pattern):
     for subdir in subdirs:
         meta_list += parse_meta(exp_dir=subdir)
 
-
-
     exp_df = pd.DataFrame(meta_list)
     exp_df.to_csv("experiment_metadata.csv", index=False)
     return exp_df
@@ -52,7 +53,7 @@ def parse_result_file(exp_file_path: str):
     return result_df
 
 
-def run_data(dimension, n_objectives, tree, generation:int, solvers, exp_df):
+def run_data(dimension, n_objectives, tree, generation: int, solvers, exp_df):
     print(f"Processing dimension {dimension}, n_objectives {n_objectives}, tree {tree}, generation {generation}")
     naming_prefix = f"dim{dimension}_objs{n_objectives}_tree_{tree.split('.')[0]}"
     stat_res = []
@@ -66,7 +67,7 @@ def run_data(dimension, n_objectives, tree, generation:int, solvers, exp_df):
         for i, row in filtered_df.iterrows():
             eval_info = parse_result_file(row["exp_result_file"])
             try:
-                vc = eval_info["eval_node_id"][generation * 100: (generation + 1) * 100].value_counts()
+                vc = eval_info["eval_node_id"][generation * 100 : (generation + 1) * 100].value_counts()
                 stat_res.append(
                     {
                         "solver": solver,
@@ -81,7 +82,7 @@ def run_data(dimension, n_objectives, tree, generation:int, solvers, exp_df):
             except Exception as e:
                 continue
     stat_res = pd.DataFrame(stat_res)
-    stat_res.to_csv(f"gen_{generation}/" + naming_prefix + ".csv")
+    stat_res.to_csv(f"stats_output/gen_{generation}/" + naming_prefix + ".csv")
 
 
 def main():
@@ -92,13 +93,13 @@ def main():
     n_objectives_list = [2, 3, 4, 5]
     trees = ["breadth.json", "depth.json"]
     solvers = ["MOEAD", "NSGAII", "GDE3", "OMOPSO", "IBEA"]
-    gens = range(2,50)
+    gens = range(2, 50)
     total_tasks = len(dimensions) * len(n_objectives_list) * len(trees) * len(gens)
 
     exp_df = get_exps_meta(search_dir, exp_dir_pattern)
 
     cpus = multiprocessing.cpu_count()
-    pool = Pool(processes=cpus-4)
+    pool = Pool(processes=cpus)
     pbar = tqdm(total=total_tasks)
     pbar.set_description("Parsing Progress")
 
@@ -106,14 +107,13 @@ def main():
         print(*args)
         pbar.update()
 
-
     def print_err(value):
         print(f"ERR! {value}")
         pbar.update()
 
-
+    os.makedirs("stats_output", exist_ok=True)
     for gen in gens:
-        os.makedirs(f"gen_{gen}", exist_ok=True)
+        os.makedirs(f"stats_output/gen_{gen}", exist_ok=True)
         for dimension in dimensions:
             for n_objectives in n_objectives_list:
                 for tree in trees:
@@ -125,7 +125,7 @@ def main():
                             tree,
                             gen,
                             solvers,
-                            exp_df, 
+                            exp_df,
                         ),
                         error_callback=print_err,
                         callback=pbar_update,
@@ -133,6 +133,7 @@ def main():
     pool.close()
     pool.join()
     pbar.close()
+
 
 if __name__ == "__main__":
     main()

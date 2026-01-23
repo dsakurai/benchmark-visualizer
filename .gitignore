@@ -162,5 +162,12 @@ cython_debug/
 mlruns/
 data/
 
+.ruff_cache/
+
 *.png
 *.mp4
+*.csv
+*.pdf
+*.png
+*.zip
+.DS_store
