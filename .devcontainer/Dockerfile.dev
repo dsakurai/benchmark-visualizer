@@ -16,7 +16,7 @@ RUN sh ~/uv-installer.sh && rm ~/uv-installer.sh
 # Ensure the installed binary is on the `PATH`
 ENV PATH="~/.local/bin/:$PATH"
 
-WORKDIR /workspacces
+WORKDIR /workspace
 
 # Disable development dependencies
 ENV UV_NO_DEV=1
