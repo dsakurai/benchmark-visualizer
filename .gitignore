@@ -171,3 +171,5 @@ data/
 *.png
 *.zip
 .DS_store
+*.yml
+*.yaml

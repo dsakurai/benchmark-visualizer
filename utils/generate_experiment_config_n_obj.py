@@ -1,3 +1,5 @@
+from argparse import ArgumentParser
+
 import yaml
 
 
@@ -81,7 +83,12 @@ def compose_solver_settings(solver_name) -> dict:
 
 
 if __name__ == "__main__":
-    exp_base_name = "N-obj-test-MOEAD"
+    parser = ArgumentParser()
+    parser.add_argument("--exp_base_name", type=str, default="N-obj-test")
+    parser.add_argument("--output_path", type=str, default="exp_config.yaml")
+    args = parser.parse_args()
+    exp_base_name = args.exp_base_name
+    output_path = args.output_path
     # trees = ["experiment_trees/diverse_tree.json"]
     # trees = []
     # depth_trees = [f"experiment_trees/depth_base_{i}.json" for i in range(1, 7)]
@@ -127,5 +134,5 @@ if __name__ == "__main__":
                                 }
                             )
                             counter += 1
-    with open(f"../exp_config_{exp_base_name}.yaml", "w") as file:
+    with open(f"{output_path}", "w") as file:
         documents = yaml.safe_dump(exp_settings, file)

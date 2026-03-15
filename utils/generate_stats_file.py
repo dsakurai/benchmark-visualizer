@@ -4,16 +4,16 @@ Utility to generate statistics files from experiment results.
 Results are in CSV format and contain counts of evaluations at different tree nodes
 """
 
-import sys
-
-sys.path.append("../")
-
 import multiprocessing
 import os
+import sys
+from argparse import ArgumentParser
 from multiprocessing import Pool
 
 import pandas as pd
 from tqdm import tqdm
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from utils.file_utils import parse_meta
 
@@ -79,21 +79,31 @@ def run_data(dimension, n_objectives, tree, generation: int, solvers, exp_df):
                         "node_4": vc.get(4, 0),
                     }
                 )
-            except Exception as e:
+            except Exception:
                 continue
     stat_res = pd.DataFrame(stat_res)
     stat_res.to_csv(f"stats_output/gen_{generation}/" + naming_prefix + ".csv")
 
 
 def main():
-    search_dir = "/Volumes/data/Submissions/l-liu/benchmark-visualizer-exp-data/EMO-2025/data"
-    exp_dir_pattern = "N-obj"
+    parser = ArgumentParser()
+    parser.add_argument("--search_dir", type=str, default="data")
+    parser.add_argument("--exp_dir_pattern", type=str, default="N-obj")
+    parser.add_argument("--output_dir", type=str, default="stats_output")
+    parser.add_argument("--max_gen", type=int, default=50)
+    parser.add_argument("--step", type=int, default=1)
+    args = parser.parse_args()
+    search_dir = args.search_dir
+    exp_dir_pattern = args.exp_dir_pattern
+    output_dir = args.output_dir
+    max_gen = args.max_gen
+    step = args.step
 
     dimensions = [2, 3, 4, 5]
     n_objectives_list = [2, 3, 4, 5]
     trees = ["breadth.json", "depth.json"]
     solvers = ["MOEAD", "NSGAII", "GDE3", "OMOPSO", "IBEA"]
-    gens = range(2, 50)
+    gens = range(2, max_gen + 1, step)
     total_tasks = len(dimensions) * len(n_objectives_list) * len(trees) * len(gens)
 
     exp_df = get_exps_meta(search_dir, exp_dir_pattern)
@@ -103,17 +113,16 @@ def main():
     pbar = tqdm(total=total_tasks)
     pbar.set_description("Parsing Progress")
 
-    def pbar_update(*args):
-        print(*args)
+    def pbar_update(_):
         pbar.update()
 
     def print_err(value):
         print(f"ERR! {value}")
         pbar.update()
 
-    os.makedirs("stats_output", exist_ok=True)
+    os.makedirs(f"{output_dir}", exist_ok=True)
     for gen in gens:
-        os.makedirs(f"stats_output/gen_{gen}", exist_ok=True)
+        os.makedirs(f"{output_dir}/gen_{gen}", exist_ok=True)
         for dimension in dimensions:
             for n_objectives in n_objectives_list:
                 for tree in trees:
