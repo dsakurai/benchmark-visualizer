@@ -93,7 +93,6 @@ if __name__ == "__main__":
         "n_obj_experiment_trees/depth.json",
     ]
     solvers = ["MOEAD", "GDE3", "NSGAII", "IBEA", "OMOPSO"]
-    solvers = ["MOEAD"]
     dimensions = [2, 3, 4, 5]
     dimensions.reverse()
     n_objectives = [2, 3, 4, 5]
@@ -102,7 +101,7 @@ if __name__ == "__main__":
         # {"criterion_name": "StoppingByTime", "termination_parameter": 200},
         {"criterion_name": "StoppingByEvaluations", "termination_parameter": 100000},
     ]
-    counter = 180
+    counter = 0
     exp_settings = []
     rotate_t = [True]
     for tree in trees:
