@@ -1,10 +1,8 @@
 import os
 from argparse import ArgumentParser
 
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from mlflow import data
 from plotly.subplots import make_subplots
 
 
@@ -28,7 +26,7 @@ def add_raincloud_trace(fig, df, row, col, palette):
                 line_color=color,
                 fillcolor=color,
                 opacity=0.4,
-                width=2.2,  # Balanced width for 4:1 ratio
+                width=1.0,  # Reduced width to prevent overlapping
                 spanmode="hard",
                 points=False,
                 showlegend=False,
@@ -46,8 +44,8 @@ def add_raincloud_trace(fig, df, row, col, palette):
                 y=node_df["percentage_log"],
                 name=node,
                 boxpoints="all",
-                jitter=0.5,
-                pointpos=-1.6,
+                jitter=0.3,  # Reduced jitter
+                pointpos=-1.0,  # Adjusted position
                 marker=dict(size=3, color=color, opacity=0.6),
                 fillcolor="rgba(0,0,0,0)",
                 line_color="rgba(0,0,0,0)",
@@ -85,7 +83,7 @@ def load_exp_data(search_dir: str, gen: int) -> pd.DataFrame:
 
 # --- 3. Plotting Execution ---
 def plot_rainclouds(data_df: pd.DataFrame, output_dir: str, gen: int):
-    dim_n_obj_combs = [(2, 5), (3, 4), (4, 3), (5, 2)]
+    dim_n_obj_combs = [(5, 2), (4, 3), (3, 4), (2, 5)]
     solvers = ["GDE3", "NSGAII", "IBEA", "MOEAD"]
     trees = ["breadth", "depth"]
     colors = ["#8fdea0", "#ec80b4", "#eed5a4", "#9a97dc", "#d7e7f5"]
@@ -97,9 +95,9 @@ def plot_rainclouds(data_df: pd.DataFrame, output_dir: str, gen: int):
             if filtered_df.empty:
                 continue
 
-            # Reduced horizontal_spacing (0.05) to bring subplots closer
+            # Increased horizontal_spacing to prevent overlapping
             fig = make_subplots(
-                rows=1, cols=4, subplot_titles=[f"N objectives = {obj}" for _, obj in dim_n_obj_combs], horizontal_spacing=0.05
+                rows=1, cols=4, subplot_titles=[f"N objectives = {obj}" for _, obj in dim_n_obj_combs], horizontal_spacing=0.08
             )
 
             for idx, (dim, n_objective) in enumerate(dim_n_obj_combs):
