@@ -1,10 +1,8 @@
-# 3BC: Benchmarking and Visualization Based on Basin Connectivity
-
-This repository is archived. The development migrated to https://github.com/sonoda-umi/3bc
+**This repository is archived.** The development migrated to https://github.com/sonoda-umi/3bc
 
 If you want to run the scripts in this project, we advice you to visit the URL above.
 
-# Introduction
+# 3BC: Benchmarking and Visualization Based on Basin Connectivity
 
 The 3BC allows you to manipulate multi-objective multimodal landscapes through the means of basins of attraction, establishing a rigorous benchmarking having explicit local and global Pareto set and fronts.
 
